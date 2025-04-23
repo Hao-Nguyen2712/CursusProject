@@ -21,4 +21,4 @@ Dự án nhằm mục đích:
 
 Dự án được thực hiện bởi [Nhóm 2 của lớp NET_08]  
 Thực tập sinh tại **FSA Hồ Chí Minh**  
-Thời gian: [Tháng 5] - [Tháng 8], năm 2025
+Thời gian: [Tháng 5] - [Tháng 8], năm 2024
