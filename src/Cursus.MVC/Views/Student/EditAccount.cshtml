@@ -1,0 +1,244 @@
+@model Cursus.MVC.Models.AccountViewModel;
+@{
+    ViewData["Title"] = "Edit Profile";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<div class="sign_in_up_bg">
+    <div class="container">
+        <div class="row justify-content-lg-center justify-content-md-center">
+            <div class="col-lg-12">
+                <div class="main_logo25" id="logo">
+                    <a asp-controller="Home" asp-action="Index"><img src="~/images/logo.svg" alt=""></a>
+                    <a asp-controller="Home" asp-action="Index"><img class="logo-inverse" src="~/images/ct_logo.svg" alt=""></a>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-8">
+                <div class="sign_form">
+                    <h2>Edit Account</h2>
+                    <p>Please fill in the necessary information before experiencing</p>
+
+
+                    <form id="form" method="post" asp-controller="Student" asp-action="EditAccount">
+                        <!-- Email -->
+
+                        <div class="ui search focus mt-15" hidden>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <input type="text" asp-for="AccountId" name="AccountID" placeholder="Password" required>
+                            </div>
+                        </div>
+
+                        <div class="ui search focus mt-15" hidden>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <input type="text" asp-for="Username" name="Username" placeholder="Password" required>
+                            </div>
+                        </div>
+                        <div class="ui search focus mt-15 container-form">
+                            <span class="text-start form-label">Email</span>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <input type="text" asp-for="Email" name="Email" placeholder="Password" readonly>
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="ui search focus mt-15" hidden>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <input type="text" asp-for="Password" name="password" placeholder="Password">
+                            </div>
+                        </div>
+
+                        <div class="ui search focus mt-15 container-form">
+                            <span class="text-start form-label">Fullname</span>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <input type="text" asp-for="FullName" name="fullname" placeholder="Full Name" required>
+
+                            </div>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="ui search focus mt-15 container-form">
+                            <span class="text-start form-label">Phone</span>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <input type="tel" asp-for="Phone" name="phone" placeholder="Phone Number" required>
+
+                            </div>
+                        </div>
+
+                        <!-- Gender -->
+                        <div class="ui search focus mt-15 container-form">
+                            <span class="text-start form-label">Gender</span>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <select class="form-control" asp-for="Gender" name="gender" required>
+                                    <option value="" disabled selected>Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Date of Birth -->
+                        <div class="ui search focus mt-15 container-form">
+                            <span class="text-start form-label">Birth</span>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <input asp-for="DateofBirth" type="date" name="dateofbirth" required>
+
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="ui search focus mt-15 container-form">
+                            <span class="text-start form-label">Description</span>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <input type="text" asp-for="Description" name="description" placeholder="Description" readonly></input>
+                            </div>
+                        </div>
+                        <div class="ui search focus mt-15" hidden>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <input type="text" asp-for="Avatar" name="Avatar" placeholder="Password">
+                            </div>
+                        </div>
+                        <div class="ui search focus mt-15" hidden>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <input type="text" asp-for="Role" name="Role" placeholder="Password">
+                            </div>
+                        </div>
+                        <div class="ui search focus mt-15" hidden>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <input type="text" asp-for="Money" name="Money" placeholder="Password">
+                            </div>
+                        </div>
+                        <div class="ui search focus mt-15" hidden>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <input type="text" asp-for="UpLevel" name="Uplevel" placeholder="Password">
+                            </div>
+                        </div>
+                        <div class="ui search focus mt-15" hidden>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <input type="text" asp-for="IsDelete" name="IsDelete" placeholder="Password">
+                            </div>
+                        </div>
+                        <div class="ui search focus mt-15" hidden>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <input type="text" asp-for="Id" name="id" placeholder="Password" required>
+                            </div>
+                        </div>
+
+                        <div class="ui search focus mt-15 container-form">
+                            <span class="text-start form-label">Bio</span>
+                            <div class="ui left icon input swdh11 swdh19">
+                                <input type="text" asp-for="Bio" name="bio" placeholder="Bio" required>
+
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button id="registerFormBtn" value="Save" type="button" class="login-btn">Submit</button>
+                    </form>
+
+                    <p class="sgntrm145"><a asp-controller="Student" asp-action="ViewProfile">Back to Home</a>
+                    <p class="mb-0 mt-30 hvsng145">Do you want to <a asp-area="Identity" asp-page="/Account/Manage/ChangePassword">Change Password</a></p>
+                </div>
+            </div>
+            <div class="sign_footer">
+                <img src="images/sign_logo.png" alt="">© 2024 <strong>Cursus</strong>. All
+                Rights Reserved.
+            </div>
+        </div>
+    </div>
+
+    @section Styles {
+        <style>
+            .error {
+                border: 1px solid red;
+            }
+
+            .container-form {
+                display: flex;
+                align-items: center;
+                margin-top: 15px;
+            }
+
+            .form-label {
+                padding-top: 5px;
+                min-width: 100px;
+                color: black;
+                font-size: 14px
+            }
+        </style>
+    }
+    @section Scripts {
+        <script src="~/js/sweetAlert.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const form = document.getElementById('registerFormBtn');
+
+                form.addEventListener('click', function (event) {
+                    let isValid = true;
+                    let errorMessage = "";
+                    // FullName validation
+                    const fullName = document.querySelector('[name="fullname"]');
+                    if (!fullName.value.trim()) {
+                        isValid = false;
+                        fullName.classList.add('error');
+                        errorMessage += 'FullName is required.<br>';
+                    } else {
+                        fullName.classList.remove('error');
+                    }
+
+                    // Phone validation
+                    const phone = document.querySelector('[name="phone"]');
+                    const phonePattern = /^(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})$/;
+                    if (!phonePattern.test(phone.value)) {
+                        isValid = false;
+                        phone.classList.add('error');
+                        errorMessage += 'Phone is not valid.<br>';
+                    } else {
+                        phone.classList.remove('error');
+                    }
+
+                    // Gender validation
+                    const gender = document.querySelector('[name="gender"]');
+                    if (gender.value === "") {
+                        isValid = false;
+                        gender.classList.add('error');
+                        errorMessage += 'Sex is required.<br>';
+                    } else {
+                        gender.classList.remove('error');
+                    }
+
+                    // Date of Birth validation
+                    const dateOfBirth = document.querySelector('[name="dateofbirth"]');
+                    if (!dateOfBirth.value) {
+                        isValid = false;
+                        dateOfBirth.classList.add('error');
+                        errorMessage += 'Date is required.<br>';
+                    } else {
+                        dateOfBirth.classList.remove('error');
+                    }
+
+                    // Description validation
+                    const description = document.querySelector('[name="description"]');
+                    if (description.value.trim() === "") {
+                        isValid = false;
+                        description.classList.add('error');
+                        errorMessage += 'Description is required.<br>';
+                    } else {
+                        description.classList.remove('error');
+                    }
+
+                    if (!isValid) {
+                        event.preventDefault();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Form Validation Error',
+                            html: errorMessage,
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                    else{
+                AlertConfirmWhenSubmitForm("You sure!", "You want to change infomation", "info", "");
+                    }
+                });
+            });
+        </script>
+    }

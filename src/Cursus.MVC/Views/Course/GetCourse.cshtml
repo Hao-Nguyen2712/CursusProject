@@ -1,0 +1,344 @@
+@model Cursus.MVC.ViewModels.GetCourseViewModel
+
+@{
+    ViewData["Title"] = Model.CourseVM.CourseName;
+    DateTime now = DateTime.Now;
+}
+
+@section styles{
+    <link href="~/css/lesson.css" rel="stylesheet" asp-append-version="true">
+}
+<div class="sa4d25">
+        <div class="container-fluid">
+          <div class="video_content row">
+            <div class="box_video--container col-md-8">
+              <div class="video-box-container">
+                <div class="video-box">
+                        <iframe id="video-iframe" width="100%" height="560px" src="@Model.LessonVM.LessionVideo" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                
+                    @* <iframe id="video-iframe" width="100%" height="560px" src="https://www.youtube.com/embed/hpPhqJD2oAs" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> *@
+                </div>
+              </div>
+              <div class="course_content">
+                <div class="study-box">
+                        @{
+                            if(Model.Progress.Equals("True"))
+                            {
+                                        <button class="button-63 active" id="submitStudy" value="Not Finish">Not Finish</button>
+                            } else
+                            {
+                                        <button class="button-63 " id="submitStudy" value="Finish">Finished</button>
+                            }
+                        }
+                </div>
+                <div class="course_title">
+                    <input id="LessonID" type="type" name="name" value="@Model.LessonVM.LessionId" hidden/>
+                    <input id="CourseID" type="type" name="name" value="@Model.CourseVM.CourseId" hidden/>
+                  <h2 class="course_title--content">
+                    @Model.LessonVM.LessionTilte
+                  </h2>
+                </div>
+                <div class="lesson_content" id="content">
+                  
+                </div>
+              </div>
+              <div class="comment">
+                <div class="comment--header">
+                    @{
+                        if (Model.CommentAccoutViewModels.Count > 0)
+                         {
+                                        <h2><span class="countComments">@Model.CommentAccoutViewModels.Count</span> Comments</h2>
+                         }
+                    else
+                         {
+                                <h2><span class="countComments">0</span> Comments</h2>
+                         }
+                    }
+                </div>
+                <div class="comment-input cmt-item-parent">
+                  <div class="cmt-avatar">
+                    <img src="@Model.AccountVM.Avatar" alt="" />
+                  </div>
+                  <div class="comment-input--content">
+                    <textarea
+                      type="text"
+                      placeholder="Write a comment..."
+                      class="comment-input--text"
+                      id="comment-input-text"
+                    ></textarea>
+                    <div class="cmt-input-action cmt-action-submit">
+                      <button class="comment-input--btn btn-cancel btn-cancel-comment">
+                        Cancel
+                      </button>
+                      <button class="comment-input--btn  btn-comment">
+                        Comment
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                    @*
+                        // lay ra list lv1
+                        // sort lại theo date
+                        // for list ròi tìm phần tử con ròi add vao
+                    *@
+                    @{
+                        List<Cursus.MVC.ViewModels.CommentAccoutViewModel> list = new List<Cursus.MVC.ViewModels.CommentAccoutViewModel>();
+                        foreach (var item in Model.CommentAccoutViewModels)
+                        {
+                            if (item.CommentViewModel.CmtLevel == 1)
+                            {
+                                list.Add(item);
+                            }
+                        }
+
+                        foreach (var item in list)
+                        {
+                            var id = "collapseExample" + item.CommentViewModel.CmtId;
+                                    <div class="cmt-item" id="@item.CommentViewModel.CmtId">
+                                        <div class="cmt-item-parent">
+                                            <div class="cmt-avatar">
+                                                <img src="@item.AccountViewModel.Avatar" alt="" />
+                                            </div>
+                                            <div class="cmt-content-box">
+                                                <div class="cmt-header">
+                                                    <div class="cmt-name">
+                                                        <h4>@item.AccountViewModel.FullName</h4>
+                                                    </div>
+                                                    <div class="cmt-time">
+                                                        @* cal time *@
+                                                        @if (item.CommentViewModel.CmtDate.HasValue)
+                                                                    {
+                                                                        var timeDiff = now - item.CommentViewModel.CmtDate.Value;
+                                                                        if (timeDiff.TotalDays < 1)
+                                                                        {
+                                                                            if (timeDiff.TotalHours < 1)
+                                                                            {
+                                                                                <text>@timeDiff.Minutes phút trước</text>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <text>@timeDiff.Hours giờ @timeDiff.Minutes phút trước</text>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <text>@item.CommentViewModel.CmtDate.Value.ToString(" HH:mm dd/MM/yy")</text>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <text>No data.</text>
+                                                                    }
+                                                        @* <p>2 giờ trước</p> *@
+                                                    </div>
+                                                </div>
+                                                <div class="cmt-content">
+                                                    <p>
+                                                        @item.CommentViewModel.CmtContent
+                                                    </p>
+                                                </div>
+                                                <div class="cmt-action">
+                                                    <div class="cmt-report">
+                                                        <span>Report</span>
+                                                    </div>
+                                                    <div class="cmt-reply"
+                                                    data-bs-toggle="collapse"
+                                                    href="#@id"
+                                                    role="button"
+                                                    aria-expanded="false"
+                                                         aria-controls="@id">
+                                                        <span>Reply</span>
+                                                    </div>
+                                                </div>
+                                                <div class="cmt-item-childen">
+                                                    <div class="comment-reply-input cmt-item-parent collapse"
+                                                         id="@id">
+                                                        <div class="comment-reply-avatar">
+                                                            <img src="./images/about/career-1.jpg" alt="" />
+                                                        </div>
+                                                        <div class="comment-reply--content">
+                                                            <textarea type="text"
+                                                            placeholder="Add a reply..."
+                                                            class="comment-input--text"
+                                                            id="comment-input-text-reply"></textarea>
+                                                            <div class="cmt-reply-action">
+                                                                <button class="comment-input--btn btn-cancel btn-cancel-lv1">
+                                                                    Cancel
+                                                                </button>
+                                                                <button class="comment-input--btn btn-reply">
+                                                                    Reply
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @{
+                                                bool exist = false;
+                                                if(Model.CommentAccoutViewModels.Count > 0)
+                                                {
+                                                    for (var i = 0; i < Model.CommentAccoutViewModels.Count; i++)
+                                                    {
+                                                        if (int.Parse(Model.CommentAccoutViewModels[i].CommentViewModel.CmtReply) == item.CommentViewModel.CmtId)
+                                                        {
+                                                            exist = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                if (exist)
+                                                {
+                                                    var countReply = Model.CommentAccoutViewModels.Where(x => x.CommentViewModel.CmtReply == item.CommentViewModel.CmtId.ToString()).Count();
+                                                    var idReply = "collapseReply" + item.CommentViewModel.CmtId;
+                                                                    <button class="btn-reply-container"
+                                                                            type="button"
+                                                                            data-bs-toggle="collapse"
+                                                                            data-bs-target="#@idReply"
+                                                                            aria-expanded="false"
+                                                                            aria-controls="@idReply">
+                                                                        <i class="bi bi-caret-down"></i> <span>@countReply</span> Reply
+                                                                    </button>
+                                                                    <div class="collapse" id="@idReply">
+                                                                    @{
+                                                         var count = 0;
+                                                         for (var i = 0; i < Model.CommentAccoutViewModels.Count; i++)
+                                                         {
+                                                             var idItemReply = "collapseReply" + Model.CommentAccoutViewModels[i].CommentViewModel.CmtId;
+                                                                if (int.Parse(Model.CommentAccoutViewModels[i].CommentViewModel.CmtReply) == item.CommentViewModel.CmtId)
+                                                             {
+                                                                    count++;
+                                                                                            <div class="cmt-item" id="@item.CommentViewModel.CmtId">
+                                                                                                <div class="cmt-item-parent">
+                                                                                                    <div class="cmt-avatar">
+                                                                                                        <img src="@Model.CommentAccoutViewModels[i].AccountViewModel.Avatar" alt="" />
+                                                                                                    </div>
+                                                                                                    <div class="cmt-content-box">
+                                                                                                        <div class="cmt-header">
+                                                                                                            <div class="cmt-name">
+                                                                                                                <h4>@Model.CommentAccoutViewModels[list.IndexOf(item)].AccountViewModel.FullName</h4>
+                                                                                                            </div>
+                                                                                                            <div class="cmt-time">
+                                                                                                                <p>2 giờ trước</p>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div class="cmt-content">
+                                                                                                            <p>
+                                                                                                                @Model.CommentAccoutViewModels[i].CommentViewModel.CmtContent
+                                                                                                            </p>
+                                                                                                        </div>
+                                                                                                        <div class="cmt-action">
+                                                                                                            <div class="cmt-report">
+                                                                                                                <span>Report</span>
+                                                                                                            </div>
+                                                                                                            <div class="cmt-reply"
+                                                                                                                 data-bs-toggle="collapse"
+                                                                                                                 href="#@idItemReply"
+                                                                                                                 role="button"
+                                                                                                                 aria-expanded="false"
+                                                                                                                 aria-controls="@idItemReply">
+                                                                                                                <span>Reply</span>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class=" comment-reply-input cmt-item-parent collapse" id="@idItemReply">
+                                                                                                <div class="comment-reply-avatar">
+                                                                                                    <img src="./images/about/career-1.jpg" alt="" />
+                                                                                                </div>
+                                                                                                <div class="comment-reply--content">
+                                                                                                    <textarea type="text"
+                                                                                                              placeholder="Add a reply..."
+                                                                                                              class="comment-input--text"
+                                                                                                              id="comment-input-text-reply"></textarea>
+                                                                                                    <div class="cmt-reply-action">
+                                                                                                        <button class="comment-input--btn btn-cancel btn-cancel-lv2">
+                                                                                                            Cancel
+                                                                                                        </button>
+                                                                                                        <button class="comment-input--btn btn-reply">
+                                                                                                            Reply
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                             }
+                                                         }
+
+                                                                    }
+                                                                    </div>
+                                                    
+                                                }
+                                                
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                        }
+
+                    }
+                </div>
+            </div>
+            <div class="box_less--container col-md-3">
+                <div class="box-less--header">
+                    <h2>Lesson</h2>
+                    <div class="iconClose">x</div>
+                </div>
+                <div class="mini_lesson">
+                    @{
+                        int countLesson = 1;
+                        foreach (var item in Model.LessonVMs)
+                    {
+                                    <a asp-controller="Course" asp-action="GetCourse" class="lesson_item" asp-route-courseID="@Model.CourseVM.CourseId" asp-route-lessonID="@item.LessionId">
+                                    <div class="lesson_item">
+                                        <div class="lesson_item--image">
+                                            <span>@countLesson</span>
+                                        </div>
+                                        <div class="lesson_item--title">
+                                            <p>
+                                                @item.LessionTilte
+                                            </p>
+                                        </div>
+                                        <div>
+                                            @if(Model.progressList[countLesson - 1].Equals("True"))
+                                            {
+                                                <i class="bi bi-check-circle-fill iconSuccess" data-lessonid="@item.LessionId" style="font-size: 22px; color: green;"></i>
+
+                                            } else {
+                                                <i class="bi bi-check-circle-fill iconSuccess" data-lessonid="@item.LessionId" style="font-size: 22px; color: transparent;"></i>
+                                            }
+                                        </div>
+                                    </div>
+                                </a>
+                            countLesson++;
+                    }
+                }
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+@section scripts{
+  <script src="~/js/comments.js" asp-append-version="true"></script>
+  <script>
+      document.addEventListener('DOMContentLoaded', function () {
+
+            function decodeHtml(html) {
+                const txt = document.createElement('textarea');
+                txt.innerHTML = html;
+                return txt.value;
+            }
+
+          const htmlContent = '@Model.LessonVM.LessionContent';
+            const decodedHtmlContent = decodeHtml(htmlContent);
+            const tempElement = document.createElement('div');
+            tempElement.innerHTML = decodedHtmlContent;
+
+            // Lấy nội dung text từ phần tử tạm thời
+            const plainText = tempElement.textContent || tempElement.innerText;
+            // Hiển thị nội dung text trong phần tử #content
+            document.getElementById('content').textContent = plainText;
+      })
+  </script>
+}

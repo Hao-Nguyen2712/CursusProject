@@ -1,0 +1,332 @@
+@model List<Cursus.Application.Models.ViewReviewViewModel>
+@{
+    ViewData["Title"] = "View Review";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+    DateTime now = DateTime.Now;
+    var firstReview = Model?.FirstOrDefault();
+}
+
+    <div class="sa4d25">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2 class="st_title"><i class="uil uil-star"></i> All Review</h2>
+                </div>
+            </div>
+            @if (firstReview == null)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <p class="text-center">No reviews available.</p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <div class="student_reviews">
+
+                            @{
+                                double rating = Double.Parse(@Model.FirstOrDefault().AverageRatePoint.ToString()) * 2; // Giá trị rating có thể thay đổi từ 0 đến 5
+                                double fullStarss = rating / 2;
+                                double halfStarss = rating % 2;
+                                double emptyStarss = 5 - fullStarss - halfStarss;
+                                // Giả sử Model là danh sách các ReviewModel
+                                var reviews = Model.FirstOrDefault();
+                                int percent1StarInt = (int)reviews.Percent1Star;
+                                int percent2StarInt = (int)reviews.Percent2Star;
+                                int percent3StarInt = (int)reviews.Percent3Star;
+                                int percent4StarInt = (int)reviews.Percent4Star;
+                                int percent5StarInt = (int)reviews.Percent5Star;
+                            }
+
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    <div class="reviews_left">
+                                        <h3>All Student Feedback</h3>
+                                        <div class="total_rating">
+                                            <div class="_rate001">@Model.FirstOrDefault().AverageRatePoint.ToString("F2")</div>
+                                            <div class="rating-box">
+                                                @for (int i = 0; i < fullStarss; i++)
+                                                {
+                                                    <span class="rating-star full-star"></span>
+                                                }
+                                                @if (halfStarss == 1)
+                                                {
+                                                    <span class="rating-star half-star"></span>
+                                                }
+                                                @for (int i = 0; i < emptyStarss; i++)
+                                                {
+                                                    <span class="rating-star empty-star"></span>
+                                                }
+                                            </div>
+                                            <div class="_rate002">All Rating</div>
+                                        </div>
+                                        <div class="_rate003">
+                                            <div class="_rate004">
+                                                <div class="progress progress1">
+                                                    <div class="progress-bar w-1" style="width: @percent5StarInt% !important;" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <div class="rating-box">
+                                                    <span class="rating-star full-star"></span>
+                                                    <span class="rating-star full-star"></span>
+                                                    <span class="rating-star full-star"></span>
+                                                    <span class="rating-star full-star"></span>
+                                                    <span class="rating-star full-star"></span>
+                                                </div>
+                                                <div class="_rate002"> @Model.FirstOrDefault().Percent5Star %</div>
+                                            </div>
+                                            <div class="_rate004">
+                                                <div class="progress progress1">
+                                                    <div class="progress-bar w-30" style="width: @percent4StarInt% !important;" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <div class="rating-box">
+                                                    <span class="rating-star full-star"></span>
+                                                    <span class="rating-star full-star"></span>
+                                                    <span class="rating-star full-star"></span>
+                                                    <span class="rating-star full-star"></span>
+                                                    <span class="rating-star empty-star"></span>
+                                                </div>
+                                                <div class="_rate002">@Model.FirstOrDefault().Percent4Star %</div>
+                                            </div>
+                                            <div class="_rate004">
+                                                <div class="progress progress1">
+                                                    <div class="progress-bar w-5" style="width: @percent3StarInt% !important;" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <div class="rating-box">
+                                                    <span class="rating-star full-star"></span>
+                                                    <span class="rating-star full-star"></span>
+                                                    <span class="rating-star full-star"></span>
+                                                    <span class="rating-star empty-star"></span>
+                                                    <span class="rating-star empty-star"></span>
+                                                </div>
+                                                <div class="_rate002">@Model.FirstOrDefault().Percent3Star %</div>
+                                            </div>
+                                            <div class="_rate004">
+                                                <div class="progress progress1">
+                                                    <div class="progress-bar w-2" style="width: @percent2StarInt% !important;" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <div class="rating-box">
+                                                    <span class="rating-star full-star"></span>
+                                                    <span class="rating-star full-star"></span>
+                                                    <span class="rating-star empty-star"></span>
+                                                    <span class="rating-star empty-star"></span>
+                                                    <span class="rating-star empty-star"></span>
+                                                </div>
+                                                <div class="_rate002">@Model.FirstOrDefault().Percent2Star %</div>
+                                            </div>
+                                            <div class="_rate004">
+                                                <div class="progress progress1">
+                                                    <div class="progress-bar w-1" style="width: @percent1StarInt% !important;" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <div class="rating-box">
+                                                    <span class="rating-star full-star"></span>
+                                                    <span class="rating-star empty-star"></span>
+                                                    <span class="rating-star empty-star"></span>
+                                                    <span class="rating-star empty-star"></span>
+                                                    <span class="rating-star empty-star"></span>
+                                                </div>
+                                                <div class="_rate002">@Model.FirstOrDefault().Percent1Star %</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-7">
+    <div class="review_right">
+        <div class="review_right_heading">
+            <h3>All Reviews</h3>
+            <div class="review_search">
+                <input class="rv_srch" type="text" placeholder="Search reviews..." id="searchInput">
+                <button class="rvsrch_btn"><i class="uil uil-search"></i></button>
+            </div>
+        </div>
+    </div>
+    <div id="reviewResults">
+        <!-- Kết quả tìm kiếm sẽ được hiển thị ở đây -->
+        @* Nội dung của các review *@
+        @if (!Model.Any())
+        {
+            <p class="text-center">No review.</p>
+        }
+        else
+        {
+            @foreach (var course in Model)
+            {
+                <div class="review_all120 mb-30">
+                    <div class="review_item_course_title">
+                        <a href="#">@course.CourseTitle</a>
+                    </div>
+
+                    @foreach (var review in course.Reviews)
+                    {
+                        <div class="review_item">
+                            <div class="review_usr_dt">
+                                <img src="@review.Avatar" alt="">
+                                <div class="rv1458">
+                                    <h4 class="tutor_name1">@review.CommenterName</h4>
+                                    <span class="time_145">
+                                        @if (review.CreatedDate.HasValue)
+                                        {
+                                            var timeDiff = now - review.CreatedDate.Value;
+                                            if (timeDiff.TotalDays < 1)
+                                            {
+                                                if (timeDiff.TotalHours < 1)
+                                                {
+                                                    <text>@timeDiff.Minutes minutes ago</text>
+                                                }
+                                                else
+                                                {
+                                                    <text>@timeDiff.Hours hours @timeDiff.Minutes minutes ago</text>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <text>@review.CreatedDate.Value.ToString(" HH:mm 'on' dd/MM/yy")</text>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <text>No data.</text>
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                            @{
+double ratings = Double.Parse(@review.RatePoint.ToString()) * 2; // Giá trị rating có thể thay đổi từ 0 đến 5
+                                double fullStars = ratings / 2;
+                                double halfStars = ratings % 2;
+                                double emptyStars = 5 - fullStars - halfStars;
+                            }
+
+                            <div class="rating-box mt-20">
+                                @for (int i = 0; i < fullStars; i++)
+                                {
+                                    <span class="rating-star full-star"></span>
+                                }
+                                @if (halfStars == 1)
+                                {
+                                    <span class="rating-star half-star"></span>
+                                }
+                                @for (int i = 0; i < emptyStars; i++)
+                                {
+                                    <span class="rating-star empty-star"></span>
+                                }
+                            </div>
+                            <p class="rvds10">@review.Content</p>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+@section scripts {
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   <script>
+    $(document).ready(function () {
+        $('#searchInput').on('input', function () {
+            var searchTerm = $(this).val();
+
+            $.ajax({
+                url: '@Url.Action("SearchReviews", "Review")', // Đường dẫn đến action trong controller
+                type: 'GET',
+                data: { searchTerm: searchTerm },
+                success: function (data) {
+                    console.log(data); // Kiểm tra dữ liệu trả về
+
+                    var resultsContainer = $('#reviewResults');
+                    resultsContainer.empty(); // Xóa nội dung cũ
+
+                    if (!data || data.length === 0) {
+                        resultsContainer.append('<p class="text-center">No review.</p>');
+                    } else {
+                        data.forEach(function (course) {
+                            var courseElement = `
+                                    <div class="review_all120 mb-30">
+                                        <div class="review_item_course_title">
+                                                    <a href="#">${course.courseTitle}</a>
+                                        </div>
+                                `;
+
+                            course.reviews.forEach(function (review) {
+                                   var ratings = parseFloat(review.ratePoint) * 2;
+                                var fullStars = Math.floor(ratings / 2);
+                                var halfStars = ratings % 2;
+                                var emptyStars = 5 - fullStars - halfStars;
+
+                                var starsHtml = '';
+                                for (var i = 0; i < fullStars; i++) {
+                                    starsHtml += '<span class="rating-star full-star"></span>';
+                                }
+                                if (halfStars === 1) {
+                                    starsHtml += '<span class="rating-star half-star"></span>';
+                                }
+                                for (var i = 0; i < emptyStars; i++) {
+                                    starsHtml += '<span class="rating-star empty-star"></span>';
+                                }
+
+                                   var createdDate = review.createdDate ? new Date(review.createdDate) : null;
+                                   var now = new Date();
+                                   var timeDiff = now - createdDate;
+                                   var timeString = '';
+
+                                   if (createdDate) {
+                                       if (timeDiff < 24 * 60 * 60 * 1000) { // Ít hơn 1 ngày
+                                           if (timeDiff < 60 * 60 * 1000) { // Ít hơn 1 giờ
+                                               var minutes = Math.floor(timeDiff / (60 * 1000));
+timeString = `${minutes} minutes ago`;
+                                           } else {
+                                               var hours = Math.floor(timeDiff / (60 * 60 * 1000));
+                                               var minutes = Math.floor((timeDiff % (60 * 60 * 1000)) / (60 * 1000));
+                                               timeString = `${hours} hours ${minutes} minutes ago`;
+                                           }
+                                       } else {
+                                           timeString = createdDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' on ' + createdDate.toLocaleDateString();
+                                       }
+                                   } else {
+                                       timeString = 'No data.';
+                                   }
+
+                                var content = review.content;
+                                   var contentString = '';
+                                if (content != null) {
+                                    contentString = content;
+                                }
+
+                                var reviewElement = `
+                                        <div class="review_item">
+                                            <div class="review_usr_dt">
+                                                        <img src="${review.avatar}" alt="">
+                                                <div class="rv1458">
+                                                            <h4 class="tutor_name1">${review.commenterName}</h4>
+                                                                            <span class="time_145">${timeString}</span>
+                                                </div>
+                                            </div>
+                                            <div class="rating-box mt-20">
+                                                ${starsHtml}
+                                            </div>
+                                                            <p class="rvds10">${contentString}</p>
+                                        </div>
+                                    `;
+
+                                courseElement += reviewElement;
+                            });
+                            courseElement += '</div>';
+                            resultsContainer.append(courseElement);
+                        });
+                    }
+                }
+            });
+        });
+    });
+</script> 
+   }

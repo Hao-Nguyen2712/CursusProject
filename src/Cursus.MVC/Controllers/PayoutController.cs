@@ -1,0 +1,101 @@
+using AutoMapper;
+using Cursus.Application.Account;
+using Cursus.Application.Credits;
+using Cursus.Application.Payout;
+using Cursus.MVC.Models;
+using Cursus.MVC.Service;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
+namespace Cursus.MVC.Controllers
+{
+    public class PayoutController : Controller
+    {
+        private readonly IAccountService _accountService;
+        private readonly EmailSender _emailSender;
+        private readonly IPayoutService _payoutService;
+        private readonly ICreditsService _creditsService;
+        private readonly IMapper _mapper;
+
+        public PayoutController(IPayoutService payoutService, IMapper mapper, EmailSender emailSender, IAccountService accountService, ICreditsService creditsService)
+        {
+            _payoutService = payoutService;
+            _mapper = mapper;
+            _emailSender = emailSender;
+            _accountService = accountService;
+            _creditsService = creditsService;
+        }
+
+        [Authorize(Roles = "Instructor")]
+        public IActionResult Index()
+        {
+            ClaimsPrincipal claims = this.User;
+            var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            double accMoney = _creditsService.GetAccMoney(userID);
+            ViewBag.accMoney = accMoney;
+            TempData["accMoney"] = accMoney.ToString();
+
+            var list = _payoutService.GetAllPayout(userID);
+            List<TradingViewModel> tradings = _mapper.Map<List<TradingViewModel>>(list);
+
+            return View(tradings);
+        }
+
+        [HttpPost]
+        public IActionResult Index(IFormCollection form)
+        {
+            string money = TempData["accMoney"] as string;
+            double accMoney = Double.Parse(money);
+            string balanceInput = form["balance[add]"];
+            int total;
+
+            if (!Int32.TryParse(balanceInput, out total))
+            {
+                TempData["Status"] = "WithdrawnFail";
+                return RedirectToAction("Error404", "Home");
+            }
+
+            if (total < 10)
+            {
+                TempData["Status"] = "WithdrawnFail";
+                return RedirectToAction("Error404", "Home");
+            }
+
+            if (accMoney < total)
+            {
+                TempData["Status"] = "WithdrawnFail";
+                return RedirectToAction("Error404", "Home");
+            }
+
+            ClaimsPrincipal claims = this.User;
+            var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
+            _payoutService.UpdateAccMoney(userID, total);
+
+            var trading = new Domain.Models.Trading
+            {
+                TdDate = DateTime.Now,
+                TdMoney = total
+            };
+
+            _payoutService.AddPayout(trading, userID);
+            var account = _accountService.GetAccountByUserID(userID);
+
+            if (account == null)
+            {
+                TempData["Status"] = "WithdrawnFail";
+                return RedirectToAction("Error404", "Home");
+            }
+            _emailSender.SendEmailAsync(account.Email, "Confirm Payment", Service.EmailSender.PayOutConfirm(account.FullName, total));
+            TempData["Status"] = "WithdrawnSuccess";
+            return RedirectToAction("Success", "Payout");
+        }
+        
+        [Authorize(Roles = "Instructor")]
+        public IActionResult Success()
+        {
+            return View();
+        }
+    }
+}

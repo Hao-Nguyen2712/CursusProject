@@ -1,0 +1,603 @@
+﻿@model Cursus.MVC.ViewModels.EditCourseViewModel
+@{
+    ViewData["Title"] = "Edit Course";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+
+
+@section styles  {
+<link href="~/css/jquery-steps.css" rel="stylesheet" asp-append-version="true">
+<link href="~/lib/vendor/ckeditor5/sample/css/sample.css" rel="stylesheet" asp-append-version="true">
+<link href="~/lib/vendor/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet" asp-append-version="true">
+}
+	<!-- Add Lecture Start -->
+	<div class="modal fade" id="add_lecture_model" tabindex="-1" aria-labelledby="lectureModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="lectureModalLabel">Add Lecture</h5>
+					<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="new-section-block">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="course-main-tabs">
+									<div class="nav nav-pills flex-column flex-sm-row nav-tabs" role="tablist">
+										<a class="flex-sm-fill text-sm-center nav-link active" data-bs-toggle="tab" href="#nav-basic" role="tab" aria-selected="true"><i class="fas fa-file-alt me-2"></i>Basic</a>
+										<a class="flex-sm-fill text-sm-center nav-link" data-bs-toggle="tab" href="#nav-video" role="tab" aria-selected="false"><i class="fas fa-video me-2"></i>Video</a>
+									</div>
+									
+									<div class="tab-content">
+										<div class="tab-pane fade show active" id="nav-basic" role="tabpanel">
+											<div class="new-section mt-30">
+												<div class="form_group">
+													<label class="label25">Lecture Title*</label>
+                                                    <input id="CourseID" type="hidden" value="@Model.CourseViewModel.CourseId" placeholder="Title here">
+													<input class="form_input_1" type="text" placeholder="Title here">
+												</div>
+											</div>
+											<div class="ui search focus lbel25 mt-30">	
+												<label>Description*</label>
+												<div class="text-editor">			
+													<div id="editor2"></div>
+												</div>
+											</div>
+										</div>
+										<div class="tab-pane fade" id="nav-video" role="tabpanel">
+											<div class="lecture-video-dt mt-30">
+												<div class="video-category">
+													<label><input type="radio" name="colorRadio" value="youtube"><span>YouTube</span></label>
+													<div class="youtube video-box">
+														<div class="new-section">
+															<div class="ui search focus mt-30 lbel25">
+																<label>Youtube URL*</label>
+																<div class="ui left icon input swdh19">
+																	<input class="prompt srch_explore" type="text" placeholder="Youtube Video URL" name="" id="videoLink" value="">															
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+										</div>
+
+									</div>
+									
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="cancelLesson" class="main-btn cancel" data-bs-dismiss="modal">Close</button>
+				<button type="button" id="addLesson" class="main-btn">Add Lesson</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+	<!-- Add Lecture End -->
+<!-- Edit Lecture Start -->
+<div class="modal fade" id="edit_lecture_model" tabindex="-1" aria-labelledby="lectureModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="lectureModalLabel">Edit Lecture</h5>
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="new-section-block">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="course-main-tabs">
+								<div class="nav nav-pills flex-column flex-sm-row nav-tabs" role="tablist">
+									<a class="flex-sm-fill text-sm-center nav-link active" data-bs-toggle="tab" href="#nav-basic-edit" role="tab" aria-selected="true"><i class="fas fa-file-alt me-2"></i>Basic</a>
+									<a class="flex-sm-fill text-sm-center nav-link" data-bs-toggle="tab" href="#nav-video-edit" role="tab" aria-selected="false"><i class="fas fa-video me-2"></i>Video</a>
+								</div>
+
+								<div class="tab-content">
+									<div class="tab-pane fade show active" id="nav-basic-edit" role="tabpanel">
+										<div class="new-section mt-30">
+											<div class="form_group">
+												<label class="label25">Lecture Title*</label>
+												<input class="form_input_1" id="inputEditTitle" type="text" placeholder="Title here">
+											</div>
+										</div>
+										<div class="ui search focus lbel25 mt-30">
+											<label>Description*</label>
+											<div class="text-editor">
+												<div id="editor10"></div>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade" id="nav-video-edit" role="tabpanel">
+										<div class="lecture-video-dt mt-30">
+											<div class="video-category">
+												<label><input type="radio" name="colorRadio" value="youtube"><span>YouTube</span></label>
+												<div class="youtube video-box">
+													<div class="new-section">
+														<div class="ui search focus mt-30 lbel25">
+															<label>Youtube URL*</label>
+															<div class="ui left icon input swdh19">
+																<input class="prompt srch_explore" type="text" placeholder="Youtube Video URL" name="" id="videoLinkEdit" value="">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="btnCancelLesson" class="main-btn cancel" data-bs-dismiss="modal">Close</button>
+					<button type="button" id="btnEditLesson" class="main-btn">Edit Lesson</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="sa4d25">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12">
+				<h2 class="st_title"><i class="uil uil-analysis"></i> Edit Course</h2>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<div class="course_tabs_1">
+					<div id="add-course-tab" class="step-app">
+						<ul class="step-steps">
+							<li class="active">
+								<a href="#tab_step1">
+									<span class="number"></span>
+									<span class="step-name">Basic</span>
+								</a>
+							</li>
+							<li>
+								<a href="#tab_step2">
+									<span class="number"></span>
+									<span class="step-name">Curriculum</span>
+								</a>
+							</li>
+							<li>
+								<a href="#tab_step3">
+									<span class="number"></span>
+									<span class="step-name">Media</span>
+								</a>
+							</li>
+							<li>
+								<a href="#tab_step4">
+									<span class="number"></span>
+									<span class="step-name">Price</span>
+								</a>
+							</li>
+							<li>
+								<a href="#tab_step5">
+									<span class="number"></span>
+									<span class="step-name">Publish</span>
+								</a>
+							</li>
+						</ul>
+						<div class="step-content">
+							<div class="step-tab-panel step-tab-info active" id="tab_step1">
+								<div class="tab-from-content">
+									<div class="title-icon">
+										<h3  class="title"><i class="uil uil-info-circle"></i>Basic Information</h3>
+									</div>
+									<div class="course__form">
+										<div class="general_info10">
+											<div class="row">
+												<div class="col-lg-12 col-md-12">
+													<div class="ui search focus mt-30 lbel25">
+														<label>Course Title*</label>
+														<div class="ui left icon input swdh19">
+															<input class="prompt srch_explore" type="text"
+																placeholder="Course title here" name="title"
+																data-purpose="edit-course-title" maxlength="60"
+																id="courseTitle" value="@Model.CourseViewModel.CourseName">
+															<div class="badge_num">60</div>
+														</div>
+														<div class="help-block">(Please make this a maximum of 100
+															characters and unique.)</div>
+													</div>
+												</div>
+												<div class="col-lg-12 col-md-12">
+													<div class="ui search focus lbel25 mt-30">
+														<label>Short Description*</label>
+														<div class="ui form swdh30">
+															<div class="field">
+																<textarea rows="3" name="description"  id="shortDescription"
+																		  placeholder="Short description">@Model.CourseViewModel.CourseShortDes</textarea>
+															</div>
+														</div>																
+														<div class="help-block">220 words</div>
+													</div>
+												</div>
+												<div class="col-lg-12 col-md-12">
+													<div class="course_des_textarea mt-30 lbel25">
+														<label>Course Description*</label>
+														<div class="text-editor">
+															<textarea class="form_textarea_1 ht-4"
+																placeholder="Item description here"
+																	  style="display:none;">@Model.CourseViewModel.CourseDescription</textarea>
+															<div id="editor1"></div>
+														</div>
+													</div>
+												</div>
+												<div class="col-lg-6 col-md-12">
+													<div class="ui search focus lbel25 mt-30">
+														<label>What will students learn in your course?*</label>
+														<div class="ui form swdh30">
+															<div class="field">
+																<textarea rows="3" name="description" id="whatLearn"
+																		  placeholder="">@Model.CourseViewModel.CourseWlearn</textarea>
+															</div>
+														</div>
+														<div class="help-block">Student will gain this skills, knowledge
+															after completing this course. (One per line).</div>
+													</div>
+												</div>
+												<div class="col-lg-6 col-md-12">
+													<div class="ui search focus lbel25 mt-30">
+														<label>Requirements*</label>
+														<div class="ui form swdh30">
+															<div class="field">
+																<textarea rows="3" name="description" id="requirements"
+																		  placeholder="Requirement">@Model.CourseViewModel.CourseRequirement</textarea>
+															</div>
+														</div>
+														<div class="help-block">What knowledge, technology, tools
+															required by users to start this course. (One per line).
+														</div>
+													</div>
+												</div>
+												<div class="col-lg-6 col-md-6">
+													<div class="mt-30 lbel25">
+														<label>Course Category*</label>
+													</div>
+													<select class="selectpicker" title="Select Category"
+														name="selectcategory" id="selectcategory"
+														data-live-search="true">
+														@{
+															var cate = Model.CourseViewModel.CategoryId;
+															foreach (var item in Model.CategoryViewModels)
+															{
+																if(item.CategoryId == cate)
+																{
+																			<option value="@item.CategoryId" selected>@item.CategoryName</option>
+                                                                } else {
+																			<option value="@item.CategoryId" >@item.CategoryName</option>
+																}
+
+															}
+														}
+
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="step-tab-panel step-tab-gallery" id="tab_step2">
+								<div class="tab-from-content">
+									<div class="title-icon">
+										<h3 class="title"><i class="uil uil-notebooks"></i>Curriculum</h3>
+									</div>
+									<div class="curriculum-section">
+										<div class="row">
+											<div class="col-md-12">
+												<div class="added-section-item">
+													<div class="section-header">
+														<h4><i class="fas fa-bars me-2"></i>Lesson</h4>
+														<div class="section-edit-options">
+															<button class="btn-152" type="button" data-toggle="collapse"
+															data-target="#edit-section"><i
+																class="fas fa-edit testLesson"></i></button>
+															<button class="btn-152" type="button"><i
+																class="fas fa-trash-alt"></i></button>
+														</div>
+													</div>
+													<div id="edit-section" class="collapse">
+														<div class="new-section smt-25">
+															<div class="form_group">
+																<div class="ui search focus mt-30 lbel25">
+																	<label>Section Name*</label>
+																	<div class="ui left icon input swdh19">
+																		<input class="prompt srch_explore" type="text"
+																		placeholder="" name="title" maxlength="60"
+																		id="main[title]" value="Introduction">
+																	</div>
+																</div>
+															</div>
+															<div class="share-submit-btns ps-0">
+																<button class="main-btn color btn-hover"><i
+																	class="fas fa-save me-2"></i>Update
+																	Section</button>
+															</div>
+														</div>
+													</div>
+													<div id="groupTitle" class="section-group-list sortable">
+														@{
+															var indexList = 1;
+														}
+														@foreach(var item in Model.LessonViewModels)
+														{
+															<div class="section-list-item">
+																<div class="section-item-title">
+																	<i class="fas fa-file-alt me-2"></i>
+																	<span class="section-item-title-text">
+																		@item.LessionTilte
+																	</span>
+																</div>
+																<button type="button" value="@indexList" class="section-item-tools editLesson" data-bs-toggle="modal" data-bs-target="#edit_lecture_model">
+																	<i class="fas fa-edit"></i>
+																</button>
+																<button type="button" value="@indexList" class="section-item-tools removeLesson">
+																	<i class="fas fa-trash-alt"></i>
+																</button>
+															</div>
+															indexList++;
+														}
+													</div>
+													<div class="section-add-item-wrap p-3">
+														<button class="add_lecture" data-bs-toggle="modal"
+															data-bs-target="#add_lecture_model"><i
+																class="far fa-plus-square me-2"></i>Lesson</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="step-tab-panel step-tab-location" id="tab_step3">
+								<div class="tab-from-content">
+									<div class="title-icon">
+										<h3 class="title"><i class="uil uil-image"></i>Media</h3>
+									</div>
+								<div class="thumbnail-into">
+										<div class="row">
+											<div class="col-lg-5 col-md-6">
+												<label class="label25 text-left">Course thumbnail*</label>
+												<div class="thumb-item">
+													<img id="imageContainer" src="@Model.CourseViewModel.CourseAvatar" alt="">
+													<div class="thumb-dt">
+														<div class="upload-btn">
+															<form id="uploadForm" enctype="multipart/form-data">
+																<input class="uploadBtn-main-input" type="file"
+																	id="fileInput">
+																<label for="fileInput" title="Zip">Choose
+																	Thumbnail</label>
+															</form>
+														</div>
+														<span class="uploadBtn-main-file">Size: 590x300 pixels.
+															Supports: jpg,jpeg, or png</span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="step-tab-panel step-tab-amenities" id="tab_step4">
+								<div class="tab-from-content">
+									<div class="title-icon">
+										<h3 class="title"><i class="uil uil-usd-square"></i>Price</h3>
+									</div>
+									<div class="course__form">
+										<div class="price-block">
+											<div class="row">
+												<div class="col-md-12">
+													<div class="course-main-tabs">
+														<div class="nav nav-pills flex-column flex-sm-row nav-tabs"
+															role="tablist">
+															<a class="flex-sm-fill text-sm-center nav-link active"
+																data-bs-toggle="tab" href="#nav-free" role="tab"
+																aria-selected="true"><i
+																	class="fas fa-tag me-2"></i>Free</a>
+															<a class="flex-sm-fill text-sm-center nav-link"
+																data-bs-toggle="tab" href="#nav-paid" role="tab"
+																aria-selected="false"><i
+																	class="fas fa-cart-arrow-down me-2"></i>Paid</a>
+														</div>
+														<div class="tab-content">
+															<div class="tab-pane" id="nav-paid" role="tabpanel">
+																<div class="license_pricing mt-30">
+																	<label class="label25">Regular Price*</label>
+																	<div class="row">
+																		<div class="col-lg-4 col-md-6 col-sm-6">
+																			<div class="loc_group">
+																				<div class="ui left icon input swdh19">
+																					<input class="prompt srch_explore"
+																						type="text" placeholder="$0"
+																						name="" id="price" value="@Model.CourseViewModel.CourseMoney">
+																				</div>
+																				<span class="slry-dt">USD</span>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<div class="license_pricing mt-30 mb-30">
+																	<label class="label25">Discount Price*</label>
+																	<div class="row">
+																		<div class="col-lg-4 col-md-6 col-sm-6">
+																			<div class="loc_group">
+																				<div class="ui left icon input swdh19">
+																					<input class="prompt srch_explore"
+																						type="text" placeholder="$0"
+																						name="" id="discount" value="@Model.CourseViewModel.Discount">
+																				</div>
+																				<span class="slry-dt">USD</span>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="step-tab-panel step-tab-location" id="tab_step5">
+								<div class="tab-from-content">
+									<div class="title-icon">
+										<h3 class="title"><i class="uil uil-upload"></i>Submit</h3>
+									</div>
+								</div>
+								<div class="publish-block">
+									<i class="far fa-edit"></i>
+									<p>Your course is in a draft state. Students cannot view, purchase or enroll in this
+										course. For students that are already enrolled, this course will not appear on
+										their student Dashboard.</p>
+								</div>
+							</div>
+						</div>
+						<div class="step-footer step-tab-pager">
+							<button data-direction="prev" class="btn btn-default steps_btn">PREVIOUS</button>
+							<button data-direction="next" class="btn btn-default steps_btn">Next</button>
+							<button data-direction="finish" id="submitEditForm" class="btn btn-default steps_btn">Submit for Review</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section scripts {
+	<script src="~/lib/vendor/ckeditor5/ckeditor.js" asp-append-version="true"></script>
+	<script src="~/lib/vendor/jquery-ui-1.12.1/jquery-ui.js" asp-append-version="true"></script>
+	<script src="~/js/custom.js" asp-append-version="true"></script>
+	<script src="~/js/jquery-steps.min.js" asp-append-version="true"></script>
+	<script src="~/js/addCourse.js" asp-append-version="true"></script>
+	<script>
+		ClassicEditor.create(document.querySelector('#editor1'))
+			.then(editor => {
+				window.editor1 = editor;
+                let courseDescription = '@Model.CourseViewModel.CourseDescription';
+
+                function decodeHtml(html) {
+                const txt = document.createElement('textarea');
+                txt.innerHTML = html;
+                return txt.value;
+                }
+                window.editor1.setData(decodeHtml(courseDescription));  
+			})
+			.catch(err => {
+				console.error(err.stack);
+			});
+
+		ClassicEditor.create(document.querySelector('#editor2'))
+			.then(editor => {
+			
+				window.editor2 = editor;
+			})
+			.catch(err => {
+				console.error(err.stack);
+			});
+
+		ClassicEditor.create(document.querySelector('#editor10'))
+			.then(editor => {
+				window.editor10 = editor;
+			})
+			.catch(err => {
+				console.error(err.stack);
+			});
+
+	</script>
+	<script>
+		$('#add-course-tab').steps({
+			onFinish: function () {
+				@* alert('Wizard Completed'); *@
+			}
+		});
+	</script>
+	<script>
+		$(function () {
+			$(".sortable").sortable();
+			$(".sortable").disableSelection();
+		});
+	</script>
+	<script>
+		// using ajax to add lession
+		$(document).ready(function () {
+			$("#addLesson").on("click", function () {
+				var title = $(".form_input_1").val();
+				var description = window.editor2.getData();
+				var videoLink = $("#videoLink").val();
+				var groupItem = $("#groupTitle");
+				// check value is null
+				if (title == "" || description == "" || videoLink == "") {
+                    sweetAlertError("Error", "Please fill all the fields");
+                    return;
+                }
+
+				$.ajax({
+					url: "/Instructor/AddLesson",
+					type: "GET",
+					data: { 
+						title: title,
+						description: description, 
+						videoLink: videoLink 
+					},
+					success: function (data) {
+						console.log(data);
+						var title2 = data.title;
+						var description2 = data.description;
+						var videoLink2 = data.videoLink;
+
+					var newItem =
+						`
+											<div class="section-list-item">
+												<div class="section-item-title">
+													<i class="fas fa-file-alt me-2"></i>
+													<span class="section-item-title-text"> `+ title2 + `</span>
+												</div>
+															<button id="edit`+ data.id + `" value="` + data.id + `" type="button" class="section-item-tools editLesson" data-bs-toggle="modal" data-bs-target="#edit_lecture_model"><i
+													class="fas fa-edit"></i></button>
+															<button id="remove`+ data.id + `" value="` + data.id + `" type="button" class="section-item-tools removeLesson"><i
+													class="fas fa-trash-alt"></i></button>
+											</div>
+								`;
+					groupItem.append(newItem);
+					// set the value to empty
+					$(".form_input_1").val("");
+					window.editor2.setData("");
+					$("#videoLink").val("");
+					// close the modal
+					$("#cancelLesson").click();
+                    sweetAlertSuccess("Success","Add lesson successfully");
+			},
+				error: function (error) {
+					alert("Error");
+				}
+					});
+
+				});
+		});
+		
+	</script>
+
+}
+

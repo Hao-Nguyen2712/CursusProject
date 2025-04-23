@@ -1,0 +1,472 @@
+@model Cursus.MVC.ViewModels.ProFileViewViewModel;
+@{
+	ViewData["Title"] = "View Profile";
+}
+
+<style>
+    .upload-container {
+    width: 80%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.upload-area {
+    border: 2px dashed #007BFF;
+    border-radius: 5px;
+    padding: 50px;
+    text-align: center;
+    background-color: #fff;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.upload-area i {
+    font-size: 50px;
+    color: #007BFF;
+}
+
+.upload-area p {
+    font-size: 18px;
+    color: #555;
+}
+
+.upload-area input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.file-list {
+    margin-top: 20px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.file-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.file-details {
+    flex: 1;
+}
+
+.file-details span {
+    display: block;
+}
+
+.file-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.file-actions button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #555;
+    transition: color 0.3s ease;
+}
+
+.file-actions button:hover {
+    color: #007BFF;
+}
+
+.progress-bar {
+    height: 5px;
+    background-color: #007BFF;
+    transition: width 0.3s ease;
+}
+
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: none;
+    transition: opacity 0.3s ease;
+}
+
+.notification.show {
+    display: block;
+    opacity: 1;
+}
+
+    .subscribed-btn 
+    {
+		border: 0;
+		background: #686f7a;
+		padding: 0 20px;
+		height: 30px;
+		border-radius: 3px;
+		color: #fff;
+		font-weight: 500;
+	    font-family: 'Roboto', sans-serif;
+	    font-size: 14px;
+        
+	}
+</style>
+    
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+			<div class=" modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="reviewModalLabel">Upload Avatar</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<!-- Your form for submitting reviews -->
+						<form class="text-center" enctype="multipart/form-data" method="post" asp-action="UploadAvatarStudent" asp-controller="Instructor">
+                            <div class="upload-container">
+                                <div class="upload-area" id="uploadArea">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click to Upload Files</p>
+                                    <input type="file" id="fileInput" multiple>
+                                </div>
+                                <div class="file-list" id="fileList"></div>
+                            </div>
+							<button type="submit" id="submitFormAvatar" class="btn btn-primary">Submit</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	<div class="_216b01">
+		<div class="container">
+			<div class="row justify-content-md-center">
+				<div class="col-md-12">
+					<div class="section3125 rpt145">
+						<div class="row">
+							<div class="col-lg-6">
+								<a href="#" class="_216b22">
+									<span><i class="uil uil-cog"></i></span>Setting
+								</a>
+								<div class="dp_dt150">
+									<div class="img148">
+                                        <a  href="modal" data-bs-toggle="modal" data-bs-target="#reportModal">
+                                             <i class="bi bi-pencil-square"></i>
+                                        </a>
+										<img src="@Model.UserAcc.Avatar" alt="avatar">
+									</div>
+									<div class="prfledt1">
+										<h2>@Model.UserAcc.Username</h2>
+										<span>@Model.UserAcc.Description</span>  <br>                                    
+										<span>Bio: @Model.UserAcc.Bio</span>                                      
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-6">
+                                    <ul class="_bty149">
+                                        <li><a asp-action="EditAccount"><button class="msg125 btn500">Edit</button></a></li>
+								    </ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="_215b15">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="course_tabs">
+						<nav>
+							<div class="nav nav-tabs tab_crse" id="nav-tab" role="tablist">
+								<a class="nav-item nav-link active" id="nav-purchased-tab" data-bs-toggle="tab"
+									href="#nav-purchased" role="tab" aria-selected="true">Purchased</a>
+                                <a class="nav-item nav-link" id="nav-subscription-tab" data-bs-toggle="tab"
+                                    href="#nav-subscription" role="tab" aria-selected="false">Subscription</a>
+							</div>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="_215b17">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="course_tab_content">
+						<div class="tab-content" id="nav-tabContent">
+							<div class="tab-pane fade show active" id="nav-purchased" role="tabpanel">
+								<div class="_htg451">
+									<div class="_htg452">
+										<h3>Enrolled Courses</h3>
+										<div class="row">
+                                            <div class="col-md-12">
+                                                @if (Model.EnrollCourse == null || !Model.EnrollCourse.Any())
+                                                {
+                                                    <p class="text-center">No Course Available!</p>
+                                                }
+                                                else
+                                                {
+                                                <div class="la5lo1">
+								    <div class="owl-carousel featured_courses owl-theme">
+										@foreach (var course in Model.EnrollCourse)
+										{
+											<div class="item">
+												<div class="fcrse_1 mb-20">
+													<a href="@Url.Action("GetCourseDetail", "Course", new { id = @course.CourseId })"
+														class="fcrse_img">
+														<img src="@course.CourseAvatar" alt="avatar course">
+														<div class="course-overlay">
+															<div class="crse_reviews">
+																<i class='uil uil-star'></i>4.5
+															</div>
+															<span class="play_btn1"><i class="uil uil-play"></i></span>
+															<div class="crse_timer">
+																25 hours
+															</div>
+														</div>
+													</a>
+													<div class="fcrse_content">
+														<a href="@Url.RouteUrl("CourseDetail", new { id = course.CourseId })"
+															class="crse14s">@course.CourseName</a>
+														<a href="#" class="crse-cate">@course.CourseShortDes</a>
+														<div class="auth1lnkprce">
+															<p class="cr1fot">By <a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@course.Account.Id">@course.Account.FullName</a></p>
+														</div>
+													</div>
+												</div>
+											</div>
+										}
+								                    </div>
+							                    </div>
+                                                }
+											</div>
+										</div>
+									</div>
+									<div class="_htg452">
+										<h3>Purchased Courses</h3>
+										<div class="row">
+                                            <div class="col-md-12">
+                                                @if (Model.PurchasedCourse == null || !Model.PurchasedCourse.Any())
+                                                {
+                                                    <p class="text-center">No Course Available!</p>
+                                                }
+                                                else
+                                                {
+                                                <div class="la5lo1">
+								    <div class="owl-carousel featured_courses owl-theme">
+										@foreach (var course in Model.PurchasedCourse)
+										{
+											<div class="item">
+												<div class="fcrse_1 mb-20">
+													<a href="@Url.Action("GetCourseDetail", "Course", new { id = @course.CourseId })"
+														class="fcrse_img">
+														<img src="@course.CourseAvatar" alt="avatar course">
+														<div class="course-overlay">
+															<div class="crse_reviews">
+																<i class='uil uil-star'></i>4.5
+															</div>
+															<span class="play_btn1"><i class="uil uil-play"></i></span>
+															<div class="crse_timer">
+																25 hours
+															</div>
+														</div>
+													</a>
+													<div class="fcrse_content">
+														<div class="vdtodt">
+															<span class="vdt14">109k views</span>
+															<span class="vdt14">15 days ago</span>
+														</div>
+														<a href="@Url.RouteUrl("CourseDetail", new { id = course.CourseId })"
+															class="crse14s">@course.CourseName</a>
+														<a href="#" class="crse-cate">@course.CourseShortDes</a>
+														<div class="auth1lnkprce">
+															<p class="cr1fot">By <a asp-controller="Instructor" asp-action="ViewProfile">@course.Account.FullName</a></p>
+														</div>
+													</div>
+												</div>
+											</div>
+										}									
+								                    </div>
+							                    </div>
+                                                }
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+                            <div class="tab-pane fade" id="nav-subscription" role="tabpanel">
+                                <div class="_htg451">
+                                    <div class="_htg452">
+                                        <h3>Subscriptions</h3>
+                                        @if (Model.SubscribeInstructor != null && Model.SubscribeInstructor.Any())
+                                        {
+                                            <div class="row">
+                                                <div class="owl-carousel top_instrutors owl-theme">
+                                                    @foreach (var instructor in Model.SubscribeInstructor)
+                                                    {
+                                                            <div class="fcrse_1 mt-30">
+                                                                <div class="tutor_img">
+                                                                    <a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@instructor.Id">
+                                                                        <img src="@instructor.Avatar" alt="Instructor Avatar">
+                                                                    </a>
+                                                                </div>
+                                                                <div class="tutor_content_dt">
+                                                                    <div class="tutor150">
+                                                                        <a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@instructor.Id"
+                                                                            class="tutor_name">
+                                                                            @instructor.FullName
+                                                                        </a>
+                                                                        <div class="mef78" title="Verify">
+                                                                            <i class="uil uil-check-circle"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="tutor_cate">@instructor.Bio</div>
+                                                                    <input type="hidden" class="instructor-id" data-id="@instructor.AccountId" />
+                                                                    <div class="sub-status" id="sub-status-@instructor.AccountId">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <p class="text-center">No instructors found!</p>
+                                        }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+@section Scripts {
+    <script src="~/js/validateImage.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.0.7/compressor.min.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next/21.6.5/i18next.min.js" asp-append-version="true"></script>
+    <script src="~/js/uploadFile.js" asp-append-version="true"></script>
+    @{
+        var message = TempData["Message"] as string;
+        TempData.Remove("Message");
+    }
+
+    <script>
+        var message = '@message';
+        console.log(message);
+        if(message == "AvatarSuccess") {
+           sweetAlertSuccess("Success", "Avatar uploaded successfully");
+        } else if(message == "AvatarFailed") {
+            sweetAlertError("Error", "Error uploading avatar");
+        }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('.instructor-id').each(function () {
+                var courseId = $(this).data('id');
+                var subStatusDiv = $('#sub-status-' + courseId);
+
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("CheckSub", "Course")',
+                    data: { id: courseId },
+                    success: function (data) {
+                        if (data.enrolled) {
+                            subStatusDiv.html('<button class="subscribed-btn" data-id="' + courseId + '">Subscribed</button>');
+                        } else {
+                            subStatusDiv.html('<button class="subscribe-btn" data-id="' + courseId + '">Subscribe</button>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        subStatusDiv.html('<p>Error checking subscription status</p>');
+                    }
+                });
+            });
+
+            $(document).on('click', '.subscribe-btn', function () {
+                var courseId = $(this).data('id');
+                var button = this;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/Course/Subscribe',
+                    data: { id: courseId },
+                    beforeSend: function () {
+                        showButtonLoading(button);
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            $('#sub-status-' + courseId).html('<button class="subscribed-btn" data-id="' + courseId + '">Subscribed</button>');
+                        } else {
+                            alert('Error subscribing to course');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Subscribe Error: ' + error);
+                    },
+                    complete: function () {
+                        hideButtonLoading(button);
+                    }
+                });
+            });
+
+            $(document).on('click', '.subscribed-btn', function () {
+                var courseId = $(this).data('id');
+                var button = this;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/Course/UnSubscribe',
+                    data: { id: courseId },
+                    beforeSend: function () {
+                        showButtonLoading(button);
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            $('#sub-status-' + courseId).html('<button class="subscribe-btn" data-id="' + courseId + '">Subscribe</button>');
+                        } else {
+                            alert('Error unsubscribing from course');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Unsubscribe Error: ' + error);
+                    },
+                    complete: function () {
+                        hideButtonLoading(button);
+                    }
+                });
+            });
+
+            function showButtonLoading(button) {
+                $(button).data('original-text', $(button).html());
+                $(button).html('Loading...');
+                $(button).prop('disabled', true);
+            }
+
+            function hideButtonLoading(button) {
+                $(button).html($(button).data('original-text'));
+                $(button).prop('disabled', false);
+            }
+        });
+    </script>
+}

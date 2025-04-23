@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+
+    <PackageReference Include="PuppeteerSharp" Version="6.2.0" />
+    <PackageReference Include="QuestPDF" Version="2024.6.4" />
+
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cursus.Domain\Cursus.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

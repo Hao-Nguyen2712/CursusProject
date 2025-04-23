@@ -1,0 +1,67 @@
+﻿@using Cursus.MVC.ViewModels
+@model CertificateViewModel
+
+@{
+    ViewData["Title"] = "View Certificate";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Certificate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet" />
+    <style>
+        .container {
+            position: relative;
+            width: 1080px;
+            height: 720px;
+        }
+
+        .image {
+            position: relative;
+        }
+
+            .image img {
+                width: 100%;
+                height: 100%;
+            }
+
+        .name {
+            position: absolute;
+            top: 300px; /* Adjust the value as needed */
+            left: 540px; /* Adjust the value as needed */
+            transform: translate(-50%, -50%);
+            font-size: 63px;
+            color: #000;
+            font-family: 'Alex Brush', cursive;
+        }
+
+        .course {
+            position: absolute;
+            top: 410px; /* Adjust the value as needed */
+            left: 540px; /* Adjust the value as needed */
+            transform: translate(-50%, -50%);
+            font-size: 38px;
+            color: #000;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image">
+            <img src="https://i.imgur.com/0JYjkDb.png" alt="Certificate Background" />
+        </div>
+        <div>
+            <span class="name">@Model.FullName</span>
+            <p class="course">@Model.CourseVM.CourseName</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,140 @@
+
+@model IEnumerable<Cursus.MVC.Models.CourseViewModel>
+
+@{
+    ViewData["Title"] = "Course";
+    var courses = Model ?? new List<Cursus.MVC.Models.CourseViewModel>(); // Kiểm tra và gán giá trị mặc định nếu Model là null
+    var rowCount = (int)Math.Ceiling((double)courses.Count() / 3); // Tính số hàng cần thiết
+    
+}
+
+@if (courses.Any())
+{
+    @for (int row = 0; row < rowCount; row++)
+    {
+        <div class="row">
+            @for (int col = row * 3; col < Math.Min((row + 1) * 3, courses.Count()); col++)
+            {
+                var course = courses.ElementAtOrDefault(col);
+                if (course != null)
+                {
+                    DateTime? courseDate = course.CourseDate;
+                    int? daysDifference = courseDate.HasValue ? (courseDate.Value - DateTime.Now).Days : (int?)null;
+                    string timeDifference = daysDifference.HasValue 
+                        ? $"{Math.Abs(daysDifference.Value)} "
+                        : "Not yet updated.";
+                    <div class="col-lg-4">
+                        <div class="item">
+                            <div class="fcrse_1 mb-20">
+                                <a href="@Url.Action("GetCourseDetail", "Course", new { id = course.CourseId })" class="fcrse_img">
+                                    <div class="course-img-container">
+                                        <img src="@(course.CourseAvatar ?? Url.Content("~/images/courses/placeholder.jpg"))" alt="Đang cập nhật" class="">
+                                    </div>
+                                    <div class="course-overlay">
+                                        <div class="badge_seller">Bestseller</div>
+                                        <div class="crse_reviews">
+                                            <i class='uil uil-star'></i>4.5
+                                        </div>
+                                        <span class="play_btn1"><i class="uil uil-play"></i></span>
+                                        <div class="crse_timer">
+                                            25 hours
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="fcrse_content">
+                                    
+                                    <div class="vdtodt">
+                                        <span class="vdt14">@timeDifference days ago</span>
+                                    </div>
+                                    <a href="@Url.RouteUrl("CourseDetail", new { id = course.CourseId })" class="crse14s course-name">@(!string.IsNullOrEmpty(course.CourseName) ? course.CourseName : "Unknown Course")</a>
+                                    <a href="#" class="crse-cate course-short-des">@(!string.IsNullOrEmpty(course.CourseShortDes) ? course.CourseShortDes : "No Description Available") </a>
+                                    <div class="auth1lnkprce">
+                                        <p class="cr1fot">By <a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@course.AccountVM.Id" class="">@(course.AccountVM != null && !string.IsNullOrEmpty(course.AccountVM.FullName) ? course.AccountVM.FullName : "Unknown name")</a></p>
+                                        @if (course.Discount > 0 && course.CourseMoney != 0)
+                                        {
+                                            var discountAmount = (course.Discount / 100) * course.CourseMoney;
+                                            var discountedPrice = course.CourseMoney - discountAmount;
+                                            <div class="prce142">
+                                                <span class="original-price" style="text-decoration: line-through">
+                                                    @String.Format("${0:N2}",
+                                                             @course.CourseMoney)
+                                                </span>
+                                                <span class="discounted-price text-danger">
+                                                    @String.Format("${0:N2}",
+                                                             discountedPrice).Replace(",", ".")
+                                                </span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="prce142">
+                                                <span class="price">
+                                                    @String.Format("${0:N2}",
+                                                             @course.CourseMoney).Replace(",", ".")
+                                                </span>
+                                            </div>
+                                        }
+                                        <button class="shrt-cart-btn" id="AddToCart-@course.CourseId" value="@course.CourseId" title="cart">
+                                            <i class="uil uil-shopping-cart-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    }
+}
+else
+{
+    <p>No courses available.</p>
+}   
+
+
+@section scripts {
+	<script>
+		$(document).ready(function () {
+			$(".shrt-cart-btn").on("click", function () {
+				var courseID = $(this).val();
+				$.ajax({
+					url: "/Cart/AddToCart",
+					type: "POST",
+					data: { courseID: courseID },
+					success: function (data) {
+						if (data === "Course already in cart.") {
+							sweetAlertError("Error", "Course already in cart.");
+                            document.getElementById("cartCount").innerHTML = data.cartCount.toString();
+						} else {
+							sweetAlertSuccess("Success", "Course added to cart.");
+						}
+					},
+					error: function (error) {
+						sweetAlertError("Error", "An error occurred.");
+					}
+				});
+			});
+		});
+	</script>
+}
+@section Styles{
+    <style>
+        .course-name, .course-short-des {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    .course-name {
+        max-width: 200px; /* Adjust the width as needed */
+    }
+
+    .course-short-des {
+        max-width: 300px; /* Adjust the width as needed */
+    }
+    </style>
+}
+

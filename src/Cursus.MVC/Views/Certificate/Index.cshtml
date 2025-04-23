@@ -1,0 +1,106 @@
+﻿@model List<Cursus.MVC.ViewModels.EnrollViewModels>
+@{
+    ViewData["Title"] = "My Certificate";
+}
+
+    <style>
+        .icon-small {
+            font-size: 1em; /* Adjust as needed for original size */
+        }
+
+        .title-small {
+            font-size: 1.5em; /* Adjust as needed for original size */
+            margin-left: 10px; /* Ensure there is some space between the icon and the text */
+        }
+
+        /* Ensure other relevant styles are correctly set */
+        .card_dash1 .d-flex i {
+            font-size: initial; /* Reverts to default size */
+        }
+
+        .card_dash1 .d-flex h1 {
+            font-size: initial; /* Reverts to default size */
+            margin: 0; /* Reset any margin that might have been added */
+        }
+
+        .mt-10 {
+            margin-top: 10px !important;
+        }
+
+        .card_dash1 {
+            padding: 15px;
+            margin: 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .table-cerificate {
+            margin-top: 20px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        th {
+            text-align: center;
+        }
+
+        .courname {
+            text-align: right;
+        }
+    </style>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="st_title"><i class="uil uil-award"></i>My Certificates</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="mt-10">
+                
+                <div class="table-cerificate mt-4">
+                    <div class="table-responsive">
+                        <table class="table ucp-table" id="content-table">
+                            <thead class="thead-s">
+                                <tr>
+                                    <th scope="col">Item No.</th>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Start Date</th>
+                                    <th scope="col">Finish Date</th>
+                                    <th scope="col">Certificate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    int itemNo = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@itemNo</td>
+                                            <td class="text-left">@item.CourseName</td>
+                                            <td class="text-center">@item.EnrollViewModel.EnrollDate.ToString("yyyy-MM-dd")</td>
+                                            <td class="text-center">@item.EnrollViewModel.EnrollFinish.Substring(0, 10)</td>
+                                            <td class="text-center"><a asp-action="ViewCertificate" asp-route-id="@item.EnrollViewModel.EnrollId" target="_blank">View</a></td>
+                                        </tr>
+                                        itemNo++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center">No certificates found.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

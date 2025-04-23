@@ -1,0 +1,633 @@
+@model Cursus.MVC.ViewModels.HomePageViewViewModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Home Page";
+}
+			<div class="container-fluid">
+				<div class="row">
+                    @{
+							if(Model.UserAcc != null)
+							{
+					<div class="col-xl-9 col-lg-8">
+						<div class="section3125">
+						@{
+							if(Model.UserAcc != null)
+							{
+								<h4 class="item_title">Subscribed Instructors</h4>
+
+							} else
+							{
+								<h4 class="item_title">Top Instructors</h4>
+							}
+						}
+							<a href="/Instructor/SearchInstructor" class="see150">See all</a>
+							<div class="la5lo1">
+								<div class="owl-carousel live_stream owl-theme">
+									@if (Model.SubscribeInstructor == null || !Model.SubscribeInstructor.Any())
+									{
+										<div class="item">
+											<div class="stream_1">
+												<a class="stream_bg">
+													<img src="images/left-imgs/img-1.jpg" alt="avatar">
+													<h4>No Instructor Available</h4>
+												</a>
+											</div>
+										</div>
+									}
+									else
+									{
+										@foreach (var account in Model.SubscribeInstructor)
+										{
+											<div class="item" title="@account.Email">
+												<div class="stream_1">
+													<a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@account.Id" class="stream_bg">
+														<img src="@account.Avatar" alt="avatar instructor">
+														<h4>@account.FullName</h4>
+														<p class="limiteText">@account.Bio</p>
+													</a>
+												</div>
+											</div>
+										}
+									}
+								</div>
+							</div>
+						</div>
+
+						@{
+							if(Model.UserAcc != null)
+							{           
+                           
+									@if (Model.EnrolledCourse == null || !Model.EnrolledCourse.Any())
+									{
+										
+									}
+									else
+									{
+                                         <div class="section3125 mt-50">
+                            <h4 class="item_title">Enrolled Courses</h4> 
+                            <a asp-action="EnrolledCourses" asp-controller="Enrolled" class="see150">See all</a>
+							<div class="la5lo1">
+								<div class="owl-carousel featured_courses owl-theme">
+										@foreach (var course in Model.EnrolledCourse)
+										{
+                                            
+											<div class="item">
+												<div class="fcrse_1 mb-20">
+													<a href="@Url.Action("GetCourseDetail", "Course", new { id = @course.CourseId })"
+														class="fcrse_img">
+														<img src="@course.CourseAvatar" alt="avatar course">
+														<div class="course-overlay">
+															<div class="crse_reviews">
+																<i class='uil uil-star'></i>
+                                                                @if(@Model.CourseRatings[course.CourseId] == 0){
+                                                                    <span>No rate</span>
+                                                                }
+                                                                else{
+                                                                    @Model.CourseRatings[course.CourseId]
+                                                                }
+															</div>
+															<span class="play_btn1"><i class="uil uil-play"></i></span>
+														</div>
+													</a>
+													<div class="fcrse_content">
+														<a href="@Url.RouteUrl("CourseDetail", new { id = course.CourseId })"
+															class="crse14s limiteText">@course.CourseName</a>
+														<a href="#" class="crse-cate limiteText">@course.CourseShortDes</a>
+														<div class="auth1lnkprce">
+															<p class="cr1fot">By <a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@course.Account.Id">@course.Account.FullName</a></p>
+														</div>
+													</div>
+												</div>
+											</div>
+										}
+                                        </div>
+							</div>
+						</div>  
+									}
+								                 
+							}
+						}
+							
+						<div class="section3125 mt-50">
+						
+									@if (Model.PuchasedCourse == null || !Model.PuchasedCourse.Any())
+									{
+										
+									}
+									else
+									{
+                                      
+							if(Model.UserAcc != null)
+							{                                
+								<h4 class="item_title">Puchased Courses</h4>
+							} else
+							{
+								<h4 class="item_title">Best Seller</h4>
+							}
+					
+							<a asp-controller="Course" asp-action="GetAllPurchasedCourse" class="see150">See all</a>
+							<div class="la5lo1">
+								<div class="owl-carousel featured_courses owl-theme">
+										@foreach (var course in Model.PuchasedCourse)
+										{
+											<div class="item">
+												<div class="fcrse_1 mb-20">
+													<a href="@Url.Action("GetCourseDetail", "Course", new { id = @course.CourseId })"
+														class="fcrse_img">
+														<img src="@course.CourseAvatar" alt="avatar course">
+														<div class="course-overlay">
+															<div class="crse_reviews">
+																<i class='uil uil-star'></i>@if(@Model.CourseRatings[course.CourseId] == 0){
+                                                                    <span>No rate</span>
+                                                                }
+                                                                else{
+                                                                    @Model.CourseRatings[course.CourseId]
+                                                                }
+															</div>
+															<span class="play_btn1"><i class="uil uil-play"></i></span>
+														</div>
+													</a>
+													<div class="fcrse_content">
+														<a href="@Url.RouteUrl("CourseDetail", new { id = course.CourseId })"
+															class="crse14s limiteText">@course.CourseName</a>
+														<a href="#" class="crse-cate limiteText">@course.CourseShortDes</a>
+														<div class="auth1lnkprce">
+															<p class="cr1fot">By <a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@course.Account.Id">@course.Account.FullName</a></p>
+														</div>
+													</div>
+												</div>
+											</div>
+										}
+								</div>
+							</div>
+									}
+						</div>                       
+						<div class="section3125 mt-30">
+							<h4 class="item_title">Newest Courses</h4>
+							<a asp-action="Searchcourse" asp-controller="Course" class="see150">See all</a>
+							<div class="la5lo1">
+								<div class="owl-carousel featured_courses owl-theme">
+									@if (Model.CourseList == null || !Model.CourseList.Any())
+									{
+										<h2>No Course Available</h2>
+									}
+									else
+									{
+										@foreach (var course in Model.CourseList)
+										{
+											<div class="item">
+												<div class="fcrse_1 mb-20">
+													<a href="@Url.Action("GetCourseDetail", "Course", new { id = @course.CourseId })"
+														class="fcrse_img">
+														<img src="@course.CourseAvatar" alt="">
+														<div class="course-overlay">
+															@if(course.Discount > 0)
+                                                            {
+                                                                <div class="badge_seller">Sale</div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="badge_seller">Bestseller</div>
+                                                            }
+															<div class="crse_reviews">
+																<i class='uil uil-star'></i>
+                                                                @if(@Model.CourseRatings[course.CourseId] == 0){
+                                                                    <span>No rate</span>
+                                                                }
+                                                                else{
+                                                                    @Model.CourseRatings[course.CourseId]
+                                                                }
+															</div>
+															<span class="play_btn1"><i class="uil uil-play"></i></span>
+														</div>
+													</a>
+													<div class="fcrse_content">
+														<a href="@Url.RouteUrl("CourseDetail", new { id = course.CourseId })"
+															class="crse14s limiteText">@course.CourseName</a>
+														<a href="#" class="crse-cate limiteText">@course.CourseShortDes</a>
+														<div class="auth1lnkprce">
+															<p class="cr1fot">By <a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@course.AccountVM.Id">@course.AccountVM.FullName</a></p>
+                                                            <div class="prce142">
+                                                                @if (course.Discount > 0 && course.CourseMoney != 0)
+                                                                {
+                                                                    var discountAmount = (course.Discount / 100) * course.CourseMoney;
+                                                                    var discountedPrice = course.CourseMoney - discountAmount;
+                                                                    <div>
+                                                                        <span class="original-price" style="text-decoration: line-through;">@String.Format("${0:N2}",
+                                                                                @course.CourseMoney)</span>
+                                                                        <span class="discounted-price text-danger">@String.Format("${0:N2}",
+                                                                                discountedPrice).Replace(",", ".")</span>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div><span class="price">@String.Format("${0:N2}",
+                                                                    @course.CourseMoney).Replace(",", ".")</span></div>
+                                                                }
+                                                                </div>
+                                                                <button class="shrt-cart-btn" id="AddToCart-@course.CourseId"
+																value="@course.CourseId" title="cart">
+																<i class="uil uil-shopping-cart-alt"></i>
+															</button>	
+														</div>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+                    }
+                    else {
+                        <div class="col-xl-12 col-lg-12">
+						<div class="section3125">
+						@{
+							if(Model.UserAcc != null)
+							{
+								<h4 class="item_title">Subscribed Instructors</h4>
+
+							} else
+							{
+								<h4 class="item_title">Top Instructors</h4>
+							}
+						}
+							<a href="/Instructor/SearchInstructor" class="see150">See all</a>
+							<div class="la5lo1">
+								<div class="owl-carousel live_stream owl-theme">
+									@if (Model.SubscribeInstructor == null || !Model.SubscribeInstructor.Any())
+									{
+										<div class="item">
+											<div class="stream_1">
+												<a class="stream_bg">
+													<img src="images/left-imgs/img-1.jpg" alt="avatar">
+													<h4>No Instructor Available</h4>
+												</a>
+											</div>
+										</div>
+									}
+									else
+									{
+										@foreach (var account in Model.SubscribeInstructor)
+										{
+											<div class="item" title="@account.Email">
+												<div class="stream_1">
+													<a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@account.Id" class="stream_bg">
+														<img src="@account.Avatar" alt="avatar instructor">
+														<h4>@account.FullName</h4>
+														<p class="limiteText">@account.Bio</p>
+													</a>
+												</div>
+											</div>
+										}
+									}
+								</div>
+							</div>
+						</div>
+
+						@{
+							if(Model.UserAcc != null)
+							{           
+                           
+									@if (Model.EnrolledCourse == null || !Model.EnrolledCourse.Any())
+									{
+										
+									}
+									else
+									{
+                                         <div class="section3125 mt-50">
+                            <h4 class="item_title">Enrolled Courses</h4> 
+                            <a asp-action="EnrolledCourses" asp-controller="Enrolled" class="see150">See all</a>
+							<div class="la5lo1">
+								<div class="owl-carousel featured_courses owl-theme">
+										@foreach (var course in Model.EnrolledCourse)
+										{
+                                            
+											<div class="item">
+												<div class="fcrse_1 mb-20">
+													<a href="@Url.Action("GetCourseDetail", "Course", new { id = @course.CourseId })"
+														class="fcrse_img">
+														<img src="@course.CourseAvatar" alt="avatar course">
+														<div class="course-overlay">
+															<div class="crse_reviews">
+																<i class='uil uil-star'></i>
+                                                                @if(@Model.CourseRatings[course.CourseId] == 0){
+                                                                    <span>No rate</span>
+                                                                }
+                                                                else{
+                                                                    @Model.CourseRatings[course.CourseId]
+                                                                }
+															</div>
+															<span class="play_btn1"><i class="uil uil-play"></i></span>
+														</div>
+													</a>
+													<div class="fcrse_content">
+														<a href="@Url.RouteUrl("CourseDetail", new { id = course.CourseId })"
+															class="crse14s limiteText">@course.CourseName</a>
+														<a href="#" class="crse-cate limiteText">@course.CourseShortDes</a>
+														<div class="auth1lnkprce">
+															<p class="cr1fot">By <a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@course.Account.Id">@course.Account.FullName</a></p>
+														</div>
+													</div>
+												</div>
+											</div>
+										}
+                                        </div>
+							</div>
+						</div>  
+									}
+								                 
+							}
+						}
+							
+						<div class="section3125 mt-50">
+						
+									@if (Model.PuchasedCourse == null || !Model.PuchasedCourse.Any())
+									{
+										
+									}
+									else
+									{
+                                      
+							if(Model.UserAcc != null)
+							{                                
+								<h4 class="item_title">Puchased Courses</h4>
+							} else
+							{
+								<h4 class="item_title">Best Seller</h4>
+							}
+					
+							<a asp-controller="Course" asp-action="GetAllPurchasedCourse" class="see150">See all</a>
+							<div class="la5lo1">
+								<div class="owl-carousel featured_courses owl-theme">
+										@foreach (var course in Model.PuchasedCourse)
+										{
+											<div class="item">
+												<div class="fcrse_1 mb-20">
+													<a href="@Url.Action("GetCourseDetail", "Course", new { id = @course.CourseId })"
+														class="fcrse_img">
+														<img src="@course.CourseAvatar" alt="avatar course">
+														<div class="course-overlay">
+															<div class="crse_reviews">
+																<i class='uil uil-star'></i>
+                                                                @if(@Model.CourseRatings[course.CourseId] == 0){
+                                                                    <span>No rate</span>
+                                                                }
+                                                                else{
+                                                                    @Model.CourseRatings[course.CourseId]
+                                                                }
+															</div>
+															<span class="play_btn1"><i class="uil uil-play"></i></span>
+														</div>
+													</a>
+													<div class="fcrse_content">
+														<a href="@Url.RouteUrl("CourseDetail", new { id = course.CourseId })"
+															class="crse14s limiteText">@course.CourseName</a>
+														<a href="#" class="crse-cate limiteText">@course.CourseShortDes</a>
+														<div class="auth1lnkprce">
+															<p class="cr1fot">By <a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@course.Account.Id">@course.Account.FullName</a></p>
+														</div>
+													</div>
+												</div>
+											</div>
+										}
+								</div>
+							</div>
+									}
+						</div>                       
+						<div class="section3125 mt-30">
+							<h4 class="item_title">Newest Courses</h4>
+							<a asp-action="Searchcourse" asp-controller="Course" class="see150">See all</a>
+							<div class="la5lo1">
+								<div class="owl-carousel featured_courses owl-theme">
+									@if (Model.CourseList == null || !Model.CourseList.Any())
+									{
+										<h2>No Course Available</h2>
+									}
+									else
+									{
+										@foreach (var course in Model.CourseList)
+										{
+											<div class="item">
+												<div class="fcrse_1 mb-20">
+													<a href="@Url.Action("GetCourseDetail", "Course", new { id = @course.CourseId })"
+														class="fcrse_img">
+														<img src="@course.CourseAvatar" alt="">
+														<div class="course-overlay">
+															@if(course.Discount > 0)
+                                                            {
+                                                                <div class="badge_seller">Sale</div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="badge_seller">Bestseller</div>
+                                                            }
+															<div class="crse_reviews">
+																<i class='uil uil-star'></i>
+                                                                @if(@Model.CourseRatings[course.CourseId] == 0){
+                                                                    <span>No rate</span>
+                                                                }
+                                                                else{
+                                                                    @Model.CourseRatings[course.CourseId]
+                                                                }
+															</div>
+															<span class="play_btn1"><i class="uil uil-play"></i></span>
+														</div>
+													</a>
+													<div class="fcrse_content">
+														<a href="@Url.RouteUrl("CourseDetail", new { id = course.CourseId })"
+															class="crse14s limiteText">@course.CourseName</a>
+														<a href="#" class="crse-cate limiteText">@course.CourseShortDes</a>
+														<div class="auth1lnkprce">
+															<p class="cr1fot">By <a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@course.AccountVM.Id">@course.AccountVM.FullName</a></p>
+                                                            <div class="prce142">
+                                                                @if (course.Discount > 0 && course.CourseMoney != 0)
+                                                                {
+                                                                    var discountAmount = (course.Discount / 100) * course.CourseMoney;
+                                                                    var discountedPrice = course.CourseMoney - discountAmount;
+                                                                    <div>
+                                                                        <span class="original-price" style="text-decoration: line-through;">@String.Format("${0:N2}",
+                                                                                @course.CourseMoney)</span>
+                                                                        <span class="discounted-price text-danger">@String.Format("${0:N2}",
+                                                                                discountedPrice).Replace(",", ".")</span>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div><span class="price">@String.Format("${0:N2}",
+                                                                    @course.CourseMoney).Replace(",", ".")</span></div>
+                                                                }
+                                                                </div>
+                                                                <button class="shrt-cart-btn" id="AddToCart-@course.CourseId"
+																value="@course.CourseId" title="cart">
+																<i class="uil uil-shopping-cart-alt"></i>
+															</button>	
+														</div>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+                    }
+                    }
+                    
+					<div class="col-xl-3 col-lg-4">
+						<div class="right_side">
+							@if(Model.UserAcc != null)
+							{
+								<div class="fcrse_2 mb-30">
+									<div class="tutor_img">
+										@if (Model.UserAcc.Avatar == null)
+										{
+											<a asp-controller="Student" asp-action="ViewProfile"><img src="@Model.UserAcc.Avatar" alt="avatar"></a>
+										}
+										else
+										{
+											<a asp-controller="Student" asp-action="ViewProfile"><img src="@Model.UserAcc.Avatar" alt="avatar"></a>
+										}
+									</div>
+									<div class="tutor_content_dt">
+										<div class="tutor150">
+											<a asp-action="" asp-controller=""
+											   class="tutor_name">@Model.UserAcc.FullName</a>
+											<div class="mef78" title="Verify">
+												<i class="uil uil-check-circle"></i>
+											</div>
+										</div>
+										<div class="tutor_cate">@Model.UserAcc.Description</div>
+										<div class="tut1250">
+											<span class="vdt15">@Model.UserAcc.Bio</span>
+										</div>
+										<a asp-controller="Student" asp-action="ViewProfile" class="prfle12link">Go To Profile</a>
+									</div>
+                                </div>
+							}
+                            @{
+                                if(Model.UserAcc != null && Model.UserAcc.UpLevel == "False" && Model.UserAcc.Role == 3) {
+
+							<div class="strttech120">
+								<h4>Become an Instructor</h4>
+								<p>Top instructors from around the world teach millions of students on Cursus. We provide
+									the tools and skills to teach what you love.</p>
+								<button id="RegisInstructorBtn" class="Get_btn" onclick="window.location.href = '/Student/UpLevelAccount';">Start Teaching</button>
+							</div>
+                                }
+                            }
+						</div>
+					</div>
+                        <div class="section3125 mt-50">
+                            <h4 class="item_title">Popular Instructors</h4>
+                            <a asp-controller="Instructor" asp-action="SearchInstructor" class="see150">See all</a>
+                            <div class="la5lo1">
+                                <div class="owl-carousel top_instrutors owl-theme">
+                                    @foreach (var instructor in Model.InstructorsList)
+                                    {
+                                        <div class="item" title="@instructor.Bio">
+                                            <div class="fcrse_1 mb-20">
+                                                @if (Model.InstructorsList == null || !Model.InstructorsList.Any())
+                                                {
+                                                    <div class="fcrse_1">
+                                                        <div class="fcrse_content">
+                                                            <div class="upcming_card">
+                                                                <h2>No Instructor</h2>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="tutor_img"> 
+                                                        <a href="@Url.Action("ViewProfile", "Instructor", new { id = instructor.Id })">
+                                                            <img src="@instructor.Avatar" alt="">
+                                                        </a>
+                                                    </div>
+                                                    <div class="tutor_content_dt">
+                                                        <div class="tutor150">
+                                                            <a href="@Url.Action("ViewProfile", "Instructor", new { id = instructor.Id })"
+                                                            class="tutor_name">@instructor.FullName</a>
+                                                            <div class="mef78" title="Verify">
+                                                                <i class="uil uil-check-circle"></i>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tutor_cate">@instructor.Email</div>
+                                                        <div class="tut1250">
+                                                            <span class="vdt15"></span>
+                                                            <span class="vdt15"></span>
+                                                        </div>
+                                                    </div>
+                                                }
+
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+			    </div>
+            </div>
+
+@section scripts {
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			var Status = '@TempData["Status"]';
+			if (Status === "loginsuccess") {
+				Swal.fire({
+					icon: 'success',
+					title: 'Logged in successfully!',
+					text: 'Welcome back.',
+					showConfirmButton: false,
+					timer: 1500
+				});
+			} else if (Status === "loginerror") {
+				Swal.fire({
+					icon: 'error',
+					title: 'Login failed!',
+					text: 'Please check your login information again.',
+					showConfirmButton: false,
+					timer: 1500
+				});
+			}
+		});
+	</script>
+    <script>
+        $(document).ready(function () {
+            $(".shrt-cart-btn").on("click", function () {
+                var courseID = $(this).val();
+                $.ajax({
+                    url: "/Cart/AddToCart",
+                    type: "POST",
+                    data: { courseID: courseID },
+                    success: function (data) {
+                        if (data.status === "NotAuthenticated") {
+                        window.location.href = "/Identity/Account/Login";
+                        }
+                        else if (data === "Course already purchased.") {
+                            sweetAlertError("This course already purchased.")
+                        }
+                        else if (data === "Course already in cart.") {
+                            sweetAlertError("This course is already in your cart.");
+                        } else {
+                            sweetAlertSuccess("Course added to cart successfully.");
+                            document.getElementById("cartCount").innerHTML = data.cartCount.toString();
+                        }
+                    },
+                    error: function (error) {
+                        sweetAlertError("Error! You have to login your account.");
+                    }
+                });
+            });
+        });
+
+    </script>
+    <script src="~/js/sweetAlert.js"></script>
+        <script>
+            document.getElementById('RegisInstructorBtn').addEventListener('click', function () {
+                sweetAlertSuccess("Success", "You have successfully registered to become an Instructor.");
+            });
+        </script>
+}

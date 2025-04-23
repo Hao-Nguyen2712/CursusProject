@@ -1,0 +1,65 @@
+@model IEnumerable<Cursus.MVC.ViewModels.SearchInstructorViewModel>
+
+@{
+    ViewData["Title"] = "Search Instructor";
+}
+
+    <!-- Body Start -->
+        <div class="sa4d25">
+            <div class="container-fluid">
+                <div class="title">
+                    <h1 class="mb-2 text-center">Search Instructor</h1>
+                </div>
+                <div class="row">
+                    <form method="get" asp-action="SearchInstructor">
+                        <div class="col-xl-12 col-lg-8">
+                            <div class="section3125">
+                                <div class="explore_search">
+                                    <div class="ui search focus">
+                                        <div class="ui left icon input swdh11">
+                                            <input class="prompt srch_explore" type="text" name="name" value="@ViewBag.name"
+                                                placeholder="Search Tutors...">
+                                            <i class="uil uil-search-alt icon icon2"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var instructor in Model)
+                        {
+                            <div class="col-xl-3 col-lg-4 col-md-6" title="@instructor.Instructor.Bio">
+                                <div class="fcrse_1 mt-30">
+                                    <div class="tutor_img">
+                                        <a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@instructor.Instructor.Id">
+                                            <img src="@instructor.Instructor.Avatar" alt="Instructor Avatar">
+                                        </a>
+                                    </div>
+                                    <div class="tutor_content_dt">
+                                        <div class="tutor150">
+                                            <a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@instructor.Instructor.Id" class="tutor_name">@instructor.Instructor.FullName</a>
+                                            <div class="mef78" title="Verify">
+                                                <i class="uil uil-check-circle"></i>
+                                            </div>
+                                        </div>
+                                        <div class="tutor_cate">@instructor.Instructor.Email</div>
+                                        <div class="tut1250">
+                                            <span class="vdt15">@instructor.CountSub Subcribe</span>
+                                            <span class="vdt15">@instructor.CountCourse Courses</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-center m-3">No instructors found!</p>
+                    }
+                </div>
+            </div>
+        </div>
+    <!-- Body End -->

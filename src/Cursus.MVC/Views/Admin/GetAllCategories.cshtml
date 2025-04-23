@@ -1,0 +1,422 @@
+@model IEnumerable<Cursus.MVC.Models.CategoryViewModel>
+@{
+    ViewData["Title"] = "Get All Categories";
+    Layout = "_LayoutAdmin";
+}
+
+
+@{
+    var successMessage = TempData["SuccessMessage"] as string;
+    var errorMessage = TempData["ErrorMessage"] as string;
+}
+
+<div class="container-fluid body">
+    <h1 class="my-4 text-center">Category List</h1>
+    <div class="d-flex justify-content-left mb-4">
+        <button type="button" class="btn btn-danger create" data-bs-toggle="modal"
+            data-bs-target="#createCategoryModal">Create</button>
+    </div>
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @successMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @errorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered" id="categoriesTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th class="thTitle">No</th>
+                    <th class="thTitle">Category Name</th>
+                    <th class="text-center thTitle">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var i = 1;
+                }
+                @foreach (var item in Model)
+                {
+                    if (item.CategoryStatus != "InActive")
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@item.CategoryName</td>
+                            <td class="text-center">
+                                <a href="#" class="btn btn-danger actionBtn" data-bs-toggle="modal"
+                                    data-bs-target="#updateCategoryModal" data-category-id="@item.CategoryId"
+                                    data-category-name="@item.CategoryName">Update</a>
+                                <a asp-controller="Admin" asp-action="DeleteCategory" asp-route-id="@item.CategoryId"
+                                    class="btn btn-danger actionBtnDelete" data-id="@item.CategoryId">Remove</a>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="updateCategoryModal" tabindex="-1" aria-labelledby="updateCategoryModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateCategoryModalLabel">Update Category</h5>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateCategoryForm" method="post" action="">
+                    <input type="hidden" id="updateCategoryId" name="CategoryId" />
+                    <div class="form-group">
+                        <label for="updateCategoryName">Category Name</label>
+                        <input type="text" class="form-control" id="updateCategoryName" name="CategoryName" required>
+                        <div class="invalid-feedback">Category Name is required.</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" onclick="updateCategory()">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createCategoryModalLabel">Create New Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createCategoryForm" method="post" action="@Url.Action("AddNewCategory", "Admin")">
+
+                    <div class="form-group">
+                        <label for="categoryName">Category Name</label>
+                        <input type="text" class="form-control" id="categoryName" name="CategoryName" required>
+                        <div class="invalid-feedback">Category Name is required.</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" onclick="submitForm()">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .container-fluid .flex-grow-1 {
+            flex: 1;       
+            width: 100%;
+            overflow-y: auto;
+        }
+        .create {
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .actionBtn {
+            font-size: 14px;
+        }
+
+        .thTitle {
+            font-size: 18px;
+font-weight: 500;
+            padding: 25px 15px;
+        }
+
+        .body {
+            position: relative;
+            padding-bottom: 50px;
+            min-height: 100vh;
+        }
+
+        table.dataTable {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+
+        table.dataTable th,
+        table.dataTable td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        table.dataTable thead th {
+            background-color: #ed2a26;
+            color: white;
+        }
+
+        table.dataTable tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        table.dataTable tbody tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        table.dataTable tbody tr:hover {
+            background-color: #ddd;
+        }
+
+        .dataTables_filter input {
+            margin-left: 0.5em;
+            padding: 5px;
+        }
+
+        .dataTables_paginate {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .dataTables_paginate .paginate_button {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 0 2px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .dataTables_paginate .paginate_button.disabled {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: default;
+        }
+
+        .dt-search {
+            margin-top: 12px;
+        }
+
+        .dt-search .dt-input {
+            width: 250px;
+            padding: 4px;
+            margin-left: 12px;
+            font-size: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .dt-search .dt-input:focus {
+            border-color: #ff0019;
+            box-shadow: 0 0 5px rgba(255, 89, 0, 0.5);
+        }
+
+        .dt-length .dt-input {
+            border: none;
+            font-size: 15px;
+        }
+
+        .dt-length label {
+            margin-left: 20px;
+            text-transform: capitalize;
+        }
+
+        .dt-paging.paging_full_numbers {
+            text-align: center;
+        }
+
+        .dt-paging.paging_full_numbers button {
+            border: none;
+            font-size: 18px;
+            margin: 0 2px;
+
+        }
+
+        .dropdown-menu {
+            border-radius: 0.25rem;
+            box-shadow: 0 0 0.125rem rgba(0, 0, 0, 0.075);
+        }
+
+        .dropdown-item {
+            font-size: 14px;
+        }
+    </style>
+}
+
+@section Scripts {
+
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#categoriesTable').DataTable();
+        });
+
+        //delete button
+        document.addEventListener('DOMContentLoaded', function () {
+document.querySelectorAll('.actionBtnDelete').forEach(button => {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    var categoryId = this.getAttribute('data-id');
+                    var deleteUrl = this.href;
+
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: 'You will not be able to recover this category!',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'No, cancel!',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = deleteUrl;
+                        }
+                    });
+                });
+            });
+        });
+
+        //modal open
+        $('#updateCategoryModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var categoryId = button.data('category-id');
+            var categoryName = button.data('category-name');
+            var modal = $(this);
+            modal.find('#updateCategoryId').val(categoryId);
+            modal.find('#updateCategoryName').val(categoryName);
+        });
+
+
+        // update button
+        function updateCategory() {
+            console.log("Log this")
+            var categoryId = $('#updateCategoryId').val();
+            var form = document.getElementById('updateCategoryModal');
+            var categoryName = $('#updateCategoryName').val().trim();
+
+            console.log(categoryName);
+
+
+            if (isEmptyOrWhitespace(categoryName)) {
+                Swal.fire({
+                    title: 'Invalid Input',
+                    text: 'Category name cannot be empty or only whitespace.',
+                    icon: 'error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                form.classList.add('was-validated');
+                return;
+            }
+
+            else {
+
+                $.ajax({
+                    url: '/Admin/UpdateCategory/' + categoryId,
+                    type: 'POST',
+                    data: {
+                        CategoryId: categoryId,
+                        CategoryName: categoryName
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Success',
+                                text: 'Category updated successfully!',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+title: 'Error',
+                                text: 'Failed to update category.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                location.reload();
+                            });
+
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Error occurred while updating category.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            }
+        }
+
+        //check khoảng trắng 
+        function isEmptyOrWhitespace(input) {
+            return !input || /^\s*$/.test(input);
+        }
+
+        //create button
+        function submitForm() {
+            var form = document.getElementById('createCategoryForm');
+            var input = document.getElementById('categoryName');
+            var valueInput = input.value.trim();
+            input.value = valueInput;
+            if (form.checkValidity() === false) {
+                form.classList.add('was-validated');
+                Swal.fire({
+                    title: 'Validation Error',
+                    text: 'Please correct the errors in the form before submitting.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                Swal.fire({
+                    title: 'Confirm Submission',
+                    text: 'Are you sure you want to submit the form?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, submit it!',
+                    cancelButtonText: 'No, cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            }
+        }
+
+
+
+        setTimeout(function () {
+            var alertList = document.querySelectorAll('.alert');
+            alertList.forEach(function (alert) {
+                var bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 1500);
+
+    </script>
+}

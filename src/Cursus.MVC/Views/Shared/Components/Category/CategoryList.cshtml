@@ -1,0 +1,15 @@
+@model IEnumerable<Cursus.MVC.Models.CategoryViewModel>
+<ul class="sub_menu">
+    @foreach (var items in Model)
+    {
+        if (items.CategoryStatus != "InActive")
+        {
+            
+            <li class="sub_menu--item">
+                <a href="@Url.Action("GetCategory", "Category", new { categoryId = items.CategoryId })"
+                    class="sub_menu--link">@items.CategoryName</a>
+            </li>
+        }
+      
+    }
+</ul>

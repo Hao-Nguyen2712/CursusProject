@@ -1,0 +1,235 @@
+@model Cursus.MVC.ViewModels.DashBoardViewModel
+@{
+    ViewData["Title"] = "DashBoard";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+}
+<div class="sa4d25">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="st_title"><i class="uil uil-apps"></i> Instructor Dashboard</h2>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-md-6">
+                <div class="card_dash">
+                    <div class="card_dash_left">
+                        <h5>Total Sales</h5>
+                        <h2>@Model.TotalRevenue.ToString("C")</h2>
+                    </div>
+                    <div class="card_dash_right">
+                        <img src="images/dashboard/achievement.svg" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-md-6">
+                <div class="card_dash">
+                    <div class="card_dash_left">
+                        <h5>Total Enroll</h5>
+                        <h2>@Model.TotalEnrolls</h2>
+                    </div>
+                    <div class="card_dash_right">
+                        <img src="images/dashboard/graduation-cap.svg" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-md-6">
+                <div class="card_dash">
+                    <div class="card_dash_left">
+                        <h5>Total Courses</h5>
+                        <h2>@Model.TotalCourses</h2>
+                    </div>
+                    <div class="card_dash_right">
+                        <img src="images/dashboard/online-course.svg" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-md-6">
+                <div class="card_dash">
+                    <div class="card_dash_left">
+                        <h5>Total Students</h5>
+                        <h2>@Model.TotalEnrolledUsers</h2>
+                    </div>
+                    <div class="card_dash_right">
+                        <img src="images/dashboard/knowledge.svg" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="card_dash1">
+                    <div class="card_dash_left1">
+                        <i class="uil uil-book-alt"></i>
+                        <h1>Jump Into Course Creation</h1>
+                    </div>
+                    <div class="card_dash_right1">
+                        <a asp-action="AddCourse"><button class="create_btn_dash">Create Your Course</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6">
+                <div class="section3125 mt-50">
+                    <h4 class="item_title">Latest Courses performance</h4>
+                    <div class="la5lo1">
+                        <div class="owl-carousel courses_performance owl-theme">
+                            @if (Model.CourseList == null || !Model.CourseList.Any())
+                            {
+                                <div class="fcrse_1">
+                                    <div class="fcrse_content">
+                                        <div class="upcming_card">
+                                            <h2>No Course</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                @foreach (var course in Model.CourseList)
+                                {
+                                    <div class="item">
+                                        <div class="fcrse_1">
+                                            <div class="container">
+                                                <div class="row justify-content-center">
+                                                    <div class="col-6">
+                                                        <a asp-action="GetCourseDetail" asp-controller="Course"
+                                                            asp-route-id="@course.CourseId"
+                                                            class="fcrse_img d-flex justify-content-center align-items-center">
+                                                            <img src="@course.CourseAvatar" alt="@course.CourseName"
+                                                                class="img-fluid rounded course-img"
+                                                                style="width: auto; height: auto;">
+                                                            <div class="course-overlay"></div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="fcrse_content">
+                                                <div class="vdtodt">
+                                                    <span class="vdt14">@course.CourseDate.Value.ToString("dd MMM yyyy")</span>
+                                                </div>
+                                                <a href="#" class="crsedt145">@course.CourseName</a>
+                                                <div class="allvperf">
+                                                    <div class="crse-perf-left">View</div>
+                                                    <div class="crse-perf-right">@course.CourseProcess</div>
+                                                </div>
+                                                <div class="allvperf">
+                                                    <div class="crse-perf-left">Purchased</div>
+                                                    <div class="crse-perf-right">
+                                                    @if (course.Discount > 0 && course.CourseMoney != 0)
+                                                    {
+                                                        var discountAmount = (course.Discount / 100) * course.CourseMoney;
+                                                        var discountedPrice = course.CourseMoney - discountAmount;
+                                                        <div class="prce142">
+                                                            <span class="original-price" style="text-decoration: line-through;">@String.Format("${0:N2}",
+                                                                                @course.CourseMoney)</span>
+                                                            <span class="discounted-price text-danger">@String.Format("${0:N2}",
+                                                                                discountedPrice).Replace(",", ".")</span>
+                                                            </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="prce142"><span class="price">@String.Format("${0:N2}",
+                                                                    @course.CourseMoney).Replace(",", ".")</span></div>
+                                                    }
+
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="auth1lnkprce">
+                                                    <a href="#" class="cr1fot50">Go to course analytics</a>
+                                                    <a href="#" class="cr1fot50">See Reviews</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="section3125 mt-50">
+                    <h4 class="item_title">Submit Courses</h4>
+                    <div class="la5lo1">
+                        <div class="owl-carousel courses_performance owl-theme">
+                            @if (Model.PendingCourse == null || !Model.PendingCourse.Any())
+                            {
+                                <div class="fcrse_1">
+                                    <div class="fcrse_content">
+                                        <div class="upcming_card">
+                                            <h2>No Pending Course</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                @foreach (var course in Model.PendingCourse)
+                                {
+                                    <div class="fcrse_1">
+                                        <div class="fcrse_content">
+                                            <div class="upcming_card">
+                                                <a asp-action="GetCourseDetail" asp-controller="Course"
+                                                    asp-route-id="@course.CourseId" class="crsedt145">@course.CourseName<span
+                                                        class="pndng_145">Pending</span></a>
+                                                <p class="submit-course">Submitted
+                                                    since<span>@course.CourseDate.Value.ToString("dd MMM yyyy")</span></p>
+                                                <a href="#" class="delete_link10">Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6">
+                <div class="section3125 mt-50">
+                    <h4 class="item_title">Reject Courses</h4>
+                    <div class="la5lo1">
+                        <div class="owl-carousel courses_performance owl-theme">
+                            @if (Model.RejectCourse == null || !Model.RejectCourse.Any())
+                            {
+                                <div class="fcrse_1">
+                                    <div class="fcrse_content">
+                                        <div class="upcming_card">
+                                            <h2>No Reject Course</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                @foreach (var course in Model.RejectCourse)
+                                {
+                                    <div class="fcrse_1">
+                                        <div class="fcrse_content">
+                                            <div class="upcming_card">
+                                                <a asp-action="GetCourseDetail" asp-controller="Course"
+                                                    asp-route-id="@course.CourseId" class="crsedt145">@course.CourseName<span
+                                                        class="pndng_145">Rejected</span></a>
+                                                <p class="submit-course">Submitted
+                                                    since<span>@course.CourseDate.Value.ToString("dd MMM yyyy")</span></p>
+                                                <a href="#" class="delete_link10">Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="section3125 mt-50">
+                    <h4 class="item_title">Profile Analytics</h4>
+                    <div class="la5lo1">
+                        <div class="fcrse_1">
+                            <div class="fcrse_content">
+                                <h6 class="crsedt8145">Current subscribers</h6>
+                                <h3 class="subcribe_title">@Model.TotalSubscrise</h3>
+                                <a href="#" class="cr1fot50">Go to profile analytics</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

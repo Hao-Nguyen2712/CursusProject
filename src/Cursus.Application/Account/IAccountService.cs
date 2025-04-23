@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Cursus.Application.Account
+{
+    public interface IAccountService
+    {
+        List<Domain.Models.Account> GetAllAccount();
+        Domain.Models.Account GetAccountIdById(string id);
+        public int GetAccountIDByUserID(string userID);
+        public string getAccountName(string userID);
+        public Cursus.Domain.Models.Account GetAccountByUserID(string userID);
+
+        public Cursus.Domain.Models.Account GetAccountByAccountID(int accountID);
+        void EditAccount(Domain.Models.Account account);
+        object GetData(int accountId, string userID);
+		public string getEmail(int accountID);
+
+        public Domain.Models.Account UpdateAccount(Domain.Models.Account account);
+        public Domain.Models.Account UpdateAccountLevel(string userID);
+	}
+}

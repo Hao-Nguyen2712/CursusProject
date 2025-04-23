@@ -1,0 +1,34 @@
+@model IEnumerable<Cursus.Domain.Models.Enroll>
+@{
+    ViewData["Title"] = "Enroll";
+}
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Enroll ID</th>
+            <th>Course ID</th>
+            <th>Account ID</th>
+            <th>Enroll Finish</th>
+            <th>Enroll Date</th>
+            <th>Enroll Block</th>
+            <th>Actions</th> 
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.EnrollId</td>
+                <td>@item.CourseId</td>
+                <td>@item.AccountId</td>
+                <td>@item.EnrollFinish</td>
+                <td>@(item.EnrollDate.HasValue ? item.EnrollDate.Value.ToString("yyyy-MM-dd") : "")</td>
+                <td>@item.EnrollBlock</td>
+                <td>
+                    <a asp-controller="Enrolled" asp-action="GetEnrolled" asp-route-enrollId="@item.EnrollId" class="btn btn-primary">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,88 @@
+@model Cursus.MVC.ViewModels.HomePageViewViewModel
+@{
+    ViewData["Title"] = "Enrolled Courses";
+}
+
+<style>
+    .course-column {
+        display: inline-block;
+        width: calc(33.33% - 20px);
+        margin-right: 20px;
+        vertical-align: top;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+    }
+
+    .crse-desc {
+        max-height: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 6;
+    using Cursus.Domain.Models;
+        -webkit-box-orient: vertical;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        @if (Model.EnrolledCourse != null && Model.EnrolledCourse.Any())
+        {
+            @foreach (var course in Model.EnrolledCourse)
+            {
+                <div class="course-column">
+                    <div class="fcrse_1 mb-20">
+                        <a href="@Url.Action("GetCourseDetail", "Course", new { id = course.CourseId })" class="hf_img position-relative d-block">
+                            <img src="@course.CourseAvatar" alt="@course.CourseName">
+                            <div class="course-overlay d-flex flex-column justify-content-center align-items-center">
+                                @if (course.Discount != null && course.Discount > 0)
+                                {
+                                    <div class="badge_seller">Discount: @String.Format("{0:N2}",
+                                                             course.Discount.HasValue ? course.Discount.Value : 0.00)%</div>
+                                }
+                                <span class="play_btn1"><i class="uil uil-play"></i></span>
+                                <div class="crse_timer">
+                                    @course.CourseDate?.ToString("yyyy-MM-dd")
+                                </div>
+                            </div>
+                        </a>
+                        <div class="hs_content">
+                            <a href="@Url.Action("GetCourseDetail", "Course", new { id = course.CourseId })" class="crse14s title900">@course.CourseName</a>
+                            <p class="crse-desc">@course.CourseShortDes</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No courses found for this category.</p>
+        }
+    </div>
+</div>
+
+@section scripts {
+	<script>
+		$(document).ready(function () {
+			$(".btn_adcart").on("click", function () {
+				var courseID = $(this).val();
+				$.ajax({
+					url: "/Cart/AddToCart",
+					type: "POST",
+					data: { courseID: courseID },
+					success: function (data) {
+						if (data === "Course already in cart.") {
+							alert("This course is already in your cart.");
+                            document.getElementById("cartCount").innerHTML = data.cartCount.toString();
+						} else {
+							alert("Course added to cart successfully.");
+						}
+					},
+					error: function (error) {
+						alert("Error adding course to cart.");
+					}
+				});
+			});
+		});
+	</script>
+}

@@ -1,0 +1,175 @@
+@model List<Cursus.Application.Models.EarningAnalysisViewModel>
+@{
+    ViewData["Title"] = "Earning";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+    var i = 1;
+    bool hasTransactions = Model != null && Model.Any();
+}
+    <div class="sa4d25">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2 class="st_title"><i class="uil uil-dollar-sign"></i> Earning</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="earning_steps">
+                        <p>Total income this month:</p>
+                        <h2>$@ViewBag.TotalInMonth</h2>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="earning_steps">
+                        <p>Total income for today:</p>
+                        <h2>$@ViewBag.TotalInComeByDay</h2>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="earning_steps">
+                        <p>Your balance:</p>
+                        <h2>$@ViewBag.AccMoney</h2>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-12">
+                    <div class="top_countries mt-50">
+                        <div class="top_countries_title">
+                            <h2>Top 10 Courses with Most Enrolls</h2>
+                        </div>
+                        <ul class="country_list">
+                            @for (int c = 0; c < ViewBag.ListTopCourse.Count; c++)
+                            {
+                                <li>
+                                    <div class="country_item">
+                                        <div class="country_item_left">
+                                            <span>@ViewBag.ListTopCourse[c]</span>
+                                        </div>
+                                        <div class="country_item_right">
+                                            <span>@ViewBag.ListTopCourseEnroll[c]</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-lg-8 col-md-12">
+                    <div class="date_selector">
+                        <div class="sorting">
+                            <label for="sortOrder">Sort by:</label>
+                            <select id="sortOrder" onchange="sortTable()" class="form-control">
+                                <option value="" disabled selected>-- Choose --</option>
+                                <option value="salesAsc">Number Of Sales Ascending</option>
+                                <option value="salesDesc">Number Of Sales Descending</option>
+                                <option value="amountAsc">Total Sales Amount Ascending</option>
+                                <option value="amountDesc">Total Sales Amount Descending</option>
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="table-responsive mt-30">
+                        <table class="table ucp-table earning__table" id="earningTable">
+                            <thead class="thead-s">
+                                <tr>
+                                    <th scope="col">No.</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Number Of Sales</th>
+                                    <th scope="col">Total Sales Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int count = 0;
+                                    decimal? total = 0m;
+                                }
+                                @if (!hasTransactions)
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center">No data.</td>
+                                    </tr>
+                                }
+
+                                else
+                                {
+                                    @for (int j = 0; j < Model.Count; j++)
+                                    {
+                                        <tr>
+                                            <td>@(j + 1)</td>
+                                            <td>@Model[j].CourseTitle</td>
+                                            <td>$@Convert.ToDouble(Model[j].CoursePrice)</td>
+                                            <td>@Model[j].NumberOfSales</td>
+                                            <td>$@Convert.ToDouble(Model[j].TotalSalesAmount)</td>
+                                        </tr>
+                                        count += Model[j].NumberOfSales;
+                                        total += Model[j].TotalSalesAmount;
+                                    }
+                                }
+                            </tbody>
+                            @if (hasTransactions)
+                            {
+                                <tfoot>
+                                    <tr>
+                                        <td>Total</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>@count</td>
+                                        <td>$@Convert.ToDouble(total)</td>
+                                    </tr>
+                                </tfoot>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @section Scripts{
+    <script>
+        function sortTable() {
+            var table, rows, switching, i, x, y, shouldSwitch;
+            table = document.getElementById("earningTable");
+            switching = true;
+            var order = document.getElementById("sortOrder").value;
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 2); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[3];
+                    y = rows[i + 1].getElementsByTagName("TD")[3];
+                    if ((order === "salesAsc" && parseInt(x.innerHTML) > parseInt(y.innerHTML)) ||
+                        (order === "salesDesc" && parseInt(x.innerHTML) < parseInt(y.innerHTML)) ||
+                        (order === "amountAsc" && parseFloat(rows[i].getElementsByTagName("TD")[4].innerHTML) > parseFloat(rows[i + 1].getElementsByTagName("TD")[4].innerHTML)) ||
+                        (order === "amountDesc" && parseFloat(rows[i].getElementsByTagName("TD")[4].innerHTML) < parseFloat(rows[i + 1].getElementsByTagName("TD")[4].innerHTML))) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                }
+            }
+            updateRowNumbers();
+        }
+
+        function updateRowNumbers() {
+            var table = document.getElementById("earningTable");
+            var rows = table.rows;
+            for (var i = 1; i < rows.length - 1; i++) {
+                rows[i].getElementsByTagName("TD")[0].innerHTML = i;
+            }
+        }
+
+        // Initial call to update row numbers on page load
+        document.addEventListener("DOMContentLoaded", function () {
+            updateRowNumbers();
+        });
+    </script>
+    }
+
+

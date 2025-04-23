@@ -1,0 +1,129 @@
+@model Tuple<List<Cursus.MVC.Models.CourseViewModel>, List<Cursus.MVC.Models.CourseViewModel>, List<Cursus.MVC.Models.CourseViewModel>, List<Cursus.MVC.Models.CourseViewModel>, List<Cursus.MVC.Models.CourseViewModel>>
+@{
+    ViewData["Title"] = "All Course By Status";
+	Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+<style>
+    /* inspired from this svgbackgrounds.com/ */
+.btnaddcourse {
+    width: 200px;
+}
+
+.btnAD{
+    width: 200px;
+    display: flex;
+    padding: 0.8em 1.1em;
+    gap: 0.4rem;
+    border: none;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    text-shadow: 2px 2px 3px rgb(136 0 136 / 50%);
+    background: linear-gradient(
+        15deg,
+        #880088,
+        #aa2068,
+        #cc3f47,
+        #de6f3d,
+        #f09f33,
+        #de6f3d,
+        #cc3f47,
+        #aa2068,
+        #880088
+      )
+      no-repeat;
+    background-size: 300%;
+    background-position: left center;
+    transition: background 0.3s ease;
+    color: #fff;
+  }
+  
+  .btnAD:hover {
+    background-size: 320%;
+    background-position: right center;
+  }
+  
+  .btnAD:hover svg {
+    fill: #fff;
+  }
+  
+  .btnAD svg {
+    width: 23px;
+    fill: #f09f33;
+    transition: 0.3s ease;
+  }
+  
+</style>
+		<div class="sa4d25">
+			<div class="container-fluid">			
+				<div class="row ">
+					<div class="col-lg-12">	
+						<h2 class="st_title"><i class="uil uil-book-alt"></i>Courses</h2>
+					</div>			
+					<div class="col-md-12">
+						<div class="card_dash1">
+							<div class="card_dash_left1">
+								<i class="uil uil-book-alt"></i>
+								<h1>Jump Into Course Creation</h1>
+							</div>
+							<div class="card_dash_right1">
+								<a class="btnaddcourse" asp-action="AddCourse" asp-controller="Instructor">
+                                    <button class=" btnAD">Create New Course</button>
+                                </a>
+							</div>
+						</div>
+					</div>					
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="my_courses_tabs">
+							<ul class="nav nav-pills my_crse_nav" id="pills-tab" role="tablist">
+								<li class="nav-item">
+									<a class="nav-link active" id="pills-my-courses-tab" data-bs-toggle="pill" href="#pills-my-courses" role="tab" aria-controls="pills-my-courses" aria-selected="true" ><i class="uil uil-book-alt"></i>My Courses</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="pills-my-purchases-tab" data-bs-toggle="pill" href="#pills-my-purchases" role="tab" aria-controls="pills-my-purchases" aria-selected="false"><i class="uil uil-download-alt"></i>Reject Course</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="pills-upcoming-courses-tab" data-bs-toggle="pill" href="#pills-upcoming-courses" role="tab" aria-controls="pills-upcoming-courses" aria-selected="false"><i class="uil uil-upload-alt"></i>Upcoming Courses</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="pills-discount-tab" data-bs-toggle="pill" href="#pills-discount" role="tab" aria-controls="pills-discount" aria-selected="false"><i class="uil uil-tag-alt"></i>Block Course</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="pills-promotions-tab" data-bs-toggle="pill" href="#pills-promotions" role="tab" aria-controls="pills-promotions" aria-selected="false"><i class="uil uil-megaphone"></i>Delete Course</a>
+								</li>
+							</ul>
+							<div class="tab-content" id="pills-tabContent">
+								<div class="tab-pane fade show active" id="pills-my-courses" role="tabpanel">
+									<partial name="~/Views/Instructor/MyCoursePartial.cshtml" model="@Model.Item1" />
+								</div>
+								<div class="tab-pane fade" id="pills-my-purchases" role="tabpanel">
+									<partial name="~/Views/Instructor/RejectedCoursePartial.cshtml" model="@Model.Item3" />							
+								</div>
+								<div class="tab-pane fade" id="pills-upcoming-courses" role="tabpanel">
+									<partial name="~/Views/Instructor/UpcomingCoursePartial.cshtml" model="@Model.Item2" />
+								</div>
+								<div class="tab-pane fade" id="pills-discount" role="tabpanel">
+									<partial name="~/Views/Instructor/BlockedCoursePartial.cshtml" model="@Model.Item4" />
+								</div>
+								<div class="tab-pane fade" id="pills-promotions" role="tabpanel" aria-labelledby="pills-promotions-tab">
+									<partial name="~/Views/Instructor/DeletedCoursePartial.cshtml" model="@Model.Item5" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		@if(TempData["Message"] != null)
+		{
+			// render script
+			@section Scripts {
+				<script>
+					notification("error", "@TempData["Message"]");
+				</script>
+			}
+		}

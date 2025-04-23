@@ -1,0 +1,216 @@
+@model IEnumerable<Cursus.MVC.Models.TradingViewModel>
+@{
+    ViewData["Title"] = "Credit";
+}
+<div class="sa4d25">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="st_title"><i class="uil uil-wallet"></i> Credits</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-md-5">
+                <div class="top_countries mt-30">
+                    <div class="top_countries_title">
+                        <h2>Wallet</h2>
+                    </div>
+                    <div class="payout_content">
+                        <span><strong>$@String.Format("{0:N2}", @ViewBag.accMoney)</strong></span>
+                        <div class="payout__via">
+                            <strong></strong>
+                        </div>
+                        <p><small class="payout__small-notification">Your credits will be using on  <strong>purchase courses</strong></small></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-7">
+                <div class="top_countries mt-30">
+                    <div class="top_countries_title">
+                        <h2>Add Credit Balance</h2>
+                    </div>
+                    <div class="credits_content">
+                        <form asp-action="Index" asp-controller="Credits" id="form" method="post">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="ui search focus mt-30 lbel25">
+                                        <label>Add Blalance</label>
+                                        <div class="ui left icon input swdh11 swdh19">
+                                            <input class="prompt srch_explore" type="text" name="balance[add]" value="" id="id_balance" required="" maxlength="5" placeholder="0">
+
+                                            <i class="uil uil-dollar-alt icon icon8"></i>
+                                        </div>
+                                        <span id="error-message" style="color: red; display: none;"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="lbel25 mt-30">
+                                        <label>Expiration Month</label>
+                                        <select class="ui hj145 dropdown cntry152 prompt srch_explore" name="card[expire-month]">
+                                            <option value="">Payment methods</option>
+                                            <option value="Bank">Payment by domestic bank card.</option>
+                                            <option value="InternationalBank">Payment by international card.</option>
+                                            <option value="QR">Payment via QR code scan.</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <button class="add_crdit_btn mt-50" type="button" id="creditsBtn">Add Credit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+        <div class="table-credits">
+            <div class="mt-30">
+                       
+                        @{
+                            var i = 1;
+                        }
+                        @if (!Model.Any())
+                        {
+                            <table class="table ucp-table earning__table" id="content-table">
+                                <thead class="thead-s">
+                                    <tr>
+                                        <th scope="col">No.</th>
+                                        <th scope="col">Amount</th>
+                                        <th scope="col">Credit Method</th>
+                                        <th scope="col">Date Processed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                            <tr>
+                                <td colspan="4" class="text-center">There have been no recent transactions.</td>
+                            </tr>
+
+                             </tbody>
+                </table>
+                        }
+                        else
+                        {
+                            <table class="ucp-table earning__table" id="example">
+                    <thead class="thead-s">
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Credit Method</th>
+                            <th scope="col">Date Processed</th>
+                        </tr>
+                    </thead>
+                    <tbody> 
+                            @foreach (var item in Model)
+                            {
+                                
+                                <tr>
+                                    <td class="text-start">@i</td>
+                                    <td class="text-start">$@((double)item.TdMoney)</td>
+                                    <td class="text-start">@item.TdMethodPayment</td>
+                                            @{
+                                                var now = DateTime.Now;
+                                                    var timeDiff = now - item.TdDate.Value;
+                                                    if (timeDiff.TotalDays < 1)
+                                                    {
+                                                        if (timeDiff.TotalHours < 1)
+                                                        {
+                                                        <td class="text-start">@timeDiff.Minutes minutes ago</td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td class="text-start">@timeDiff.Hours hours @timeDiff.Minutes minutes ago</td>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="text-start">@item.TdDate.Value.ToString("HH:mm 'on' dd/MM/yy")</td>
+                                                    }
+                                                }
+                                </tr>
+                                 
+                                i++;
+                            }
+                                </tbody>
+                            </table>
+                        }
+                   
+            </div>
+                </div>
+        </div>
+    </div>
+    </div>
+    @section Styles {
+            <style>
+                #example_length {
+                    margin-bottom: 15px;
+                }
+
+                #example_filter {
+                    margin-bottom: 15px;
+                }
+            </style>
+    }
+    @section scripts {
+        <script src="~/js/sweetAlert.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Lấy các phần tử từ DOM
+                var inputBalance = document.getElementById('id_balance'); // Lấy phần tử input cho balance
+                var errorMessage = document.getElementById('error-message'); // Lấy phần tử hiển thị thông báo lỗi
+                var creditsBtn = document.getElementById('creditsBtn'); // Lấy phần tử button
+                var maxBalance = parseFloat('@ViewBag.accMoney'); // Lấy giá trị tối đa từ ViewBag và chuyển đổi sang kiểu số thực
+
+                // Chỉ cho phép nhập số nguyên vào input
+                inputBalance.addEventListener('keypress', function (event) {
+                    // Get the character code of the key pressed
+                    var charCode = event.which ? event.which : event.keyCode;
+
+                    // Allow only digits (0-9) and control keys (backspace, arrow keys, etc.)
+                    if (charCode < 48 || charCode > 57) {
+                        event.preventDefault();
+                    }
+                });
+
+                // Thêm sự kiện 'click' cho button
+                creditsBtn.addEventListener('click', function () {
+                    var enteredValue = parseFloat(inputBalance.value); // Lấy giá trị người dùng nhập và chuyển đổi sang kiểu số thực
+                    if (inputBalance.value.trim() === '' || isNaN(enteredValue) || enteredValue < 10) { // Kiểm tra nếu giá trị input rỗng, không phải là số hoặc nhỏ hơn 10
+                        if (inputBalance.value.trim() === '') {
+                            errorMessage.textContent = 'Please enter a value.';
+                        } else if (isNaN(enteredValue)) {
+                            errorMessage.textContent = 'Please enter a positive integer.';
+                        } else if (enteredValue < 10) {
+                            errorMessage.textContent = 'Please enter a positive integer greater than or equal to 10.';
+                        }
+                        errorMessage.style.display = 'block';
+                    } else {
+                        errorMessage.style.display = 'none'; // Ẩn thông báo lỗi nếu giá trị hợp lệ
+                        var inputValue = document.getElementById('id_balance').value;
+                        AlertConfirmWhenSubmitForm("Are you sure", `You want to deposit ${inputValue}$ into your account?`, "info", inputValue);
+                    }
+                });
+
+                // Thêm sự kiện 'input' cho phần tử inputBalance
+                inputBalance.addEventListener('input', function () {
+                    // Kiểm tra nếu giá trị input rỗng, không phải là số hoặc nhỏ hơn 10
+                    var enteredValue = parseInt(inputBalance.value, 10);
+                    if (inputBalance.value.trim() === '' || isNaN(enteredValue) || enteredValue < 10) {
+                        if (inputBalance.value.trim() === '') {
+                            errorMessage.textContent = 'Please enter a value.';
+                        } else if (isNaN(enteredValue)) {
+                            errorMessage.textContent = 'Please enter a positive integer.';
+                        } else if (enteredValue < 10) {
+                            errorMessage.textContent = 'Please enter a positive integer greater than or equal to 10.';
+                        }
+                        errorMessage.style.display = 'block';
+                    } else {
+                        errorMessage.style.display = 'none'; // Ẩn thông báo lỗi nếu giá trị hợp lệ
+                    }
+                });
+            });
+        </script>
+    }

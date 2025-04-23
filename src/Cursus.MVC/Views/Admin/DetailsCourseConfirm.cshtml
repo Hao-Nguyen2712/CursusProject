@@ -1,0 +1,73 @@
+@model IEnumerable<Cursus.MVC.Models.CourseViewModel>
+@{
+    ViewData["Title"] = "Confirm Course";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+}
+
+<body>
+    <div class="wrapper" style="margin-left: 5px; margin-top: -150px;">
+        <div class="sa4d25">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mt-10">
+
+                            <div class="table-cerificate">
+                                <div class="table-responsive">
+                                    <h2>Confirm Course</h2>
+                                    <h6>Course Instructor</h6>
+                                    <p class="form-control" style="width: 80%;">
+                                        @ViewBag.account.FullName
+                                    </p>
+                                    @foreach (var Model in Model)
+                                    {
+                                        <h6>Course Name</h6>
+                                        <p class="form-control" style="width: 80%;">
+                                            @Model.CourseName
+                                        </p>
+                                        <h6>Course Description</h6>
+                                        <p class="form-control" style="width: 80%;">
+                                            @Model.CourseDescription
+                                        </p>
+
+                                        <h6>Course What Learn</h6>
+                                        <p class="form-control" style="width: 80%;">
+                                            @Model.CourseWlearn
+                                        </p>
+                                        <h6>Course Requirement</h6>
+
+                                        <p class="form-control" style="width: 80%;">
+                                            @Model.CourseRequirement
+                                        </p>
+                                        <h6>Course Price</h6>
+
+                                        <p class="form-control" style="width: 80%;">
+                                            @Model.CourseMoney
+                                        </p>
+                                        <h6>Course Process</h6>
+
+                                        <p class="form-control" style="width: 80%;">
+                                            @Model.CourseProcess
+                                        </p>
+                                        <h6>Course Avatar</h6>
+                                        <img style="width: 80%; margin-bottom: 20px;"  src="@Model.CourseAvatar"></img>
+                                        <br />
+                                        <a asp-action="ApproveCourse" style="margin-top: 50px;" asp-asp-controller="Admin"
+                                            asp-route-id="@Model.CourseId">
+                                            <button class="btn btn-primary" onclick="">Approve</button>
+                                        </a>
+                                        <a asp-action="RejectCourse" asp-asp-controller="Admin"
+                                            asp-route-id="@Model.CourseId">
+                                            <button class="btn btn-danger" onclick="">Reject</button>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

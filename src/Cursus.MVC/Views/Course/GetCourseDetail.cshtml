@@ -1,0 +1,834 @@
+@model Cursus.MVC.Models.CourseViewModel
+@{
+    ViewData["Title"] = Model.CourseName;
+    DateTime now = DateTime.Now;
+    var reviews = ViewBag.Reviews as List<Cursus.Application.Models.ViewReviewByCourse>;
+    var firstReview = reviews?.FirstOrDefault();
+}
+@section styles {
+    <link href="~/css/jquery-steps.css" rel="stylesheet" asp-append-version="true">
+    <link href="~/lib/vendor/ckeditor5/sample/css/sample.css" rel="stylesheet" asp-append-version="true">
+}
+<style>
+    .rating-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f8f9fa;
+    }
+
+    .rating-box {
+        background-color: #ffffff;
+    }
+
+    .star-rating {
+    using DocumentFormat.OpenXml.Office.CustomUI;
+        direction: rtl;
+        display: flex;
+        justify-content: center;
+        padding: 20px 0;
+    }
+
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating label {
+            color: #000;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+            .star-rating input[type="radio"]:checked ~ label,
+            .star-rating label:hover,
+            .star-rating label:hover ~ label {
+                color: #eeff00;
+            }
+
+    .subscribed-btn {
+        border: 0;
+        background: #686f7a;
+        padding: 0 20px;
+        height: 30px;
+        border-radius: 3px;
+        color: #fff;
+        font-weight: 500;
+        font-family: 'Roboto', sans-serif;
+        font-size: 14px;
+    }
+
+    ._215b17 {
+        width: 100%;
+        background: #f7f7f7 !important;
+    }
+</style>
+
+    <div class="text-center ">
+        <div class="_215b01">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="section3125">
+                            <div class="row justify-content-center">
+                                <div class="col-xl-4 col-lg-5 col-md-6">
+                                    <div class="preview_video">
+                                        <a href="#" class="fcrse_img" data-bs-toggle="modal" data-bs-target="#videoModal">
+                                            <img src="@(Model.CourseAvatar ?? Url.Content("~/images/courses/placeholder.jpg"))"
+                                                 alt="Đang cập nhật" class="">
+                                            <div class="course-overlay">
+                                                <div class="badge_seller">Bestseller</div>
+                                                <div class="badge_seller_reverse">
+                                                    @String.Format("{0:N2}",
+                                                             Model.Discount.HasValue ? Model.Discount.Value : 0.00) Off
+                                                </div>
+                                                @* <span class="play_btn1"><i class="uil uil-play"></i></span>
+                                                <span class="_215b02">Preview this course</span> *@
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="_215b10">
+                                        <a href="modal" data-bs-toggle="modal" data-bs-target="#reportModal"
+                                           class="_215b12 ">
+                                            <span><i class="uil uil-windsock"></i></span>Report abuse
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-xl-8 col-lg-7 col-md-6">
+                                    <div class="_215b03">
+                                        <h2>
+                                            @(!string.IsNullOrEmpty(Model.CourseName) ? Model.CourseName : "Unknown Course")
+                                        </h2>
+                                        <p class="_215b04">
+                                            @(!string.IsNullOrEmpty(Model.CourseShortDes) ?
+                                                Model.CourseShortDes : "No Description Available")
+                                        </p>
+                                    </div>
+                                    <div class="_215b05">
+                                        <div class="crse_reviews mr-2">
+                                            <i class="uil uil-star"></i>
+                                            @if (firstReview == null)
+                                            {
+                                                var a = "No ratings yet!";
+                                                @a
+                                            }
+                                            else
+                                            {
+                                                @firstReview.AverageRatePoint
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="_215b05">
+                                        Students enrolled: @ViewBag.EnrollCount
+                                    </div>
+                                    <div class="_215b06">
+                                        <div class="_215b07">
+                                            <span><i class='uil uil-comment'></i></span>
+                                            Comment
+                                        </div>
+                                        <div class="_215b08">
+                                            <span><i class='uil uil-dollar-sign' style='font-size: 1.2em;'></i></span>
+                                            <span style="font-weight: bold;">
+                                                @String.Format("{0:N2}",
+                                                         Model.CourseMoney.HasValue ? Model.CourseMoney.Value : 0.00)
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="_215b05">
+                                        Category: @(Model.CategoryVM != null &&
+                                        !string.IsNullOrEmpty(Model.CategoryVM.CategoryName) ? Model.CategoryVM.CategoryName
+                                        : "Unknown Category")
+                                    </div>
+                                    <ul class="_215b31">
+                                        @if (ViewBag.IsEnrolled == "Enrolled" || ViewBag.IsEnrolled == "completed")
+                                        {
+                                            <li>
+                                                <button class="btn_adcart" id="unEnrollBtn" style="text-decoration: none !important; color: white">
+                                                    UnEnroll
+                                                </button>
+                                            </li>
+                                            <li>
+                                                @if(ViewBag.LessonID == 0) {
+                                                    <button class="btn_adcart"><a class="text-decoration-none" style="color: #fff" id="nonLesson">Go to Course</a></button>
+                                                } else {
+                                                <button class="btn_adcart"><a style="color: #fff" href="/Course/GetCourse?courseID=@Model.CourseId&lessonID=@ViewBag.LessonID"
+                                                   >Go to Course</a></button>
+                                                }
+                                            </li>
+                                            <button class="btn_adcart re" data-id="@Model.CourseId">Review</button>
+                                        }
+                                        else if (Model.CourseMoney == 0 || ViewBag.IsEnrolled == "Purchased")
+                                        {
+                                            <button class="btn_adcart enroll-button"
+                                                    data-course-id="@Model.CourseId">
+                                                Enroll
+                                                now
+                                            </button>
+                                        }
+                                        else if (ViewBag.IsEnrolled == "")
+                                        {
+                                            <li>
+                                                <button class="btn_adcart btn_adcart1" id="AddToCart-@Model.CourseId"
+                                                        value="@Model.CourseId" title="cart">
+                                                    Add to Cart
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button class="btn_buy bu" id="buynow-@Model.CourseId"
+                                                        value="@Model.CourseId">
+                                                    Buy
+                                                    Now
+                                                </button>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="_215b15 _byt1458">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="user_dt5">
+                            <div class="user_dt_left">
+                                <div class="live_user_dt">
+                                    <div class="user_img5">
+                                        <a href="#"><img src="~/images/left-imgs/img-1.jpg" alt=""></a>
+                                    </div>
+                                    <div class="user_cntnt">
+                                        <a href="#" class="_df7852">
+                                            @(Model.AccountVM != null &&
+                                                !string.IsNullOrEmpty(Model.AccountVM.FullName) ? Model.AccountVM.FullName :
+                                                "Unknown name")
+                                        </a>
+                                        <input type="hidden" id="instructor-id" data-id="@Model.AccountId" />
+                                        <div id="sub-status"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="course_tabs">
+                                <nav>
+                                    <div class="nav nav-tabs tab_crse justify-content-center" id="nav-tab" role="tablist">
+                                        <a class="nav-item nav-link active" id="nav-about-tab" data-bs-toggle="tab"
+                                           href="#nav-about" role="tab" aria-selected="true">About</a>
+                                        <a class="nav-item nav-link" id="nav-reviews-tab" data-bs-toggle="tab"
+                                           href="#nav-reviews" role="tab" aria-selected="false">Reviews</a>
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="_215b17">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="course_tab_content">
+                                <div class="tab-content" id="nav-tabContent">
+                                    <div class="tab-pane fade show active" id="nav-about" role="tabpanel">
+                                        <div class="_htg451">
+                                            <div class="_htg452">
+                                                <h3>Requirements</h3>
+                                                @if (!string.IsNullOrEmpty(@Model.CourseRequirement))
+                                                {
+                                                    var requirementList = @Model.CourseRequirement.Split(new[] { '.', '?', '!' },
+                                                    StringSplitOptions.RemoveEmptyEntries);
+                                                    <ul>
+                                                        @foreach (var requirement in requirementList)
+                                                        {
+                                                            <li><span class="_5f7g11">@requirement.Trim()</span></li>
+                                                        }
+                                                    </ul>
+                                                }
+                                                else
+                                                {
+                                                    <p>No requirements available.</p>
+                                                }
+
+                                            </div>
+                                            <div class="_htg452 mt-35">
+                                                <h3>Description</h3>
+                                                <div id="content" class="text-start"></div>
+
+                                                <div class="_htgdrt mt-35">
+                                                    <h3>What you'll learn</h3>
+                                                    @{
+                                                        int totalLines = 0;
+                                                        if (!string.IsNullOrEmpty(@Model.CourseWlearn))
+                                                        {
+                                                            var learnList = @Model.CourseWlearn.Split(new[] { '.', '?', '!' },
+                                                            StringSplitOptions.RemoveEmptyEntries);
+                                                            totalLines = learnList.Length;
+                                                        }
+                                                        int linesPerColumn = (int)Math.Ceiling((double)totalLines / 2);
+                                                    }
+                                                    <div class="_scd123">
+                                                        <div class="row">
+                                                            @for (int colIndex = 0; colIndex < 2; colIndex++)
+                                                            {
+                                                                <div class="col-lg-6">
+                                                                    <ul class="_htg452 _abcd145">
+                                                                        @if (!string.IsNullOrEmpty(@Model.CourseWlearn))
+                                                                        {
+                                                                            var learnList = @Model.CourseWlearn.Split(new[] { '.', '?',
+                                                                    '!' }, StringSplitOptions.RemoveEmptyEntries);
+                                                                            int startIndex = colIndex * linesPerColumn;
+                                                                            int endIndex = Math.Min(startIndex + linesPerColumn,
+                                                                            learnList.Length);
+
+                                                                            for (int i = startIndex; i < endIndex; i++)
+                                                                            {
+                                                                                <li>
+                                                                                    <div class="_5f7g15">
+                                                                                        <i class="fas fa-check-circle"></i>
+                                                                                        <span>@learnList[i].Trim()</span>
+                                                                                    </div>
+                                                                                </li>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <p>No learning outcomes available.</p>
+                                                                        }
+                                                                    </ul>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="nav-reviews" role="tabpanel">
+                                        <div class="student_reviews">
+                                            @if (firstReview == null)
+                                            {
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <p class="text-center">No reviews available.</p>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+
+                                                <div class="row">
+                                                    <div class="col-lg-5">
+                                                        <div class="reviews_left">
+                                                            <h3>Student Feedback</h3>
+                                                            @{
+                                                                double rating = @firstReview.AverageRatePoint * 2; // Giá trị rating có thể thay đổi từ 0 đến 5
+                                                                double fullStarss = rating / 2;
+                                                                double halfStarss = rating % 2;
+                                                                double emptyStarss = 5 - fullStarss - halfStarss;
+
+                                                                int percent5StarInt = (int)firstReview.Percent5Star;
+                                                                int percent4StarInt = (int)firstReview.Percent4Star;
+                                                                int percent3StarInt = (int)firstReview.Percent3Star;
+                                                                int percent2StarInt = (int)firstReview.Percent2Star;
+                                                                int percent1StarInt = (int)firstReview.Percent1Star;
+                                                            }
+                                                            <div class="total_rating">
+                                                                <div class="_rate001">@firstReview.AverageRatePoint</div>
+                                                                <div class="rating-box">
+                                                                    @for (int i = 0; i < fullStarss; i++)
+                                                                    {
+                                                                        <span class="rating-star full-star"></span>
+                                                                    }
+                                                                    @if (halfStarss == 1)
+                                                                    {
+                                                                        <span class="rating-star half-star"></span>
+                                                                    }
+                                                                    @for (int i = 0; i < emptyStarss; i++)
+                                                                    {
+                                                                        <span class="rating-star empty-star"></span>
+                                                                    }
+                                                                </div>
+                                                                <div class="_rate002">Course Rating</div>
+                                                            </div>
+                                                            <div class="_rate003">
+                                                                <div class="_rate004">
+                                                                    <div class="progress progress1">
+                                                                        <div class="progress-bar w-1" style="width: @percent5StarInt% !important;" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+                                                                    </div>
+                                                                    <div class="rating-box">
+                                                                        <span class="rating-star full-star"></span>
+                                                                        <span class="rating-star full-star"></span>
+                                                                        <span class="rating-star full-star"></span>
+                                                                        <span class="rating-star full-star"></span>
+                                                                        <span class="rating-star full-star"></span>
+                                                                    </div>
+                                                                    <div class="_rate002"> @firstReview.Percent5Star%</div>
+                                                                </div>
+                                                                <div class="_rate004">
+                                                                    <div class="progress progress1">
+                                                                        <div class="progress-bar w-30" style="width: @percent4StarInt% !important;" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+                                                                    </div>
+                                                                    <div class="rating-box">
+                                                                        <span class="rating-star full-star"></span>
+                                                                        <span class="rating-star full-star"></span>
+                                                                        <span class="rating-star full-star"></span>
+                                                                        <span class="rating-star full-star"></span>
+                                                                        <span class="rating-star empty-star"></span>
+                                                                    </div>
+                                                                    <div class="_rate002">@firstReview.Percent4Star%</div>
+                                                                </div>
+                                                                <div class="_rate004">
+                                                                    <div class="progress progress1">
+                                                                        <div class="progress-bar w-5" style="width: @percent3StarInt% !important;" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                                                                    </div>
+                                                                    <div class="rating-box">
+                                                                        <span class="rating-star full-star"></span>
+                                                                        <span class="rating-star full-star"></span>
+                                                                        <span class="rating-star full-star"></span>
+                                                                        <span class="rating-star empty-star"></span>
+                                                                        <span class="rating-star empty-star"></span>
+                                                                    </div>
+                                                                    <div class="_rate002">@firstReview.Percent3Star%</div>
+                                                                </div>
+                                                                <div class="_rate004">
+                                                                    <div class="progress progress1">
+                                                                        <div class="progress-bar w-2" style="width: @percent2StarInt% !important;" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100"></div>
+                                                                    </div>
+                                                                    <div class="rating-box">
+                                                                        <span class="rating-star full-star"></span>
+                                                                        <span class="rating-star full-star"></span>
+                                                                        <span class="rating-star empty-star"></span>
+                                                                        <span class="rating-star empty-star"></span>
+                                                                        <span class="rating-star empty-star"></span>
+                                                                    </div>
+                                                                    <div class="_rate002">@firstReview.Percent2Star%</div>
+                                                                </div>
+                                                                <div class="_rate004">
+                                                                    <div class="progress progress1">
+                                                                        <div class="progress-bar w-1" style="width: @percent1StarInt% !important;" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                                    </div>
+                                                                    <div class="rating-box">
+                                                                        <span class="rating-star full-star"></span>
+                                                                        <span class="rating-star empty-star"></span>
+                                                                        <span class="rating-star empty-star"></span>
+                                                                        <span class="rating-star empty-star"></span>
+                                                                        <span class="rating-star empty-star"></span>
+                                                                    </div>
+                                                                    <div class="_rate002">@firstReview.Percent1Star%</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-7">
+                                                        <div class="review_right">
+                                                            <div class="review_right_heading">
+                                                                <h3>Reviews</h3>
+
+                                                            </div>
+                                                        </div>
+                                                        @foreach (var course in reviews)
+                                                        {
+                                                            <div class="review_all120">
+                                                                @foreach (var review in course.Reviews)
+                                                                {
+                                                                    <div class="review_item">
+                                                                        <div class="review_usr_dt">
+                                                                            <img src="@review.Avatar" alt="">
+                                                                            <div class="rv1458">
+                                                                                <h4 class="tutor_name1">@review.CommenterName</h4>
+                                                                                <span class="time_145">
+                                                                                    @if (review.CreatedDate.HasValue)
+                                                                                    {
+                                                                                        var timeDiff = now - review.CreatedDate.Value;
+                                                                                        if (timeDiff.TotalDays < 1)
+                                                                                        {
+                                                                                            if (timeDiff.TotalHours < 1)
+                                                                                            {
+                                                                                            <text>@timeDiff.Minutes minutes ago</text>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                            <text>@timeDiff.Hours hours @timeDiff.Minutes minutes ago</text>
+                                                                                            }
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <text>@review.CreatedDate.Value.ToString(" HH:mm 'on' dd/MM/yy")</text>
+                                                                                        }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <text>No data.</text>
+                                                                                    }
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                        @{
+                                                                            double ratings = Double.Parse(@review.RatePoint.ToString()) * 2; // Giá trị rating có thể thay đổi từ 0 đến 5
+                                                                            double fullStars = ratings / 2;
+                                                                            double halfStars = ratings % 2;
+                                                                            double emptyStars = 5 - fullStars - halfStars;
+                                                                        }
+
+                                                                        <div class="rating-box mt-20">
+                                                                            @for (int i = 0; i < fullStars; i++)
+                                                                            {
+                                                                                <span class="rating-star full-star"></span>
+                                                                            }
+                                                                            @if (halfStars == 1)
+                                                                            {
+                                                                                <span class="rating-star half-star"></span>
+                                                                            }
+                                                                            @for (int i = 0; i < emptyStars; i++)
+                                                                            {
+                                                                                <span class="rating-star empty-star"></span>
+                                                                            }
+                                                                        </div>
+                                                                        <p class="rvds10">@review.Content</p>
+                                                                        <div class="rpt100">
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review Modal -->
+            <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+                <div class=" modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="reviewModalLabel">Review Course: @Model.CourseName</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Your form for submitting reviews -->
+                            <form asp-action="rate" method="post">
+                                <!-- Hidden field for CourseId -->
+                                <input type="hidden" name="CourseId" id="CourseId" value="@Model.CourseId" />
+                                <div class="form-group">
+                                    <input type="hidden" class="form-control" id="AccountId" name="AccountId"
+                                           value="@Model.AccountId">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ReviewContent">Review Content</label>
+                                    <textarea class="form-control" id="RateContent" name="RateContent" rows="3"
+                                              placeholder="Enter your review"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="Rating">Rating</label>
+                                    <div class="star-rating">
+                                        <input id="star5" name="RatePoint" type="radio" value="5">
+                                        <label for="star5" title="5 stars">&#9733;</label>
+                                        <input id="star4" name="RatePoint" type="radio" value="4">
+                                        <label for="star4" title="4 stars">&#9733;</label>
+                                        <input id="star3" name="RatePoint" type="radio" value="3">
+                                        <label for="star3" title="3 stars">&#9733;</label>
+                                        <input id="star2" name="RatePoint" type="radio" value="2">
+                                        <label for="star2" title="2 stars">&#9733;</label>
+                                        <input id="star1" name="RatePoint" type="radio" value="1">
+                                        <label for="star1" title="1 star">&#9733;</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div style="display: none">
+                                        <input readonly type="datetime-local" class="form-control" id="RateDate" name="RateDate"
+                                               value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")">
+                                    </div>
+                                </div>
+                                <!-- Submit button -->
+                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+                <div class=" modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="reviewModalLabel">report Course: @Model.CourseName</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Your form for submitting reviews -->
+                            <form asp-action="Report" method="post">
+                                <div class="form-group">
+                                    <input type="hidden" class="form-control" id="CourseId" name="CourseId"
+                                           value="@Model.CourseId">
+                                </div>
+                                <div class="form-group">
+                                    <input type="hidden" class="form-control" id="AccountId" name="AccountId"
+                                           value="@Model.AccountId">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ReportReason">Report Reason</label>
+                                    <textarea class="form-control" id="ReportReasson" name="ReportReasson" rows="3"
+                                              placeholder="Enter your review"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ReportDate">Report Date</label>
+                                    <input readonly type="datetime-local" class="form-control" id="ReportDate"
+                                           name="ReportDate" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")">
+                                </div>
+                                <button type="submit" id="btnReport" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @section scripts {
+        <script src="~/lib/vendor/ckeditor5/ckeditor.js" asp-append-version="true"></script>
+	    <script src="~/lib/vendor/jquery-ui-1.12.1/jquery-ui.js" asp-append-version="true"></script>
+        <script src="~/js/sweetAlert.js"></script>
+            <script>
+      document.addEventListener('DOMContentLoaded', function () {
+
+            function decodeHtml(html) {
+                const txt = document.createElement('textarea');
+                txt.innerHTML = html;
+                return txt.value;
+            }
+
+          const htmlContent = '@Model.CourseDescription';
+            const decodedHtmlContent = decodeHtml(htmlContent);
+            const tempElement = document.createElement('div');
+            tempElement.innerHTML = decodedHtmlContent;
+
+            // Lấy nội dung text từ phần tử tạm thời
+            const plainText = tempElement.textContent || tempElement.innerText;
+            // Hiển thị nội dung text trong phần tử #content
+            document.getElementById('content').textContent = plainText;
+      })
+  </script>
+        
+        <script>
+            document.getElementById('unEnrollBtn').addEventListener('click', function () {
+                unenrollAlert(@Model.CourseId); // Gọi hàm creditAlert với giá trị từ input
+            });
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var Status = '@TempData["Status"]';
+                if (Status === "UnEnrollSuccess") {
+                    sweetAlertSuccess("Success","You have successfully left the course");
+                }
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+                $('.re').on('click', function () {
+                    var courseId = $(this).data('id');
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("CheckEnroll", "Course")',
+                        data: { id: courseId },
+                        success: function (data) {
+                            if (data.enrolled) {
+                                $('#reviewModal').modal('show');
+                            } else {
+                                sweetAlertError("Error", "You must enroll in the course to review it.");
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            sweetAlertError("Error", "Error checking enrollment status.");
+                        }
+                    });
+                });
+            });
+
+            $(document).ready(function () {
+
+                var courseId = $('#instructor-id').data('id');
+                if (courseId == "") {
+                    $('#sub-status').html('<button class="subscribe-btn" id="subscribe-btn" asp-action="/Identity/Account/Login" data-id="">Subscribe</button>');
+                    return;
+                }
+                function showButtonLoading(button) {
+                    $(button).data('original-text', $(button).html());
+                    $(button).html('Loading...');
+                    $(button).prop('disabled', true);
+                }
+
+                function hideButtonLoading(button) {
+                    $(button).html($(button).data('original-text'));
+                    $(button).prop('disabled', false);
+                }
+
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("CheckSub", "Course")',
+                    data: { id: courseId },
+                    success: function (data) {
+                        if (data.enrolled) {
+                            $('#sub-status').html('<button class="subscribed-btn" id="unsubscribe-btn" data-id="@Model.AccountId">Subscribed</button>');
+                        } else {
+                            $('#sub-status').html('<button class="subscribe-btn" id="subscribe-btn" data-id="@Model.AccountId">Subscribe</button>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        sweetAlertError("Error", "Error checking subscription status.");
+                    }
+                });
+
+
+                $(document).on('click', '#subscribe-btn', function () {
+                    var button = this;
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Course/Subscribe',
+                        data: { id: courseId },
+                        beforeSend: function () {
+                            showButtonLoading(button);
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                $('#sub-status').html('<button class="subscribed-btn" id="unsubscribe-btn" data-id="@Model.AccountId">Subscribed</button>');
+                            } else {
+                                sweetAlertError('Error subscribing to course');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            sweetAlertError("Error", "Error subscribing to course.");
+                        },
+                        complete: function () {
+                            hideButtonLoading(button);
+                        }
+                    });
+                });
+
+                $(document).on('click', '#unsubscribe-btn', function () {
+                    var button = this;
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Course/UnSubscribe',
+                        data: { id: courseId },
+                        beforeSend: function () {
+                            showButtonLoading(button);
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                $('#sub-status').html('<button class="subscribe-btn" id="subscribe-btn" data-id="@Model.AccountId">Subscribe</button>');
+                            } else {
+                                sweetAlertError("Error", "Error unsubscribing from course.");
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            sweetAlertError("Error", "Error unsubscribing from course.");
+                        },
+                        complete: function () {
+                            hideButtonLoading(button);
+                        }
+                    });
+                });
+            });
+
+            $(document).ready(function () {
+                $(".btn_adcart1").on("click", function () {
+                    var courseID = $(this).val();
+                    $.ajax({
+                        url: "/Cart/AddToCart",
+                        type: "POST",
+                        data: { courseID: courseID },
+                        success: function (data) {
+                            if (data === "Course already in cart.") {
+                                sweetAlertError("Error", "This course is already in your cart.");
+                                document.getElementById("cartCount").innerHTML = data.cartCount.toString();
+                            } else {
+                                sweetAlertSuccess("Success", "Course added to cart successfully.");
+                            }
+                        },
+                        error: function (error) {
+                            sweetAlertError("Error", "Error adding course to cart.");
+                        }
+                    });
+                });
+            });
+        </script>
+
+        <script>
+            $(document).ready(function () {
+                $(".btn_buy").on("click", function (e) {
+                    e.preventDefault();
+                    var courseID = $(this).val();
+                    // Confirmation dialog
+                    if (confirm("Are you sure you want to buy now?")) {
+                        $.ajax({
+                            url: "/Cart/BuyNow",
+                            type: "POST",
+                            data: { courseID: courseID },
+                            success: function (data) {
+                                if (data === "Course already purchased.") {
+                                    sweetAlertError("Error", "This course is already purchased.");
+                                }
+                                else if (data) {
+                                    sweetAlertSuccess("Success", "Course purchased successfully.");
+                                    window.location.href = "/Home/Index";
+                                } else {
+                                    sweetAlertError("Error", "Insufficient funds, checkout fails!");
+                                }
+                            },
+                            error: function () {
+                                sweetAlertError("Error", "Error buying course.");
+                            }
+                        });
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            $(document).ready(function () {
+                $('.enroll-button').on('click', function () {
+                    var button = $(this);
+                    var courseId = button.data('course-id');
+
+                    $.ajax({
+                        url: '/Enrolled/EnrollCourseFree',
+                        type: 'POST',
+                        data: { courseId: courseId },
+                        success: function (response) {
+                            if (response.success) {
+                                button.removeClass('btn-success').addClass('btn-primary').text('Go to Course').removeClass('enroll-button').attr('href', '/Course/GetCourseDetail/' + courseId);
+                                sweetAlertSuccess("Success", "Enrollment successful.");
+                                window.location.reload();
+                            } else {
+                                sweetAlertError("Error", "An error occurred while enrolling.");
+                            }
+                        },
+                        error: function () {
+                            sweetAlertError("Error", "An error occurred while enrolling.");
+                        }
+                    });
+                });
+            });
+            $(document).on("click", "#nonLesson", function() {
+                 sweetAlertError("Error", "The course has no lessons yet.");
+            })
+            $(document).on("click", "#btnReport", function(event) {
+                var textReport = $("#ReportReasson").val();
+                if (textReport == "") {
+                    sweetAlertError("Error", "Please enter the reason for reporting.");
+                    event.preventDefault();
+                    return false;
+                }
+            })
+        </script>
+
+    }

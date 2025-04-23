@@ -1,0 +1,55 @@
+@model Cursus.MVC.ViewModels.HomePageViewViewModel
+
+<style>
+    .subscription-list {
+        margin-left: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .subscription-card {
+        display: flex;
+        align-items: center;
+        /* Canh giữa theo chiều dọc */
+        flex-direction: row;
+        /* Xếp các phần tử theo hàng ngang */
+        width: 300px;
+        /* Chiều rộng của mỗi thẻ */
+        border-radius: 5px;
+        /* Bo tròn góc thẻ */
+    }
+
+    .subscription-card img {
+        width: 30px;
+        /* Chiều rộng của hình ảnh */
+        height: 30px;
+        /* Chiều cao của hình ảnh */
+        border-radius: 50%;
+        /* Bo tròn hình ảnh */
+        margin-right: 10px;
+        /* Khoảng cách giữa hình ảnh và tên */
+    }
+
+    .subscription-card .name {
+        font-size: 14px;
+        font-weight: bold;
+    }
+</style>
+
+@if (Model.SubscribeInstructor != null && Model.SubscribeInstructor.Any())
+{
+    <div class="subscription-list">
+        @foreach (var instructor in Model.SubscribeInstructor.Take(2))
+        {
+            <a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@instructor.Id">
+                <div href="instructor_profile_view.html" class="subscription-card">
+                    <img src="@instructor.Avatar" alt="Instructor Avatar">
+                    <div class="name">@instructor.FullName</div>
+                </div>
+            </a>
+
+        }
+    </div>
+}
+

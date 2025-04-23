@@ -1,0 +1,415 @@
+@model Cursus.MVC.ViewModels.ProFileViewViewModel;
+@{
+	ViewData["Title"] = "View Profile";
+    if(ViewBag.Yes != "ok"){
+        Layout="~/Views/Shared/_LayoutDashboard.cshtml";
+    }
+}
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <link rel="icon" type="image/png" href="~/images/fav.png">
+    <!-- Stylesheets -->
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,500' rel='stylesheet'>
+    <link href='~/lib/vendor/unicons-2.0.1/css/unicons.css' rel='stylesheet' asp-append-version="true">
+    <link href="~/css/vertical-responsive-menu.min.css" rel="stylesheet" asp-append-version="true">
+    <link href="~/css/style.css" rel="stylesheet" asp-append-version="true">
+    <link href="~/css/responsive.css" rel="stylesheet" asp-append-version="true">
+    <link href="~/css/night-mode.css" rel="stylesheet" asp-append-version="true">
+
+    <link href="~/css/instructor-dashboard.css" rel="stylesheet" asp-append-version="true">
+    <link href="~/css/instructor-responsive.css" rel="stylesheet" asp-append-version="true">
+
+    <!-- Vendor Stylesheets -->
+    <link href="~/lib/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" asp-append-version="true">
+    <link href="~/lib/vendor/OwlCarousel/assets/owl.carousel.css" rel="stylesheet" asp-append-version="true">
+    <link href="~/lib/vendor/OwlCarousel/assets/owl.theme.default.min.css" rel="stylesheet" asp-append-version="true">
+    <link href="~/lib/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true">
+    <link href="~/lib/vendor/bootstrap-select/docs/docs/dist/css/bootstrap-select.min.css" rel="stylesheet"
+        asp-append-version="true">
+    <link rel="stylesheet" type="text/css" href="~/lib/vendor/semantic/semantic.min.css" asp-append-version="true">
+    <style>
+        .upload-area {
+    border: 2px dashed #007BFF;
+    border-radius: 5px;
+    padding: 50px;
+    text-align: center;
+    background-color: #fff;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.upload-area i {
+    font-size: 50px;
+    color: #007BFF;
+}
+
+.upload-area p {
+    font-size: 18px;
+    color: #555;
+}
+
+.upload-area input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.file-list {
+    margin-top: 20px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.file-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.file-details {
+    flex: 1;
+}
+
+.file-details span {
+    display: block;
+}
+
+.file-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.file-actions button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #555;
+    transition: color 0.3s ease;
+}
+
+.file-actions button:hover {
+    color: #007BFF;
+}
+
+.progress-bar {
+    height: 5px;
+    background-color: #007BFF;
+    transition: width 0.3s ease;
+}
+
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: none;
+    transition: opacity 0.3s ease;
+}
+
+.notification.show {
+    display: block;
+    opacity: 1;
+}
+    </style>
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+			<div class=" modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="reviewModalLabel">Upload Avatar</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<!-- Your form for submitting reviews -->
+						<form class="text-center" enctype="multipart/form-data" method="post" asp-action="UploadAvatar" asp-controller="Instructor">
+                            <div class="upload-container">
+                                <div class="upload-area" id="uploadArea">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click to Upload Files</p>
+                                    <input type="file" id="fileInput" multiple>
+                                </div>
+                                <div class="file-list" id="fileList"></div>
+                            </div>
+							<button type="submit" id="submitAvatarInstructor" class="btn btn-primary">Submit</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	<div class="_216b01">
+		<div class="container">
+			<div class="row justify-content-md-center">
+				<div class="col-md-12">
+					<div class="section3125 rpt145">
+						<div class="row">
+							<div class="col-lg-6">
+								<div class="dp_dt150">
+									<div class="img148" >
+                                        @{
+                                            if(TempData["AccountId"] != null) {
+
+                                        <a  href="modal" data-bs-toggle="modal" data-bs-target="#reportModal">
+                                             <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                            }
+                                        }
+                                       
+										<img src="@Model.UserAcc.Avatar" alt="">
+									</div>
+									<div class="prfledt1">
+										<h2>@Model.UserAcc.Username</h2>
+										<span>@Model.UserAcc.Description</span> <br>
+										<span>Bio: @Model.UserAcc.Bio</span>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-6">
+                                @if(ViewBag.Yes == "ok"){
+                                <ul class="_bty149">
+									<li><input type="hidden" class="instructor-id" data-id="@Model.UserAcc.AccountId" />
+                                    <div class="sub-status" id="sub-status-@Model.UserAcc.AccountId"></li>
+								</ul>
+                                }else{
+                                    <ul class="_bty149">
+                                        <li><a asp-action="EditAccount"><button class="msg125 btn500">Edit</button></a></li>
+								    </ul>
+                                }
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="_215b15">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="course_tabs">
+						<nav>
+							<div class="nav nav-tabs tab_crse" id="nav-tab" role="tablist">
+								<a class="nav-item nav-link active" id="nav-about-tab" data-bs-toggle="tab"
+									href="#nav-about" role="tab" aria-selected="true">Available course</a>
+							</div>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="_215b17">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="course_tab_content">
+						<div class="tab-content" id="nav-tabContent">
+							<div class="tab-pane fade show active" id="nav-about" role="tabpanel">
+								<div class="_htg451">
+									<div class="_htg452">
+										<h3>Available Courses</h3>
+										<div class="row">
+											<div class="col-md-9">
+												@if (Model.CourseList == null || !Model.CourseList.Any())
+									{
+										<h2>No Course Available</h2>
+									}
+									else
+									{
+										@foreach (var course in Model.CourseList)
+										{
+                                                    <div class="fcrse_1 mt-20">
+                                                        <a href="@Url.Action("GetCourseDetail", "Course", new { id = @course.CourseId })" class="hf_img">
+                                                            <img src="@course.CourseAvatar" alt="">
+                                                            <div class="corse-overlay">
+                                                                <span class="play_btn1"><i class="uil uil-play"></i></span>
+                                                            </div>
+                                                        </a>
+                                                        <div class="hs_content">
+                                                            <a href="@Url.Action("GetCourseDetail", "Course", new { id = @course.CourseId })"
+                                                                class="crse14s title900 limiteText">@course.CourseName</a>
+                                                            <a class="crse-cate limiteText">@course.CourseShortDes</a>
+                                                            <div class="auth1lnkprce">
+                                                                <p class="cr1fot">By <a asp-controller="Instructor" asp-action="ViewProfile" asp-route-id="@course.Account.Id">@course.Account.FullName</a></p>
+                                                                <div class="prce142">
+                                                                @if (course.Discount > 0 && course.CourseMoney != 0)
+                                                                {
+                                                                    var discountAmount = (course.Discount / 100) * course.CourseMoney;
+                                                                    var discountedPrice = course.CourseMoney - discountAmount;
+                                                                    <div class="prce142">
+                                                                        <span class="original-price">@String.Format("${0:N2}",
+                                                                                @course.CourseMoney)</span>
+                                                                        <span class="discounted-price text-danger">@String.Format("${0:N2}",
+                                                                                discountedPrice).Replace(",", ".")</span>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="prce142"><span class="price">@String.Format("${0:N2}",
+                                                                    @course.CourseMoney).Replace(",", ".")</span></div>
+                                                                }
+                                                                </div>
+                                                                <button class="shrt-cart-btn" title="cart"><i
+                                                                        class="uil uil-shopping-cart-alt"></i></button>
+                                                            </div>
+                                                        </div>
+												    </div>
+                                                }
+                                            }
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<style>
+    			.subscribed-btn {
+				border: 0;
+				background: #686f7a;
+				padding: 0 20px;
+				height: 30px;
+				border-radius: 3px;
+				color: #fff;
+				font-weight: 500;
+				font-family: 'Roboto', sans-serif;
+				font-size: 14px;
+			}
+</style>
+@section Scripts {
+   <script src="~/js/validateImage.js" asp-append-version="true"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.0.7/compressor.min.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next/21.6.5/i18next.min.js" asp-append-version="true"></script>
+    <script src="~/js/uploadFile.js" asp-append-version="true"></script>
+    @{
+        var message = TempData["Message"] as string;
+        TempData.Remove("Message");
+    }
+
+    <script>
+        var message = '@message';
+        console.log(message);
+        if(message == "AvatarSuccess") {
+           sweetAlertSuccess("Success", "Avatar uploaded successfully");
+        } else if(message == "AvatarFailed") {
+            sweetAlertError("Error", "Error uploading avatar");
+        }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('.instructor-id').each(function () {
+                var courseId = $(this).data('id');
+                var subStatusDiv = $('#sub-status-' + courseId);
+
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("CheckSub", "Course")',
+                    data: { id: courseId },
+                    success: function (data) {
+                        if (data.enrolled) {
+                            subStatusDiv.html('<button class="subscribed-btn btn500" data-id="' + courseId + '">Subscribed</button>');
+                        } else {
+                            subStatusDiv.html('<button class="subscribe-btn btn500" data-id="' + courseId + '">Subscribe</button>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        subStatusDiv.html('<p>Error checking subscription status</p>');
+                    }
+                });
+            });
+
+            $(document).on('click', '.subscribe-btn', function () {
+                var courseId = $(this).data('id');
+                var button = this;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/Course/Subscribe',
+                    data: { id: courseId },
+                    beforeSend: function () {
+                        showButtonLoading(button);
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            $('#sub-status-' + courseId).html('<button class="subscribed-btn btn500" data-id="' + courseId + '">Subscribed</button>');
+                        } else {
+                            alert('Error subscribing to course');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Subscribe Error: ' + error);
+                    },
+                    complete: function () {
+                        hideButtonLoading(button);
+                    }
+                });
+            });
+
+            $(document).on('click', '.subscribed-btn', function () {
+                var courseId = $(this).data('id');
+                var button = this;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/Course/UnSubscribe',
+                    data: { id: courseId },
+                    beforeSend: function () {
+                        showButtonLoading(button);
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            $('#sub-status-' + courseId).html('<button class="subscribe-btn btn500" data-id="' + courseId + '">Subscribe</button>');
+                        } else {
+                            alert('Error unsubscribing from course');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Unsubscribe Error: ' + error);
+                    },
+                    complete: function () {
+                        hideButtonLoading(button);
+                    }
+                });
+            });
+
+            function showButtonLoading(button) {
+                $(button).data('original-text', $(button).html());
+                $(button).html('Loading...');
+                $(button).prop('disabled', true);
+            }
+
+            function hideButtonLoading(button) {
+                $(button).html($(button).data('original-text'));
+                $(button).prop('disabled', false);
+            }
+        });
+
+    </script>
+}
+

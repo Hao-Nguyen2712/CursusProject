@@ -1,0 +1,106 @@
+@model Cursus.MVC.Models.CategoryViewModel
+
+@{
+    ViewData["Title"] = "Category";
+}
+
+<style>
+    .course-column {
+        display: inline-block;
+        width: calc(33.33% - 20px); /* Chiều rộng của mỗi cột, tính cả khoảng cách giữa chúng */
+        margin-right: 20px; /* Khoảng cách giữa các cột */
+        vertical-align: top; /* Đảm bảo các cột nằm ngang */
+        margin-bottom: 20px; /* Khoảng cách dưới của mỗi cột */
+        box-sizing: border-box; /* Đảm bảo các padding và border không làm thay đổi kích thước */
+    }
+</style>
+
+<div class="text-center">
+    <div class="sa4d25">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-9 col-lg-8">
+                    <div class="section3125">
+                        <div class="grp_titles pt-0">
+                            <div class="ht_title">Courses in @Model.CategoryName</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        @if (Model.CoursesVM != null && Model.CoursesVM.Any())
+        {
+            @foreach (var course in Model.CoursesVM)
+            {
+                <div class="course-column">
+                    <div class="fcrse_1 mb-20">
+                        <a href="@Url.Action("GetCourseDetail", "Course", new { id = course.CourseId })" class="hf_img position-relative d-block">
+                            <img src="@course.CourseAvatar" alt="@course.CourseName">
+                            <div class="course-overlay d-flex flex-column justify-content-center align-items-center">
+                                @if (course.Discount != null && course.Discount > 0)
+                                {
+                                    <div class="badge_seller">Discount: @course.Discount%</div>
+                                }
+                                <span class="play_btn1"><i class="uil uil-play"></i></span>
+                                <div class="crse_timer">
+                                    @course.CourseDate?.ToString("yyyy-MM-dd")
+                                </div>
+                            </div>
+                        </a>
+                        <div class="hs_content">
+                            <a href="@Url.Action("GetCourseDetail", "Course", new { id = course.CourseId })" class="crse14s title900">@course.CourseName</a>
+                            <a href="#" class="crse-cate">@Model.CategoryName</a>
+                            <p class="crse-desc limiteText">@course.CourseShortDes</p>
+                            <p class="crse-desc limiteText">@course.CourseDescription</p>
+                            <div class="auth1lnkprce mt-2">
+                                <div class="prce142">$@course.CourseMoney?.ToString("0.00")</div>
+                                <button class="shrt-cart-btn" id="AddToCart-@course.CourseId"
+																value="@course.CourseId" title="cart">
+																<i class="uil uil-shopping-cart-alt"></i>
+								</button>	
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No courses found for this category.</p>
+        }
+    </div>
+</div>
+
+@section scripts {
+	<script>
+         $(document).ready(function () {
+            $(".shrt-cart-btn").on("click", function () {
+                var courseID = $(this).val();
+                $.ajax({
+                    url: "/Cart/AddToCart",
+                    type: "POST",
+                    data: { courseID: courseID },
+                    success: function (data) {
+                        if (data === "Course already purchased.") {
+                            sweetAlertError("This course already purchased.")
+                        }
+                        else if (data === "Course already in cart.") {
+                            sweetAlertError("This course is already in your cart.");
+                        } else {
+                            sweetAlertSuccess("Course added to cart successfully.");
+                            document.getElementById("cartCount").innerHTML = data.cartCount.toString();
+                        }
+                    },
+                    error: function (error) {
+                        sweetAlertError("Error! You have to login your account.");
+                    }
+                });
+            });
+        });
+	</script>
+}

@@ -1,0 +1,84 @@
+@model Cursus.MVC.Models.RateViewModel;
+@{
+    ViewData["Title"] = "Rate Course";
+}
+<style>
+    .rating-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f8f9fa;
+    }
+    .rating-box {
+    background-color: #ffffff; /* Light red background */
+    border: 2px solid #ff4d4d; /* Red border */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+    color: #000; /* Black text */
+    display: flex;
+    flex-direction: column; /* Arrange children in a column */
+    align-items: center; /* Center items horizontally */
+}
+    .star-rating {
+        direction: rtl;
+        display: flex;
+        justify-content: center;
+        padding: 20px 0;
+    }
+    .star-rating input[type="radio"] {
+        display: none;
+    }
+    .star-rating label {
+        color: #000; /* Black for the stars */
+        font-size: 3rem; /* Larger size */
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    .star-rating input[type="radio"]:checked ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+        color: #eeff00; /* Red when hovered or checked */
+    }
+</style>
+<div class="back_link">
+						<a href="@Url.Action("GetCourseDetail", "Course", new { id = Model.CourseId })" class="hde151">Back To Course</a>
+						<a href="index.html" class="hde152">Back</a>
+</div>
+ <div class="container mt-5">
+        <div class="rating-box">
+            <form asp-action="Rate" method="post">
+                <h2>Rate Course: @ViewBag.CourseName</h2>
+                <input readonly type="hidden" name="CourseId" value="@Model.CourseId" />            
+                <div class="form-group">
+                    <input type="hidden" class="form-control" id="AccountId" name="AccountId" value="@Model.AccountId">
+                </div>
+                <div class="form-group">
+                    <label for="RatePoint">Rate Point</label>
+                    <div class="star-rating">
+                        <input id="star5" name="RatePoint" type="radio" value="5">
+                        <label for="star5" title="5 stars">&#9733;</label>
+                        <input id="star4" name="RatePoint" type="radio" value="4">
+                        <label for="star4" title="4 stars">&#9733;</label>
+                        <input id="star3" name="RatePoint" type="radio" value="3">
+                        <label for="star3" title="3 stars">&#9733;</label>
+                        <input id="star2" name="RatePoint" type="radio" value="2">
+                        <label for="star2" title="2 stars">&#9733;</label>
+                        <input id="star1" name="RatePoint" type="radio" value="1">
+                        <label for="star1" title="1 star">&#9733;</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="RateContent">Rate Content</label>
+                    <textarea class="form-control" id="RateContent" name="RateContent" rows="3" placeholder="Enter Rate Content"></textarea>
+                </div>
+                <div class="form-group">
+                <label for="ReportDate">Report Date</label>
+                <input readonly type="datetime-local" class="form-control" id="ReportDate" name="RateDate" value="@Model.RateDate?.ToString("yyyy-MM-ddTHH:mm:ss")">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>

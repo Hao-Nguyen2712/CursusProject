@@ -1,0 +1,36 @@
+@model List<Cursus.MVC.Models.CourseViewModel>
+
+<div class="table-responsive mt-30">
+    <table class="table ucp-table">
+        <thead class="thead-s">
+            <tr>
+                <th class="text-center" scope="col">Item No.</th>
+                <th class="text-left">Title</th>
+                <th class="text-center" scope="col">Publish Date</th>
+                <th class="text-center" scope="col">Price</th>
+                <th class="text-center" scope="col">Parts</th>
+                <th class="text-center" scope="col">Category</th>
+                <th class="text-center" scope="col">Status</th>
+                <th class="text-center" scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in Model)
+            {
+                <tr>
+                    <td class="text-center">@course.CourseId</td>
+                    <td class="text-left">@(!string.IsNullOrEmpty(course.CourseName) ? course.CourseName : "Unknown Course")</td>
+                    <td class="text-center">@course.CourseDate?.ToString("yyyy-MM-dd")</td>
+                    <td class="text-center">@String.Format("${0:N2}", course.CourseMoney.HasValue ? course.CourseMoney.Value : 0.00)</td>
+                    <td class="text-center">@course.CourseProcess</td>
+                    <td class="text-center"><a href="#">@(course.CategoryVM != null && !string.IsNullOrEmpty(course.CategoryVM.CategoryName) ? course.CategoryVM.CategoryName : "Unknown Category")</a></td>
+                    <td class="text-center"><b class="text-danger">@course.CourseStatus</b></td>
+                    <td class="text-center">
+                        <a asp-action="EditCourse" asp-controller="Instructor" asp-route-id="@course.CourseId" title="Edit" class="gray-s"><i class="uil uil-edit-alt"></i></a>
+                        <a asp-action="DeleteCourse" asp-controller="Instructor" asp-route-id="@course.CourseId" title="Delete" class="gray-s"><i class="uil uil-trash-alt"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

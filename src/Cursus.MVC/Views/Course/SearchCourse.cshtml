@@ -1,0 +1,127 @@
+@model IEnumerable<Cursus.MVC.Models.CourseViewModel>
+@{  
+    ViewData["Title"] = "Search Course";
+}
+
+<style>
+    .original-price {
+        font-size: 15px;
+        text-decoration: line-through;
+    }
+
+    .discounted-price {
+        font-size: 15px;
+        color: red;
+    }
+
+    .price {
+        font-size: 15px;
+    }
+</style>
+
+        <div class="sa4d25">
+            <div class="container-fluid">
+                <div class="row">
+                    <form class="searchform" method="get" asp-action="Searchcourse">
+                        <div class="col-xl-12 col-lg-8">
+                            <div class="section3125">
+                                <div class="explore_search">
+                                    <div class="ui search focus">
+                                        <div class="ui left icon input swdh11">
+                                            <input class="prompt srch_explore" type="text" name="name" value="@ViewBag.name"
+                                                placeholder="Search Tutors...">
+                                            <i class="uil uil-search-alt icon icon2"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var course in Model)
+                        {
+                            <div class="col-xl-4 col-lg-4 col-md-6">
+                               	<div class="fcrse_1 mt-30">
+									<a href="@Url.Action("GetCourseDetail", "Course", new { id = @course.CourseId })"
+														class="fcrse_img">
+														<img src="@course.CourseAvatar" alt="">
+														<div class="course-overlay">
+															@if(course.Discount > 0)
+                                                            {
+                                                                <div class="badge_seller">Sale</div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="badge_seller">Bestseller</div>
+                                                            }
+															<span class="play_btn1"><i class="uil uil-play"></i></span>
+														</div>
+													</a>
+													<div class="fcrse_content">
+														<a href="@Url.RouteUrl("CourseDetail", new { id = course.CourseId })"
+															class="crse14s">@course.CourseName</a>
+                                                                    <a href="#" class="crse-cate limiteText">@course.CourseShortDes</a>
+														<div class="auth1lnkprce">
+                                                            @if (course.Discount > 0 && course.CourseMoney != 0)
+                                                                {
+                                                                    var discountAmount = (course.Discount / 100) * course.CourseMoney;
+                                                                    var discountedPrice = course.CourseMoney - discountAmount;
+                                                                    <div class="prce142">
+                                                                        <span class="original-price">@String.Format("${0:N2}",
+                                                                                @course.CourseMoney)</span>
+                                                                        <span class="discounted-price text-danger">@String.Format("${0:N2}",
+                                                                                discountedPrice).Replace(",", ".")</span>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="prce142"><span class="price">@String.Format("${0:N2}",
+                                                                    @course.CourseMoney).Replace(",", ".")</span></div>
+                                                                }
+															<button class="shrt-cart-btn" id="AddToCart-@course.CourseId"
+																value="@course.CourseId" title="cart">
+																<i class="uil uil-shopping-cart-alt"></i>
+															</button>	
+										                </div>
+									                </div>
+								</div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-center m-3">No courses found!</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+        $(document).ready(function () {
+            $(".shrt-cart-btn").on("click", function () {
+                var courseID = $(this).val();
+                $.ajax({
+                    url: "/Cart/AddToCart",
+                    type: "POST",
+                    data: { courseID: courseID },
+                    success: function (data) {
+                        if (data === "Course already purchased.") {
+                            sweetAlertError("This course already purchased.")
+                        }
+                        else if (data === "Course already in cart.") {
+                            alert("This course is already in your cart.");
+                        } else {
+                            sweetAlertSuccess("Course added to cart successfully.");
+                            document.getElementById("cartCount").innerHTML = data.cartCount.toString();
+                        }
+                    },
+                    error: function (error) {
+                        sweetAlertError("Error adding course to cart.");
+                    }
+                });
+            });
+        });
+    </script>

@@ -1,0 +1,130 @@
+    @model Cursus.MVC.ViewModels.HomePageViewViewModel
+    @{
+        ViewData["Title"] = "Instructor List";
+    }
+    <style>
+    .wrapper {
+        padding: 20px;
+    }
+
+    .instructor-list {
+        display: flex;
+        flex-wrap: wrap; /* Cho phép các phần tử quấn lên dòng tiếp theo nếu không đủ chỗ */
+        gap: 20px; /* Khoảng cách giữa các phần tử */
+    }
+
+    .col-lg-3 {
+        flex: 1 1 calc(33.333% - 20px); /* Chia đều thành 3 cột, trừ khoảng cách */
+        box-sizing: border-box; /* Bao gồm padding và border vào kích thước của phần tử */
+    }
+
+    .fcrse_1 {
+        border: 1px solid #ddd; /* Đường viền cho các thẻ */
+        border-radius: 5px; /* Bo tròn các góc */
+        padding: 15px; /* Khoảng cách bên trong */
+        background-color: #fff; /* Màu nền */
+        display: flex;
+        flex-direction: column; /* Xếp theo chiều dọc */
+        align-items: center; /* Căn giữa theo chiều ngang */
+    }
+
+    .tutor_img img {
+        width: 100%; /* Đảm bảo hình ảnh chiếm toàn bộ không gian */
+        height: auto; /* Đảm bảo tỷ lệ khung hình của hình ảnh */
+        border-radius: 50%; /* Bo tròn hình ảnh */
+    }
+
+    .tutor_name {
+        font-size: 16px; /* Kích thước chữ */
+        font-weight: bold; /* In đậm */
+        color: #333; /* Màu chữ */
+        text-decoration: none; /* Bỏ gạch chân */
+    }
+
+    .tutor_name:hover {
+        color: #007bff; /* Màu chữ khi hover */
+    }
+
+    .tutor_cate {
+        font-size: 14px; /* Kích thước chữ nhỏ hơn */
+        color: #777; /* Màu chữ */
+        text-align: center; /* Canh giữa văn bản */
+    }
+
+    .tutor_social_links {
+        list-style: none; /* Bỏ dấu chấm cho các phần tử danh sách */
+        padding: 0; /* Bỏ padding */
+        display: flex; /* Hiển thị các phần tử danh sách nằm ngang */
+        gap: 10px; /* Khoảng cách giữa các phần tử danh sách */
+        justify-content: center; /* Căn giữa các nút */
+        margin: 10px 0; /* Khoảng cách trên và dưới */
+    }
+
+    .tutor_social_links li {
+        display: inline-flex; /* Hiển thị các nút nằm ngang và căn giữa nội dung */
+        align-items: center; /* Căn giữa theo chiều dọc */
+    }
+
+    .tut1250 {
+        font-size: 14px; /* Kích thước chữ nhỏ hơn */
+        color: #555; /* Màu chữ */
+        text-align: center; /* Canh giữa văn bản */
+    }
+
+    .sbbc145, .sbbc146 {
+        border: none; /* Bỏ đường viền */
+        padding: 5px 10px; /* Padding cho các nút */
+        border-radius: 5px; /* Bo tròn góc các nút */
+    }
+
+    </style>
+
+
+    <body>
+        <!-- Body Start -->
+        <div class="wrapper">
+
+            @if (Model.SubscribeInstructor != null && Model.SubscribeInstructor.Any())
+            {
+                <div class="instructor-list">
+                    @foreach (var instructor in Model.SubscribeInstructor)
+                    {
+                        <div class="col-lg-3 col-md-4">
+                            <div class="fcrse_1 mt-30">
+                                <div class="tutor_img">
+                                    <a asp-controller="Instructor" asp-action="Profile" asp-route-id="@instructor.AccountId">
+                                        <img src="@instructor.Avatar" alt="Instructor Avatar">
+                                    </a>
+                                </div>
+                                <div class="tutor_content_dt">
+                                    <div class="tutor150">
+                                        <a asp-controller="Instructor" asp-action="Profile" asp-route-id="@instructor.AccountId"
+                                            class="tutor_name">
+                                            @instructor.FullName
+                                        </a>
+                                        <div class="mef78" title="Verify">
+                                            <i class="uil uil-check-circle"></i>
+                                        </div>
+                                    </div>
+                                    <div class="tutor_cate">Wordpress &amp; Plugin Tutor</div>
+                                    <ul class="tutor_social_links">
+                                        <li><button class="sbbc145">Subscribed</button></li>
+                                        <li><button class="sbbc146"><i class="uil uil-bell"></i></button></li>
+                                    </ul>
+                                    <div class="tut1250">
+                                        <span class="vdt15">100K Students</span>
+                                        <span class="vdt15">15 Courses</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-center">No instructors found!</p>
+            }
+        </div>
+    </body>

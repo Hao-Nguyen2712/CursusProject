@@ -1,0 +1,97 @@
+@model Cursus.MVC.Models.CategoryViewModel
+@{
+    ViewData["Title"] = "Add New Category";
+}
+
+<div class="wrapper">
+
+    <div class="container-fluid">
+
+        <div class="col-lg-8 col-md-7">
+            <div class="top_countries mt-30">
+                <div class="top_countries_title">
+                    <h2>Add Credit Balance</h2>
+                </div>
+                <div class="credits_content">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="ui search focus mt-30 lbel25">
+                                    <label>Add Blalance</label>
+                                    <div class="ui left icon input swdh11 swdh19">
+                                        <input class="prompt srch_explore" type="text" name="balance[add]" value=""
+                                            id="id_balance" required="" maxlength="4" placeholder="0">
+                                        <i class="uil uil-dollar-alt icon icon8"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="ui search focus mt-30 lbel25">
+                                    <label>Holder Name</label>
+                                    <div class="ui left icon input swdh19">
+                                        <input class="prompt srch_explore" type="text" name="holder[name]" value=""
+                                            id="id_holdername" required="" maxlength="64"
+                                            placeholder="Enter Holder Name">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="ui search focus mt-30 lbel25">
+                                    <label>Card Number</label>
+                                    <div class="ui left icon input swdh19">
+                                        <input class="prompt srch_explore" type="text" name="card[number]"
+                                            maxlength="16" placeholder="Card #">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="lbel25 mt-30">
+                                    <label>Expiration Month</label>
+                                    <select class="ui hj145 dropdown cntry152 prompt srch_explore"
+                                        name="card[expire-month]">
+                                        <option value="">Month</option>
+                                        <option value="1">January</option>
+                                        <option value="2">February</option>
+                                        <option value="3">March</option>
+                                        <option value="4">April</option>
+                                        <option value="5">May</option>
+                                        <option value="6">June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">August</option>
+                                        <option value="9">September</option>
+                                        <option value="10">October</option>
+                                        <option value="11">November</option>
+                                        <option value="12">December</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="ui search focus mt-30 lbel25">
+                                    <label>Expiration Year</label>
+                                    <div class="ui left icon input swdh19">
+                                        <input class="prompt srch_explore" type="text" name="card[expire-year]"
+                                            maxlength="4" placeholder="Year">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="ui search focus mt-30 lbel25">
+                                    <label>Expiration Year</label>
+                                    <div class="ui left icon input swdh19">
+                                        <input class="prompt srch_explore" type="text" name="card[cvc]" maxlength="3"
+                                            placeholder="CVC">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <button class="add_crdit_btn mt-50" type="submit">Add Credit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

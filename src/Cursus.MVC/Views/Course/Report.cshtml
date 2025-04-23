@@ -1,0 +1,62 @@
+@model Cursus.MVC.Models.ReportViewModel;
+@{
+    ViewData["Title"] = "Report Course";
+}
+<style>
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #f8f9fa;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: 0 auto;
+        color: #000;
+    }
+    .form-group {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
+    .form-group input, .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+</style>
+<div class="back_link">
+						<a href="@Url.Action("GetCourseDetail", "Course", new { id = Model.CourseId })" class="hde151">Back To Course</a>
+						<a href="index.html" class="hde152">Back</a>
+</div>
+<div class="container mt-5">
+    <div class="form-container">
+        <form asp-action="Report" method="post">
+            <h2>Report Course: @ViewBag.CourseName</h2>
+            <div class="form-group">
+                <input type="hidden" class="form-control" id="CourseId" name="CourseId" value="@Model.CourseId">
+            </div>
+            <div class="form-group">
+                <input type="hidden" class="form-control" id="CmtId" name="CmtId" value="@Model.CmtId">
+            </div>
+            <div class="form-group">
+                <input type="hidden" class="form-control" id="AccountId" name="AccountId" value="@Model.AccountId">
+            </div>
+            <div class="form-group">
+                <label for="ReportReason">Report Reason</label>
+                <textarea class="form-control" id="ReportReasson" name="ReportReasson" rows="3">@Model.ReportReasson</textarea>
+            </div>
+            <div class="form-group">
+                <label for="ReportDate">Report Date</label>
+                <input readonly type="datetime-local" class="form-control" id="ReportDate" name="ReportDate" value="@Model.ReportDate?.ToString("yyyy-MM-ddTHH:mm:ss")">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>

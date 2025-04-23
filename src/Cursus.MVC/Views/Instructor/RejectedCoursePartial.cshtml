@@ -1,0 +1,91 @@
+@model List<Cursus.MVC.Models.CourseViewModel>
+
+<style>
+    /* inspired from this svgbackgrounds.com/ */
+.button {
+    width: 100px;
+    display: flex;
+    padding: 0.8em 1.1em;
+    gap: 0.4rem;
+    border: none;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    text-shadow: 2px 2px 3px rgb(136 0 136 / 50%);
+    background: linear-gradient(
+        15deg,
+        #880088,
+        #aa2068,
+        #cc3f47,
+        #de6f3d,
+        #f09f33,
+        #de6f3d,
+        #cc3f47,
+        #aa2068,
+        #880088
+      )
+      no-repeat;
+    background-size: 300%;
+    background-position: left center;
+    transition: background 0.3s ease;
+    color: #fff;
+  }
+  
+  .button:hover {
+    background-size: 320%;
+    background-position: right center;
+  }
+  
+  .button:hover svg {
+    fill: #fff;
+  }
+  
+  .button svg {
+    width: 23px;
+    fill: #f09f33;
+    transition: 0.3s ease;
+  }
+  
+</style>
+<div class="table-responsive mt-30">
+    <table class="table ucp-table">
+        <thead class="thead-s">
+            <tr>
+                <th class="text-center" scope="col">Item No.</th>
+                <th class="text-left">Title</th>
+                <th class="text-center" scope="col">Thumbnail</th>
+                <th class="text-center">Category</th>
+                <th class="text-center">Price</th>
+                <th class="text-center">Date</th>
+                <th class="text-center" scope="col">Status</th>
+                <th class="text-center" scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in Model)
+            {
+                <tr>
+                    <td class="text-center">@course.CourseId</td>
+                    <td class="text-left">@(!string.IsNullOrEmpty(course.CourseName) ? course.CourseName : "Unknown Course")</td>
+                    <td class="text-center"><a href="#">View</a></td>
+                    <td class="text-center"><a href="#">@(course.CategoryVM != null && !string.IsNullOrEmpty(course.CategoryVM.CategoryName) ? course.CategoryVM.CategoryName : "Unknown Category")</a></td>
+                    <td class="text-center">@String.Format("{0:N2}", course.CourseMoney.HasValue ? course.CourseMoney.Value : 0.00) $</td>
+                    <td class="text-center">@course.CourseDate?.ToString("yyyy-MM-dd")</td>
+                    <td class="text-center"><b class="text-danger">@course.CourseStatus</b></td>
+                    <td class="text-center">
+                        <form asp-action="ReSubmitCourse" asp-controller="Instructor">
+                            <input type="hidden" name="courseId" value="@course.CourseId" />
+                            <button class="button" type="submit">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 24">
+                                </svg>
+                                 Resubmit
+                            </button>
+
+                           
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
