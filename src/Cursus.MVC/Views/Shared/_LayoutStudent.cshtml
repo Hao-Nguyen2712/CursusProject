@@ -1,9 +1,9 @@
 ﻿﻿@using Microsoft.AspNetCore.Http
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
-@using Cursus.MVC.Areas.Identity.Data
+@using Cursus.Domain.Models
 @using Microsoft.AspNetCore.Identity
-@inject SignInManager<CursusMVCUser> SignInManager
-@inject UserManager<CursusMVCUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 <!DOCTYPE html>
 <html lang="en">
@@ -230,7 +230,7 @@
 										</a>
 									</li>
 									<li>
-										<p>© 2024 <strong>Cursus</strong>. All Rights Reserved.</p>
+										<p>© @DateTime.Now.Year <strong>Cursus</strong>. All Rights Reserved.</p>
 									</li>
 								</ul>
 							</div>

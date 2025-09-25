@@ -7,24 +7,21 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Cursus.MVC.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Cursus.Domain.Models;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Shared;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Cursus.MVC.Areas.Identity.Pages.Account
 {
     public class ResetPasswordModel : PageModel
     {
-        private readonly UserManager<CursusMVCUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly CursusDBContext _db;
 
         // Constructor definition
-        public ResetPasswordModel(UserManager<CursusMVCUser> userManager, CursusDBContext db)
+        public ResetPasswordModel(UserManager<ApplicationUser> userManager, CursusDBContext db)
         {
             _userManager = userManager;
             _db = db;

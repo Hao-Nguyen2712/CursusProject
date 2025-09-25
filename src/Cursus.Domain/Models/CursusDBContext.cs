@@ -39,6 +39,91 @@ namespace Cursus.Domain.Models
         builder.Ignore<AspNetUserRole>();
         builder.Ignore<AspNetUserToken>();
 
+        // Configure Cart relationships - use AccountId (int) to link to Account.AccountId (int)
+        builder.Entity<Cart>()
+            .HasOne(c => c.Account)
+            .WithMany(a => a.Carts)
+            .HasForeignKey(c => c.AccountId)
+            .HasPrincipalKey(a => a.AccountId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Entity<Cart>()
+            .HasOne(c => c.Course)
+            .WithMany(c => c.Carts)
+            .HasForeignKey(c => c.CourseId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // Configure Comment relationships - use AccountId (int) to link to Account.AccountId (int)
+        builder.Entity<Comment>()
+            .HasOne(c => c.Account)
+            .WithMany(a => a.Commnents)
+            .HasForeignKey(c => c.AccountId)
+            .HasPrincipalKey(a => a.AccountId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Entity<Comment>()
+            .HasOne(c => c.Lession)
+            .WithMany(l => l.Commnents)
+            .HasForeignKey(c => c.LessionId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // Configure Course relationships - use AccountId (int) to link to Account.AccountId (int)
+        builder.Entity<Course>()
+            .HasOne(c => c.Account)
+            .WithMany(a => a.Courses)
+            .HasForeignKey(c => c.AccountId)
+            .HasPrincipalKey(a => a.AccountId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Entity<Course>()
+            .HasOne(c => c.Category)
+            .WithMany(c => c.Courses)
+            .HasForeignKey(c => c.CategoryId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // Configure Lesson relationships
+        builder.Entity<Lesson>()
+            .HasOne(l => l.Course)
+            .WithMany(c => c.Lessons)
+            .HasForeignKey(l => l.CourseId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // Configure Enroll relationships - use AccountId (int) to link to Account.AccountId (int)
+        builder.Entity<Enroll>()
+            .HasOne(e => e.Account)
+            .WithMany(a => a.Enrolls)
+            .HasForeignKey(e => e.AccountId)
+            .HasPrincipalKey(a => a.AccountId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Entity<Enroll>()
+            .HasOne(e => e.Course)
+            .WithMany(c => c.Enrolls)
+            .HasForeignKey(e => e.CourseId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // Configure Rate relationships - use AccountId (int) to link to Account.AccountId (int)
+        builder.Entity<Rate>()
+            .HasOne(r => r.Account)
+            .WithMany(a => a.Rates)
+            .HasForeignKey(r => r.AccountId)
+            .HasPrincipalKey(a => a.AccountId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Entity<Rate>()
+            .HasOne(r => r.Course)
+            .WithMany(c => c.Rates)
+            .HasForeignKey(r => r.CourseId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // Configure Otp relationships - use AccountId (int) to link to Account.AccountId (int)
+        builder.Entity<Otp>()
+            .HasOne(o => o.Account)
+            .WithMany(a => a.Otps)
+            .HasForeignKey(o => o.AccountId)
+            .HasPrincipalKey(a => a.AccountId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         // Configure Subscribe relationships manually
         builder.Entity<Subscribe>()
             .HasOne(s => s.User)
@@ -101,6 +186,33 @@ namespace Cursus.Domain.Models
             .HasMany(c => c.Discounts)
             .WithMany(d => d.Courses)
             .UsingEntity(j => j.ToTable("CourseDiscounts"));
+
+        // Configure Trading relationship - use AccountId (int) to link to Account.AccountId (int)
+        builder.Entity<Trading>()
+            .HasOne(t => t.Account)
+            .WithMany(a => a.Tradings)
+            .HasForeignKey(t => t.AccountId)
+            .HasPrincipalKey(a => a.AccountId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // Configure Account entity - AccountId is primary key (identity), Id is foreign key to AspNetUsers
+        builder.Entity<Account>()
+            .HasKey(a => a.AccountId); // Set AccountId as primary key
+
+        builder.Entity<Account>()
+            .Property(a => a.AccountId)
+            .ValueGeneratedOnAdd(); // Ensure AccountId is auto-generated
+
+        builder.Entity<Account>()
+            .HasIndex(a => a.Id)
+            .IsUnique(); // Id should be unique (references AspNetUsers.Id)
+
+        // Configure relationship between Account and AspNetUsers
+        builder.Entity<Account>()
+            .HasOne<ApplicationUser>()
+            .WithOne()
+            .HasForeignKey<Account>(a => a.Id)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Configure decimal precision for money fields
         builder.Entity<Account>()

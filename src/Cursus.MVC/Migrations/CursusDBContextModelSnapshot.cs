@@ -4,19 +4,16 @@ using Cursus.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Cursus.MVC.Migrations.CursusDB
+namespace Cursus.MVC.Migrations
 {
     [DbContext(typeof(CursusDBContext))]
-    [Migration("20250925083722_AddEntityRelationships")]
-    partial class AddEntityRelationships
+    partial class CursusDBContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,11 +39,11 @@ namespace Cursus.MVC.Migrations.CursusDB
 
             modelBuilder.Entity("Cursus.Domain.Models.Account", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("AccountId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccountId"));
 
                     b.Property<string>("Avatar")
                         .HasColumnType("nvarchar(max)");
@@ -68,6 +65,10 @@ namespace Cursus.MVC.Migrations.CursusDB
 
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Id")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("IsDelete")
                         .HasColumnType("nvarchar(max)");
@@ -91,7 +92,10 @@ namespace Cursus.MVC.Migrations.CursusDB
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("AccountId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.ToTable("Accounts");
                 });
@@ -172,9 +176,6 @@ namespace Cursus.MVC.Migrations.CursusDB
                     b.Property<int?>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<string>("AccountId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<decimal?>("CartMoney")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -184,7 +185,7 @@ namespace Cursus.MVC.Migrations.CursusDB
 
                     b.HasKey("CartId");
 
-                    b.HasIndex("AccountId1");
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("CourseId");
 
@@ -221,9 +222,6 @@ namespace Cursus.MVC.Migrations.CursusDB
                     b.Property<int?>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<string>("AccountId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("CmtContent")
                         .HasColumnType("nvarchar(max)");
 
@@ -241,7 +239,7 @@ namespace Cursus.MVC.Migrations.CursusDB
 
                     b.HasKey("CmtId");
 
-                    b.HasIndex("AccountId1");
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("LessionId");
 
@@ -258,9 +256,6 @@ namespace Cursus.MVC.Migrations.CursusDB
 
                     b.Property<int?>("AccountId")
                         .HasColumnType("int");
-
-                    b.Property<string>("AccountId1")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
@@ -302,7 +297,7 @@ namespace Cursus.MVC.Migrations.CursusDB
 
                     b.HasKey("CourseId");
 
-                    b.HasIndex("AccountId1");
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("CategoryId");
 
@@ -342,9 +337,6 @@ namespace Cursus.MVC.Migrations.CursusDB
                     b.Property<int?>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<string>("AccountId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int?>("CourseId")
                         .HasColumnType("int");
 
@@ -362,7 +354,7 @@ namespace Cursus.MVC.Migrations.CursusDB
 
                     b.HasKey("EnrollId");
 
-                    b.HasIndex("AccountId1");
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("CourseId");
 
@@ -432,9 +424,6 @@ namespace Cursus.MVC.Migrations.CursusDB
                     b.Property<int?>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<string>("AccountId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int?>("OtpCode")
                         .HasColumnType("int");
 
@@ -452,7 +441,7 @@ namespace Cursus.MVC.Migrations.CursusDB
 
                     b.HasKey("OtpId");
 
-                    b.HasIndex("AccountId1");
+                    b.HasIndex("AccountId");
 
                     b.ToTable("Otps");
                 });
@@ -494,9 +483,6 @@ namespace Cursus.MVC.Migrations.CursusDB
                     b.Property<int?>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<string>("AccountId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int?>("CourseId")
                         .HasColumnType("int");
 
@@ -511,7 +497,7 @@ namespace Cursus.MVC.Migrations.CursusDB
 
                     b.HasKey("RateId");
 
-                    b.HasIndex("AccountId1");
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("CourseId");
 
@@ -597,6 +583,8 @@ namespace Cursus.MVC.Migrations.CursusDB
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("TdId");
+
+                    b.HasIndex("AccountId");
 
                     b.ToTable("Tradings");
                 });
@@ -753,15 +741,26 @@ namespace Cursus.MVC.Migrations.CursusDB
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Cursus.Domain.Models.Account", b =>
+                {
+                    b.HasOne("Cursus.Domain.Models.ApplicationUser", null)
+                        .WithOne()
+                        .HasForeignKey("Cursus.Domain.Models.Account", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Cursus.Domain.Models.Cart", b =>
                 {
                     b.HasOne("Cursus.Domain.Models.Account", "Account")
                         .WithMany("Carts")
-                        .HasForeignKey("AccountId1");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Cursus.Domain.Models.Course", "Course")
                         .WithMany("Carts")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Account");
 
@@ -772,11 +771,13 @@ namespace Cursus.MVC.Migrations.CursusDB
                 {
                     b.HasOne("Cursus.Domain.Models.Account", "Account")
                         .WithMany("Commnents")
-                        .HasForeignKey("AccountId1");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Cursus.Domain.Models.Lesson", "Lession")
                         .WithMany("Commnents")
-                        .HasForeignKey("LessionId");
+                        .HasForeignKey("LessionId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Account");
 
@@ -787,11 +788,13 @@ namespace Cursus.MVC.Migrations.CursusDB
                 {
                     b.HasOne("Cursus.Domain.Models.Account", "Account")
                         .WithMany("Courses")
-                        .HasForeignKey("AccountId1");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Cursus.Domain.Models.Category", "Category")
                         .WithMany("Courses")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Account");
 
@@ -802,11 +805,13 @@ namespace Cursus.MVC.Migrations.CursusDB
                 {
                     b.HasOne("Cursus.Domain.Models.Account", "Account")
                         .WithMany("Enrolls")
-                        .HasForeignKey("AccountId1");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Cursus.Domain.Models.Course", "Course")
                         .WithMany("Enrolls")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Account");
 
@@ -818,6 +823,7 @@ namespace Cursus.MVC.Migrations.CursusDB
                     b.HasOne("Cursus.Domain.Models.Account", "Instructor")
                         .WithOne()
                         .HasForeignKey("Cursus.Domain.Models.InstructorSubscription", "InstructorId")
+                        .HasPrincipalKey("Cursus.Domain.Models.Account", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -828,7 +834,8 @@ namespace Cursus.MVC.Migrations.CursusDB
                 {
                     b.HasOne("Cursus.Domain.Models.Course", "Course")
                         .WithMany("Lessons")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Course");
                 });
@@ -837,7 +844,8 @@ namespace Cursus.MVC.Migrations.CursusDB
                 {
                     b.HasOne("Cursus.Domain.Models.Account", "Account")
                         .WithMany("Otps")
-                        .HasForeignKey("AccountId1");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Account");
                 });
@@ -847,6 +855,7 @@ namespace Cursus.MVC.Migrations.CursusDB
                     b.HasOne("Cursus.Domain.Models.Account", "Account")
                         .WithMany("Progresses")
                         .HasForeignKey("AccId")
+                        .HasPrincipalKey("Id")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Cursus.Domain.Models.Lesson", "Lesson")
@@ -864,11 +873,13 @@ namespace Cursus.MVC.Migrations.CursusDB
                 {
                     b.HasOne("Cursus.Domain.Models.Account", "Account")
                         .WithMany("Rates")
-                        .HasForeignKey("AccountId1");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Cursus.Domain.Models.Course", "Course")
                         .WithMany("Rates")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Account");
 
@@ -880,7 +891,6 @@ namespace Cursus.MVC.Migrations.CursusDB
                     b.HasOne("Cursus.Domain.Models.Account", "Account")
                         .WithMany("Reports")
                         .HasForeignKey("AccountId")
-                        .HasPrincipalKey("AccountId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Cursus.Domain.Models.Comment", "Comment")
@@ -905,16 +915,28 @@ namespace Cursus.MVC.Migrations.CursusDB
                     b.HasOne("Cursus.Domain.Models.Account", "Instructor")
                         .WithMany("InstructorSubscriptions")
                         .HasForeignKey("InstructorId")
+                        .HasPrincipalKey("Id")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Cursus.Domain.Models.Account", "User")
                         .WithMany("UserSubscriptions")
                         .HasForeignKey("UserId")
+                        .HasPrincipalKey("Id")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Instructor");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Cursus.Domain.Models.Trading", b =>
+                {
+                    b.HasOne("Cursus.Domain.Models.Account", "Account")
+                        .WithMany("Tradings")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -987,6 +1009,8 @@ namespace Cursus.MVC.Migrations.CursusDB
                     b.Navigation("Rates");
 
                     b.Navigation("Reports");
+
+                    b.Navigation("Tradings");
 
                     b.Navigation("UserSubscriptions");
                 });

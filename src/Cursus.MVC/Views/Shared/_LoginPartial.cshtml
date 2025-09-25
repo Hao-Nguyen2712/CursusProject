@@ -1,8 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using Cursus.MVC.Areas.Identity.Data
+@using Cursus.Domain.Models
 
-@inject SignInManager<CursusMVCUser> SignInManager
-@inject UserManager<CursusMVCUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))

@@ -6,7 +6,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Cursus.Domain.Models;
-using Cursus.MVC.Areas.Identity.Data;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -15,13 +15,13 @@ namespace Cursus.MVC.Areas.Identity.Pages.Account.Manage
 {
     public class SetPasswordModel : PageModel
     {
-        private readonly UserManager<CursusMVCUser> _userManager;
-        private readonly SignInManager<CursusMVCUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly Cursus.Domain.Models.CursusDBContext _db;
 
         public SetPasswordModel(
-            UserManager<CursusMVCUser> userManager,
-            SignInManager<CursusMVCUser> signInManager,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
             CursusDBContext db)
         {
             _userManager = userManager;

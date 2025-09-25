@@ -12,5 +12,8 @@ namespace Cursus.Domain.Models
         public decimal? TdMoney { get; set; }
         public string TdMethodPayment { get; set; }
         public int? AccountId { get; set; }
+
+        // Navigation Property
+        public virtual Account Account { get; set; }
     }
 }

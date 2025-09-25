@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Data;
-using Cursus.MVC.Areas.Identity.Data;
+using Cursus.Domain.Models;
 using System.Security.Claims;
 using Cursus.Application.Account;
 using Cursus.Application;
@@ -23,12 +23,12 @@ namespace Cursus.MVC.Controllers
         private readonly ICartService _cartService;
         private readonly IAccountService _accountService;
         private readonly ICourseService _courseService;
-        private readonly UserManager<CursusMVCUser> _userManager;
-        private readonly IUserStore<CursusMVCUser> _userStore;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IEmailSender _sendEmail;
 
 
-        public CartController(ICartService cartService, IUserStore<CursusMVCUser> userStore, UserManager<CursusMVCUser> userManager, IAccountService accountService, ICourseService courseService, IEmailSender sendEmail)
+        public CartController(ICartService cartService, IUserStore<ApplicationUser> userStore, UserManager<ApplicationUser> userManager, IAccountService accountService, ICourseService courseService, IEmailSender sendEmail)
         {
             _cartService = cartService;
             _userStore = userStore;

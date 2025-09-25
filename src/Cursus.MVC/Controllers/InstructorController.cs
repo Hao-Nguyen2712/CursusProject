@@ -44,7 +44,7 @@ using DocumentFormat.OpenXml.Drawing;
 namespace Cursus.MVC.Controllers
 {
 
-    /*[Authorize(Roles = "Student")]*/
+    
     public class InstructorController : Controller
     {
         private readonly ICourseService _courseService;
@@ -57,8 +57,8 @@ namespace Cursus.MVC.Controllers
         private readonly IDashBoardService _dashBoardService;
         private readonly IMapper _mapper;
         private readonly ISearchInstructorService _searchInstructorService;
-        private readonly UserManager<CursusMVCUser> _userManager;
-        private readonly IUserStore<CursusMVCUser> _userStore;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserStore<ApplicationUser> _userStore;
         private readonly ICartService _cartService;
         private readonly ISubscriptionService _subscriptionService;
         private readonly IHomePageService _homePageService;
@@ -69,7 +69,7 @@ namespace Cursus.MVC.Controllers
         private string blobStorageConnectionString = "";
         private string blobStorageContainerName = "images";
 
-        public InstructorController(ICourseService courseService, ILessonService lessonService, ICategoryService categoryService, IAccountService accountService, IInstructorCourseService instructorCourseService, IDashBoardService dashBoardSerVice, IMapper mapper, ISearchInstructorService searchInstructorService, UserManager<CursusMVCUser> userManager, IUserStore<CursusMVCUser> userStore, ICartService cartService, ISubscriptionService subscriptionService, IProfileService ProfileService, IHomePageService homePageService, IInstructorService instructorService)
+        public InstructorController(ICourseService courseService, ILessonService lessonService, ICategoryService categoryService, IAccountService accountService, IInstructorCourseService instructorCourseService, IDashBoardService dashBoardSerVice, IMapper mapper, ISearchInstructorService searchInstructorService, UserManager<ApplicationUser> userManager, IUserStore<ApplicationUser> userStore, ICartService cartService, ISubscriptionService subscriptionService, IProfileService ProfileService, IHomePageService homePageService, IInstructorService instructorService)
         {
             _courseService = courseService;
             _lessonService = lessonService;

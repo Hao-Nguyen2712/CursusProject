@@ -7,7 +7,6 @@ using Cursus.Application.Report;
 using Cursus.Application.Review;
 using Cursus.Application.Subscrise;
 using Cursus.Domain.Models;
-using Cursus.MVC.Areas.Identity.Data;
 using Cursus.MVC.Models;
 using Cursus.MVC.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -24,8 +23,8 @@ namespace Cursus.MVC.Controllers
         private readonly Cursus.Application.ILessonService _lessonService;
         private readonly Cursus.Application.Category.ICategoryService _categoryService;
         private readonly IMapper _mapper;
-        private readonly UserManager<CursusMVCUser> _userManager;
-        private readonly IUserStore<CursusMVCUser> _userStore;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserStore<ApplicationUser> _userStore;
         private readonly Cursus.Application.Account.IAccountService _accountService;
         private readonly Cursus.Application.Comment.ICommentService _commentService;
         private readonly IRateService _rateService;
@@ -44,8 +43,8 @@ namespace Cursus.MVC.Controllers
             Cursus.Application.ILessonService lessonService,
             Cursus.Application.Category.ICategoryService categoryService,
             IMapper mapper,
-            UserManager<CursusMVCUser> userManager,
-            IUserStore<CursusMVCUser> userStore,
+            UserManager<ApplicationUser> userManager,
+            IUserStore<ApplicationUser> userStore,
             Cursus.Application.Account.IAccountService accountService,
             Application.Comment.ICommentService commentService,
             IRateService rateService,
