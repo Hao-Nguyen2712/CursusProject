@@ -1,15 +1,8 @@
-﻿using Cursus.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Cursus.Application.Comment
+﻿namespace Cursus.Application.Comment
 {
-	public interface ICommentRepository
-	{
-		public Commnent addComment(Cursus.Domain.Models.Commnent comment);
-		public List<Commnent> GetCommnentsByLessonID(int lessonID);
-	}
+    public interface ICommentRepository
+    {
+        public Cursus.Domain.Models.Comment addComment(Cursus.Domain.Models.Comment comment);
+        public List<Cursus.Domain.Models.Comment> GetCommentsByLessonID(int lessonID);
+    }
 }

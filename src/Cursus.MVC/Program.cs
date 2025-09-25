@@ -1,60 +1,55 @@
-using Cursus.Infrastructure;
-using Cursus.Application;
-using Cursus.Domain.Models;
 using AutoMapper;
-using Cursus.MVC.Mapper;
-using Cursus.Application.SearchInstructor;
-using Cursus.Infrastructure.SearchInstructor;
-using Cursus.MVC.Controllers;
-using Cursus.Application.Cart;
-using Cursus.Infrastructure.Cart;
-using Cursus.MVC.ViewModels;
-using Cursus.MVC.Data;
-using Microsoft.EntityFrameworkCore;
-using Cursus.MVC.Areas.Identity.Data;
-using Cursus.Application.Category;
-using Cursus.Infrastructure.Category;
-using Cursus.Infrastructure.Student;
-using Microsoft.Extensions.DependencyInjection;
-using Cursus.Application.Student;
-using Cursus.Application.Instructor;
-using Cursus.Infrastructure.Instructor;
-using Cursus.Application.Analyze;
-using Cursus.Infrastructure.Analyze;
-using Microsoft.AspNetCore.StaticFiles;
-using Cursus.Application.Enroll;
-using Cursus.Infrastructure.Enroll;
+using Cursus.Application;
 using Cursus.Application.Account;
-using Cursus.Application.Report;
-using Cursus.Infrastructure.Report;
-using Cursus.Application.DashBoard;
-using Cursus.Application.Subscrise;
-using Cursus.Infrastructure.Subscrise;
-using Cursus.Application.AdminDashBoard;
-using Cursus.MVC.Service;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Cursus.Application.Admin;
-using Cursus.Infrastructure.Admin;
-using Cursus.MVC.Services;
-using Azure.Storage.Blobs;
-using Cursus.Application.Comment;
-using Cursus.Infrastructure.Comment;
-using Microsoft.AspNetCore.Identity;
-using Cursus.Application.Progress;
-using Cursus.Infrastructure.Progress;
-using Cursus.Application.Credits;
-using Cursus.Infrastructure.Credits;
-using Cursus.Application.Review;
-using Cursus.Infrastructure.Review;
-using Cursus.Application.Earning;
-using Cursus.Infrastructure.Earning;
-using Cursus.Application.Payout;
-using Cursus.Infrastructure.Payout;
+using Cursus.Application.AdminDashBoard;
+using Cursus.Application.Analyze;
+using Cursus.Application.Cart;
+using Cursus.Application.Category;
 using Cursus.Application.Certificate;
-using Cursus.Application.Subscription;
-using Cursus.Infrastructure.Subscription;
-
+using Cursus.Application.Comment;
+using Cursus.Application.Credits;
+using Cursus.Application.DashBoard;
+using Cursus.Application.Earning;
+using Cursus.Application.Enroll;
+using Cursus.Application.Instructor;
+using Cursus.Application.Payout;
 using Cursus.Application.Profile;
+using Cursus.Application.Progress;
+using Cursus.Application.Report;
+using Cursus.Application.Review;
+using Cursus.Application.SearchInstructor;
+using Cursus.Application.Student;
+using Cursus.Application.Subscription;
+using Cursus.Application.Subscrise;
+using Cursus.Domain.Models;
+using Cursus.Infrastructure;
+using Cursus.Infrastructure.Admin;
+using Cursus.Infrastructure.Analyze;
+using Cursus.Infrastructure.Cart;
+using Cursus.Infrastructure.Category;
+using Cursus.Infrastructure.Comment;
+using Cursus.Infrastructure.Credits;
+using Cursus.Infrastructure.Earning;
+using Cursus.Infrastructure.Enroll;
+using Cursus.Infrastructure.Instructor;
+using Cursus.Infrastructure.Payout;
+using Cursus.Infrastructure.Progress;
+using Cursus.Infrastructure.Report;
+using Cursus.Infrastructure.Review;
+using Cursus.Infrastructure.SearchInstructor;
+using Cursus.Infrastructure.Student;
+using Cursus.Infrastructure.Subscription;
+using Cursus.Infrastructure.Subscrise;
+using Cursus.MVC.Areas.Identity.Data;
+using Cursus.MVC.Data;
+using Cursus.MVC.Mapper;
+using Cursus.MVC.Service;
+using Cursus.MVC.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cursus.MVC
 {
@@ -66,16 +61,21 @@ namespace Cursus.MVC
             var connectionString = builder.Configuration.GetConnectionString("CursusMVCContextConnection") ?? throw new InvalidOperationException("Connection string 'CursusMVCContextConnection' not found.");
             var config = builder.Configuration;
 
-            builder.Services.AddDbContext<CursusMVCContext>(options => options.UseSqlServer(connectionString));
+            // Configure CursusDBContext for your domain models
+            builder.Services.AddDbContext<CursusDBContext>(options =>
+                options.UseSqlServer(connectionString, b => b.MigrationsAssembly("Cursus.MVC")));
 
+            // Configure CursusMVCContext for Identity
+            builder.Services.AddDbContext<CursusMVCContext>(options =>
+                options.UseSqlServer(connectionString));
+
+            // Set up Identity with CursusMVCUser
             builder.Services.AddDefaultIdentity<CursusMVCUser>(options => options.SignIn.RequireConfirmedAccount = true)
-             .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<CursusMVCContext>();
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<CursusMVCContext>();
 
-        
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddScoped<CursusDBContext>();
 
             builder.Services.AddRazorPages();
 
@@ -106,7 +106,7 @@ namespace Cursus.MVC
 
             builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 
-   
+
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
             builder.Services.AddScoped<IAdminService, AdminService>();
 
@@ -147,7 +147,7 @@ namespace Cursus.MVC
 
             builder.Services.AddScoped<IProgressRepository, ProgressRepository>();
             builder.Services.AddScoped<IProgressService, ProgressService>();
-            
+
             builder.Services.AddScoped<ICreditsService, CreditsService>();
             builder.Services.AddScoped<ICreditsRepository, CreditsRepository>();
 
@@ -162,16 +162,16 @@ namespace Cursus.MVC
 
             builder.Services.AddScoped<ICertificateService, CertificateService>();
 
-			builder.Services.AddTransient<IEmailSender, EmailSender>();
-			builder.Services.AddTransient<ISendEmail, SendEmail>();
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
+            builder.Services.AddTransient<ISendEmail, SendEmail>();
 
             builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
             builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
-			builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddDistributedMemoryCache();
 
             builder.Services.AddScoped<IProfileService, ProfileService>();
-            
+
             builder.Services.AddDistributedMemoryCache();
 
 
@@ -201,11 +201,8 @@ namespace Cursus.MVC
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                 options.SlidingExpiration = true;
                 options.Cookie.SameSite = SameSiteMode.Lax;
-                options.ExpireTimeSpan = TimeSpan.FromDays(14); // Th?i gian h?t h?n cookie khi nh? ??ng nh?p
+                options.ExpireTimeSpan = TimeSpan.FromDays(14); // Cookie expiration time
             });
-
-            //set cookie
-
 
             var mapperConfig = new MapperConfiguration(cfg =>
             {
@@ -219,6 +216,26 @@ namespace Cursus.MVC
 
             var app = builder.Build();
 
+            // Apply migrations on startup
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    // Migrate both contexts
+                    var cursusDbContext = services.GetRequiredService<CursusDBContext>();
+                    cursusDbContext.Database.Migrate();
+
+                    var identityContext = services.GetRequiredService<CursusMVCContext>();
+                    identityContext.Database.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while migrating the database.");
+                }
+            }
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -230,10 +247,10 @@ namespace Cursus.MVC
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
-            app.UseSession();           
+            app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");

@@ -1,64 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Cursus.Application;
-using Cursus.Application.Category;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using System.Data;
-using Cursus.MVC.Areas.Identity.Data;
-using System.Security.Claims;
-using Cursus.Application.Account;
-using Cursus.MVC.Models;
-using Cursus.Application;
-using Cursus.Domain.Models;
-using Cursus.MVC.ViewModels;
-using Cursus.Application.Enroll;
-using Cursus.Application.Report;
 using Cursus.Application.Cart;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using Cursus.MVC.Service;
-using Cursus.Application.Progress;
-using Cursus.Application.Subscrise;
-using Cursus.MVC.Services;
-using Microsoft.AspNetCore.Identity.UI.Services;
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Cursus.Application;
-using Cursus.Application.Category;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using System.Data;
-using Cursus.MVC.Areas.Identity.Data;
-using System.Security.Claims;
-using Cursus.Application.Account;
-using Cursus.MVC.Models;
-using Cursus.Application;
-using Cursus.Domain.Models;
-using Cursus.MVC.ViewModels;
 using Cursus.Application.Enroll;
-using Cursus.Application.Report;
-using Cursus.Application.Cart;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using Cursus.MVC.Service;
 using Cursus.Application.Progress;
-using Cursus.Application.Subscrise;
-using Cursus.MVC.Services;
-using Microsoft.AspNetCore.Identity.UI.Services;
+using Cursus.Application.Report;
 using Cursus.Application.Review;
-using Cursus.Infrastructure.Review;
+using Cursus.Application.Subscrise;
+using Cursus.Domain.Models;
+using Cursus.MVC.Areas.Identity.Data;
+using Cursus.MVC.Models;
+using Cursus.MVC.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Cursus.MVC.Controllers
 {
@@ -154,7 +110,7 @@ namespace Cursus.MVC.Controllers
         {
             Domain.Models.Course course = _courseService.GetCourseById(courseID);
             List<Lesson> lessons = _lessonService.GetLessonsByCourseID(courseID);
-            List<Cursus.Domain.Models.Commnent> commnents = _commentService.GetCommnentsByLessonID(lessonID);
+            List<Cursus.Domain.Models.Comment> commnents = _commentService.GetCommentsByLessonID(lessonID);
             // map
             CourseViewModel courseVM = _mapper.Map<CourseViewModel>(course);
             List<LessonViewModel> lessonVMs = _mapper.Map<List<LessonViewModel>>(lessons);
@@ -212,8 +168,10 @@ namespace Cursus.MVC.Controllers
                     Domain.Models.Progress progressItem = _progressService.GetProgressByAccountIDAndLessonID(userID, item.LessionId);
                     if (progressItem != null)
                     {
-                       listProgress.Add("True");
-                    } else {
+                        listProgress.Add("True");
+                    }
+                    else
+                    {
                         listProgress.Add("False");
                     }
                 }
@@ -344,7 +302,7 @@ namespace Cursus.MVC.Controllers
             var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
             var instructor = _accountService.GetAccountByAccountID(id);
             var instructorMail = instructor.Email;
-            var instructorUsername= instructor.Username;
+            var instructorUsername = instructor.Username;
             var instructorId = instructor.Id;
             var account = _accountService.GetAccountByUserID(userID);
             var subscrise = new SubscriseViewModel

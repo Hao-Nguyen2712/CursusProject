@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable disable
 
-#nullable disable
+using System.ComponentModel.DataAnnotations;
 
 namespace Cursus.Domain.Models
 {
@@ -9,9 +8,11 @@ namespace Cursus.Domain.Models
     {
         public Lesson()
         {
-            Commnents = new HashSet<Commnent>();
+            Commnents = new HashSet<Comment>();
+            Progresses = new HashSet<Progress>();
         }
 
+        [Key]
         public int LessionId { get; set; }
         public int? CourseId { get; set; }
         public string LessionTilte { get; set; }
@@ -23,6 +24,7 @@ namespace Cursus.Domain.Models
         public string LessionImage { get; set; }
 
         public virtual Course Course { get; set; }
-        public virtual ICollection<Commnent> Commnents { get; set; }
+        public virtual ICollection<Comment> Commnents { get; set; }
+        public virtual ICollection<Progress> Progresses { get; set; }
     }
 }

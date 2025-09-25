@@ -1,11 +1,6 @@
 ﻿using Cursus.Domain.Models;
 using Cursus.Infrastructure.Student;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cursus.Tests.TestStudent
 {
@@ -43,7 +38,7 @@ namespace Cursus.Tests.TestStudent
 
             // Assert
             Assert.AreEqual(2, students.Count);
-           
+
         }
         [Test]
         public void RemoveStudent()

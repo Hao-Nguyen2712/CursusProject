@@ -95,10 +95,10 @@ namespace Cursus.Infrastructure.Cart
                     _db.SaveChanges();
                     transaction.Commit(); // Commit changes if successful
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     transaction.Rollback(); // Rollback on errors
-                    throw ex;
+                    throw;
                 }
             }
 
@@ -167,10 +167,10 @@ namespace Cursus.Infrastructure.Cart
                     _db.SaveChanges();
                     transaction.Commit(); // Commit changes if successful
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     transaction.Rollback(); // Rollback on errors
-                    throw ex;
+                    throw;
                 }
             }
             // Enroll user in purchased courses (within the transaction)

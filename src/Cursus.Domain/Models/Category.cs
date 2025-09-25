@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -12,6 +11,7 @@ namespace Cursus.Domain.Models
             Courses = new HashSet<Course>();
         }
 
+        [Key]
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public string CategoryStatus { get; set; }

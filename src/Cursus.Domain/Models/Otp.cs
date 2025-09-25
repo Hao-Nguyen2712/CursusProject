@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable disable
 
-#nullable disable
+using System.ComponentModel.DataAnnotations;
 
 namespace Cursus.Domain.Models
 {
     public partial class Otp
     {
+        [Key]
         public int OtpId { get; set; }
         public int? AccountId { get; set; }
         public string OtpType { get; set; }

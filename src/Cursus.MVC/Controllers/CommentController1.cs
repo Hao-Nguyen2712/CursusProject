@@ -1,17 +1,16 @@
-﻿using AutoMapper;
+using AutoMapper;
+using Cursus.Application;
 using Cursus.Application.Account;
 using Cursus.Application.Comment;
+using Cursus.Application.Enroll;
+using Cursus.Application.Progress;
 using Cursus.Domain.Models;
-using Cursus.Infrastructure.Comment;
 using Cursus.MVC.Areas.Identity.Data;
 using Cursus.MVC.Models;
 using Cursus.MVC.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Cursus.Application.Progress;
-using Cursus.Application;
-using Cursus.Application.Enroll;
 namespace Cursus.MVC.Controllers
 {
     public class CommentController : Controller
@@ -57,7 +56,7 @@ namespace Cursus.MVC.Controllers
             comment.CmtDate = DateTime.Now;
             comment.CmtReply = "0";
             // map
-            Cursus.Domain.Models.Commnent commentModel = _mapper.Map<Cursus.Domain.Models.Commnent>(comment);
+            Cursus.Domain.Models.Comment commentModel = _mapper.Map<Cursus.Domain.Models.Comment>(comment);
             commentModel = _commentService.addComment(commentModel);
             comment.CmtId = commentModel.CmtId;
 
@@ -67,7 +66,7 @@ namespace Cursus.MVC.Controllers
             lesson = _lessonService.UpadateLesson(lesson);
 
 
-            return Json(new {LessonID = obj.LessonId, Comment = comment, AccountViewModel = accountViewModel });
+            return Json(new { LessonID = obj.LessonId, Comment = comment, AccountViewModel = accountViewModel });
         }
 
         [HttpPost]
@@ -88,7 +87,7 @@ namespace Cursus.MVC.Controllers
             comment.CmtDate = DateTime.Now;
             comment.CmtReply = obj.reply;
             // map
-            Cursus.Domain.Models.Commnent commentModel = _mapper.Map<Cursus.Domain.Models.Commnent>(comment);
+            Cursus.Domain.Models.Comment commentModel = _mapper.Map<Cursus.Domain.Models.Comment>(comment);
             commentModel = _commentService.addComment(commentModel);
             comment.CmtId = commentModel.CmtId;
             // update comment count in lesson
@@ -101,13 +100,13 @@ namespace Cursus.MVC.Controllers
 
         [HttpPost]
         public IActionResult FinishStudy(int lessonID, int courseID)
-         {
+        {
             ClaimsPrincipal claims = this.User;
             var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
             int accountID = _accountService.GetAccountIDByUserID(userID);
-            
+
             Domain.Models.Progress progress = _progressService.GetProgressByAccountIDAndLessonID(userID, lessonID);
-            if(progress != null)
+            if (progress != null)
             {
                 return Json("False");
             }
@@ -119,19 +118,20 @@ namespace Cursus.MVC.Controllers
             // Dem so luong lesson trong course
             int countLesson = 0;
             List<int> listLessonID = _progressService.GetListLessonIDByCourseID(courseID);
-            foreach(var item in listLessonID) {
+            foreach (var item in listLessonID)
+            {
                 int count = _progressService.coutProgressByAccountID(item, userID);
-                if(count > 0)
+                if (count > 0)
                 {
                     countLesson++;
                 }
             }
 
-            if(countLesson == listLessonID.Count)
+            if (countLesson == listLessonID.Count)
             {
                 // update finish course in enroll
                 Domain.Models.Enroll enroll = _enrollService.UpdateFinishByAccountID(accountID, courseID);
-                if(enroll == null)
+                if (enroll == null)
                 {
                     return Json("False");
                 }
@@ -156,6 +156,6 @@ namespace Cursus.MVC.Controllers
                 return Json("False");
             }
             return Json("True");
-        }   
+        }
     }
 }

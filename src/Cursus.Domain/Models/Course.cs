@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -13,8 +12,11 @@ namespace Cursus.Domain.Models
             Enrolls = new HashSet<Enroll>();
             Lessons = new HashSet<Lesson>();
             Rates = new HashSet<Rate>();
+            Reports = new HashSet<Report>();
+            Discounts = new HashSet<Discount>();
         }
 
+        [Key]
         public int CourseId { get; set; }
         public int? AccountId { get; set; }
         public string CourseName { get; set; }
@@ -36,5 +38,7 @@ namespace Cursus.Domain.Models
         public virtual ICollection<Enroll> Enrolls { get; set; }
         public virtual ICollection<Lesson> Lessons { get; set; }
         public virtual ICollection<Rate> Rates { get; set; }
+        public virtual ICollection<Report> Reports { get; set; }
+        public virtual ICollection<Discount> Discounts { get; set; }
     }
 }

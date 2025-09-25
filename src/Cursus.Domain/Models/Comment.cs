@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
 namespace Cursus.Domain.Models
 {
-    public partial class Commnent
+    public partial class Comment
     {
+        public Comment()
+        {
+            Reports = new HashSet<Report>();
+        }
+
+        [Key]
         public int CmtId { get; set; }
         public int? AccountId { get; set; }
         public int? LessionId { get; set; }
@@ -17,5 +23,6 @@ namespace Cursus.Domain.Models
 
         public virtual Account Account { get; set; }
         public virtual Lesson Lession { get; set; }
+        public virtual ICollection<Report> Reports { get; set; }
     }
 }

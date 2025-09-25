@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable disable
 
-#nullable disable
+using System.ComponentModel.DataAnnotations;
 
 namespace Cursus.Domain.Models
 {
     public partial class Rate
     {
+        [Key]
         public int RateId { get; set; }
         public int? CourseId { get; set; }
         public int? AccountId { get; set; }
