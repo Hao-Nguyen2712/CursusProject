@@ -1,7 +1,5 @@
-using System.Threading.Tasks;
 using Cursus.Application.Report;
 using Cursus.Domain.Models;
-using Cursus.Application;
 
 namespace Cursus.Infrastructure.Report
 {

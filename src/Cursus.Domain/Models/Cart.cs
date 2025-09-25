@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -7,6 +6,7 @@ namespace Cursus.Domain.Models
 {
     public partial class Cart
     {
+        [Key]
         public int CartId { get; set; }
         public int? CourseId { get; set; }
         public int? AccountId { get; set; }

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Cursus.Domain.Models
 {
-	public class CourseTop
-	{
-		public int CourseID { get; set; }
-		public int CourseCount { get; set; }
-	}
+    public class CourseTop
+    {
+        [Key]
+        public int CourseID { get; set; }
+        public int CourseCount { get; set; }
+    }
 }
