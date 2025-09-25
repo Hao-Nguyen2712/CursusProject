@@ -16,6 +16,7 @@ namespace Cursus.Domain.Models
             Progresses = new HashSet<Progress>();
             UserSubscriptions = new HashSet<Subscribe>();
             InstructorSubscriptions = new HashSet<Subscribe>();
+            Tradings = new HashSet<Trading>();
         }
 
         public int AccountId { get; set; }
@@ -46,5 +47,6 @@ namespace Cursus.Domain.Models
         public virtual ICollection<Progress> Progresses { get; set; }
         public virtual ICollection<Subscribe> UserSubscriptions { get; set; }
         public virtual ICollection<Subscribe> InstructorSubscriptions { get; set; }
+        public virtual ICollection<Trading> Tradings { get; set; }
     }
 }

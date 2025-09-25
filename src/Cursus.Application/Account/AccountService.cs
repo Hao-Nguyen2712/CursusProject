@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Cursus.Application.Account
+﻿namespace Cursus.Application.Account
 {
     public class AccountService : IAccountService
     {
@@ -68,7 +62,8 @@ namespace Cursus.Application.Account
         {
             return _accountRepository.UpdateAccount(account);
         }
-        public Domain.Models.Account UpdateAccountLevel(string userID) {
+        public Domain.Models.Account UpdateAccountLevel(string userID)
+        {
             return _accountRepository.UpdateAccountLevel(userID);
         }
     }

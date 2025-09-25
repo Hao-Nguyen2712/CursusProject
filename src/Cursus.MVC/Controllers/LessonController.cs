@@ -19,10 +19,10 @@ namespace Cursus.MVC.Controllers
     public class LessonController : Controller
     {
         private readonly Cursus.Application.ILessonService _lessonService;
-        private readonly UserManager<CursusMVCUser> _userManager;
-        private readonly IUserStore<CursusMVCUser> _userStore;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserStore<ApplicationUser> _userStore;
 
-        public LessonController(UserManager<CursusMVCUser> userManager, IUserStore<CursusMVCUser> userStore, Cursus.Application.ILessonService lessonService)
+        public LessonController(UserManager<ApplicationUser> userManager, IUserStore<ApplicationUser> userStore, Cursus.Application.ILessonService lessonService)
         {
 
             _userManager = userManager;

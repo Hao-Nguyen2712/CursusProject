@@ -24,7 +24,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Cursus.MVC.Service;
 using Cursus.Application;
 using Cursus.Application.Account;
-using Cursus.MVC.Areas.Identity.Data;
+
 
 
 namespace Cursus.MVC.Controllers
@@ -47,11 +47,11 @@ namespace Cursus.MVC.Controllers
         private readonly IAccountService accountService;
         private readonly IEmailSender _emailSender;
         private readonly ICourseService courseService;
-        private readonly UserManager<CursusMVCUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly SignInManager<CursusMVCUser> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AdminController(ICategoryService _categoryService, IInstructorService _instructorService, IStudentService _studentService, IAnalyzeService _analyzeService, IAdminDashBoardService adminDashBoardService, IAdminService _adminService, IMapper _mapper, IEmailSender emailSender, ICourseService courseService, IAccountService accountService, RoleManager<IdentityRole> roleManager, UserManager<CursusMVCUser> userManager, SignInManager<CursusMVCUser> signInManager, IEmailSender _mailSender)
+        public AdminController(ICategoryService _categoryService, IInstructorService _instructorService, IStudentService _studentService, IAnalyzeService _analyzeService, IAdminDashBoardService adminDashBoardService, IAdminService _adminService, IMapper _mapper, IEmailSender emailSender, ICourseService courseService, IAccountService accountService, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender _mailSender)
 
         {
             this.categoryService = _categoryService;

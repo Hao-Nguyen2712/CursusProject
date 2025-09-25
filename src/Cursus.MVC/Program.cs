@@ -41,8 +41,6 @@ using Cursus.Infrastructure.SearchInstructor;
 using Cursus.Infrastructure.Student;
 using Cursus.Infrastructure.Subscription;
 using Cursus.Infrastructure.Subscrise;
-using Cursus.MVC.Areas.Identity.Data;
-using Cursus.MVC.Data;
 using Cursus.MVC.Mapper;
 using Cursus.MVC.Service;
 using Cursus.MVC.Services;
@@ -55,24 +53,20 @@ namespace Cursus.MVC
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             var connectionString = builder.Configuration.GetConnectionString("CursusMVCContextConnection") ?? throw new InvalidOperationException("Connection string 'CursusMVCContextConnection' not found.");
             var config = builder.Configuration;
 
-            // Configure CursusDBContext for your domain models
+            // Configure CursusDBContext as the main context (includes both domain models and Identity)
             builder.Services.AddDbContext<CursusDBContext>(options =>
                 options.UseSqlServer(connectionString, b => b.MigrationsAssembly("Cursus.MVC")));
 
-            // Configure CursusMVCContext for Identity
-            builder.Services.AddDbContext<CursusMVCContext>(options =>
-                options.UseSqlServer(connectionString));
-
-            // Set up Identity with CursusMVCUser
-            builder.Services.AddDefaultIdentity<CursusMVCUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            // Set up Identity with ApplicationUser using CursusDBContext
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<CursusMVCContext>();
+                .AddEntityFrameworkStores<CursusDBContext>();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -214,25 +208,32 @@ namespace Cursus.MVC
             builder.Services.AddRazorPages();
             builder.Services.AddTransient<Cursus.MVC.Service.EmailSender>();
 
+            // Register the database seeder
+            builder.Services.AddScoped<DatabaseSeeder>();
+
             var app = builder.Build();
 
-            // Apply migrations on startup
+            // Apply migrations and seed data on startup
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
                 try
                 {
-                    // Migrate both contexts
+                    // Migrate CursusDBContext (includes both domain models and Identity)
                     var cursusDbContext = services.GetRequiredService<CursusDBContext>();
                     cursusDbContext.Database.Migrate();
 
-                    var identityContext = services.GetRequiredService<CursusMVCContext>();
-                    identityContext.Database.Migrate();
+                    // Seed data if in development environment
+                    if (app.Environment.IsDevelopment())
+                    {
+                        var seeder = services.GetRequiredService<DatabaseSeeder>();
+                        await seeder.SeedAsync();
+                    }
                 }
                 catch (Exception ex)
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while migrating the database.");
+                    logger.LogError(ex, "An error occurred while migrating or seeding the database.");
                 }
             }
 

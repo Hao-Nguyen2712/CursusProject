@@ -3,40 +3,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Cursus.MVC.Migrations.CursusDB
+namespace Cursus.MVC.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Accounts",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    AccountId = table.Column<int>(type: "int", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateofBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Role = table.Column<int>(type: "int", nullable: true),
-                    Money = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    UpLevel = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsDelete = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Bio = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Accounts", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -106,104 +80,6 @@ namespace Cursus.MVC.Migrations.CursusDB
                 });
 
             migrationBuilder.CreateTable(
-                name: "InstructorSubscriptions",
-                columns: table => new
-                {
-                    InstructorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    SubscriptionCount = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_InstructorSubscriptions", x => x.InstructorId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Progresses",
-                columns: table => new
-                {
-                    ProgressId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AccId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LessonId = table.Column<int>(type: "int", nullable: false),
-                    Finish = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Progresses", x => x.ProgressId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Reports",
-                columns: table => new
-                {
-                    ReportId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CourseId = table.Column<int>(type: "int", nullable: true),
-                    CmtId = table.Column<int>(type: "int", nullable: true),
-                    AccountId = table.Column<int>(type: "int", nullable: true),
-                    ReportReasson = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ReportDate = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Reports", x => x.ReportId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Subscribes",
-                columns: table => new
-                {
-                    SubId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    InstructorId = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Subscribes", x => x.SubId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tradings",
-                columns: table => new
-                {
-                    TdId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TdDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    TdMoney = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    TdMethodPayment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AccountId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tradings", x => x.TdId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Otps",
-                columns: table => new
-                {
-                    OtpId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountId = table.Column<int>(type: "int", nullable: true),
-                    OtpType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OtpCreateAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    OtpExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    OtpIsUse = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OtpCode = table.Column<int>(type: "int", nullable: true),
-                    AccountId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Otps", x => x.OtpId);
-                    table.ForeignKey(
-                        name: "FK_Otps_Accounts_AccountId1",
-                        column: x => x.AccountId1,
-                        principalTable: "Accounts",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -220,6 +96,40 @@ namespace Cursus.MVC.Migrations.CursusDB
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Accounts",
+                columns: table => new
+                {
+                    AccountId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateofBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Role = table.Column<int>(type: "int", nullable: true),
+                    Money = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    UpLevel = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDelete = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Bio = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Accounts", x => x.AccountId);
+                    table.UniqueConstraint("AK_Accounts_Id", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Accounts_AspNetUsers_Id",
+                        column: x => x.Id,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -323,26 +233,117 @@ namespace Cursus.MVC.Migrations.CursusDB
                     CourseRequirement = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CourseAvatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CourseDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CourseMoney = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CourseMoney = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     CourseStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CourseProcess = table.Column<int>(type: "int", nullable: true),
-                    Discount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    CategoryId = table.Column<int>(type: "int", nullable: true),
-                    AccountId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    Discount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    CategoryId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Courses", x => x.CourseId);
                     table.ForeignKey(
-                        name: "FK_Courses_Accounts_AccountId1",
-                        column: x => x.AccountId1,
+                        name: "FK_Courses_Accounts_AccountId",
+                        column: x => x.AccountId,
                         principalTable: "Accounts",
-                        principalColumn: "Id");
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Courses_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "CategoryId");
+                        principalColumn: "CategoryId",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InstructorSubscriptions",
+                columns: table => new
+                {
+                    InstructorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SubscriptionCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InstructorSubscriptions", x => x.InstructorId);
+                    table.ForeignKey(
+                        name: "FK_InstructorSubscriptions_Accounts_InstructorId",
+                        column: x => x.InstructorId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Otps",
+                columns: table => new
+                {
+                    OtpId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AccountId = table.Column<int>(type: "int", nullable: true),
+                    OtpType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OtpCreateAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    OtpExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    OtpIsUse = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OtpCode = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Otps", x => x.OtpId);
+                    table.ForeignKey(
+                        name: "FK_Otps_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Accounts",
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Subscribes",
+                columns: table => new
+                {
+                    SubId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    InstructorId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subscribes", x => x.SubId);
+                    table.ForeignKey(
+                        name: "FK_Subscribes_Accounts_InstructorId",
+                        column: x => x.InstructorId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Subscribes_Accounts_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tradings",
+                columns: table => new
+                {
+                    TdId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TdDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TdMoney = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    TdMethodPayment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AccountId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tradings", x => x.TdId);
+                    table.ForeignKey(
+                        name: "FK_Tradings_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Accounts",
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -353,22 +354,47 @@ namespace Cursus.MVC.Migrations.CursusDB
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CourseId = table.Column<int>(type: "int", nullable: true),
                     AccountId = table.Column<int>(type: "int", nullable: true),
-                    CartMoney = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    AccountId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    CartMoney = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Carts", x => x.CartId);
                     table.ForeignKey(
-                        name: "FK_Carts_Accounts_AccountId1",
-                        column: x => x.AccountId1,
+                        name: "FK_Carts_Accounts_AccountId",
+                        column: x => x.AccountId,
                         principalTable: "Accounts",
-                        principalColumn: "Id");
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Carts_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
-                        principalColumn: "CourseId");
+                        principalColumn: "CourseId",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CourseDiscounts",
+                columns: table => new
+                {
+                    CoursesCourseId = table.Column<int>(type: "int", nullable: false),
+                    DiscountsDiscountId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CourseDiscounts", x => new { x.CoursesCourseId, x.DiscountsDiscountId });
+                    table.ForeignKey(
+                        name: "FK_CourseDiscounts_Courses_CoursesCourseId",
+                        column: x => x.CoursesCourseId,
+                        principalTable: "Courses",
+                        principalColumn: "CourseId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CourseDiscounts_Discounts_DiscountsDiscountId",
+                        column: x => x.DiscountsDiscountId,
+                        principalTable: "Discounts",
+                        principalColumn: "DiscountId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -382,22 +408,23 @@ namespace Cursus.MVC.Migrations.CursusDB
                     EnrollFinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EnrollDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EnrollBlock = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EnrollStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AccountId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    EnrollStatus = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Enrolls", x => x.EnrollId);
                     table.ForeignKey(
-                        name: "FK_Enrolls_Accounts_AccountId1",
-                        column: x => x.AccountId1,
+                        name: "FK_Enrolls_Accounts_AccountId",
+                        column: x => x.AccountId,
                         principalTable: "Accounts",
-                        principalColumn: "Id");
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Enrolls_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
-                        principalColumn: "CourseId");
+                        principalColumn: "CourseId",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -422,7 +449,8 @@ namespace Cursus.MVC.Migrations.CursusDB
                         name: "FK_Lessons_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
-                        principalColumn: "CourseId");
+                        principalColumn: "CourseId",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -435,22 +463,23 @@ namespace Cursus.MVC.Migrations.CursusDB
                     AccountId = table.Column<int>(type: "int", nullable: true),
                     RatePoint = table.Column<int>(type: "int", nullable: true),
                     RateContent = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    AccountId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    RateDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Rates", x => x.RateId);
                     table.ForeignKey(
-                        name: "FK_Rates_Accounts_AccountId1",
-                        column: x => x.AccountId1,
+                        name: "FK_Rates_Accounts_AccountId",
+                        column: x => x.AccountId,
                         principalTable: "Accounts",
-                        principalColumn: "Id");
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Rates_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
-                        principalColumn: "CourseId");
+                        principalColumn: "CourseId",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -464,23 +493,92 @@ namespace Cursus.MVC.Migrations.CursusDB
                     CmtContent = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CmtLevel = table.Column<int>(type: "int", nullable: true),
                     CmtReply = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CmtDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    AccountId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    CmtDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Comments", x => x.CmtId);
                     table.ForeignKey(
-                        name: "FK_Comments_Accounts_AccountId1",
-                        column: x => x.AccountId1,
+                        name: "FK_Comments_Accounts_AccountId",
+                        column: x => x.AccountId,
                         principalTable: "Accounts",
-                        principalColumn: "Id");
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Comments_Lessons_LessionId",
                         column: x => x.LessionId,
                         principalTable: "Lessons",
-                        principalColumn: "LessionId");
+                        principalColumn: "LessionId",
+                        onDelete: ReferentialAction.SetNull);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Progresses",
+                columns: table => new
+                {
+                    ProgressId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AccId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    LessonId = table.Column<int>(type: "int", nullable: false),
+                    Finish = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Progresses", x => x.ProgressId);
+                    table.ForeignKey(
+                        name: "FK_Progresses_Accounts_AccId",
+                        column: x => x.AccId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Progresses_Lessons_LessonId",
+                        column: x => x.LessonId,
+                        principalTable: "Lessons",
+                        principalColumn: "LessionId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reports",
+                columns: table => new
+                {
+                    ReportId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CourseId = table.Column<int>(type: "int", nullable: true),
+                    CmtId = table.Column<int>(type: "int", nullable: true),
+                    AccountId = table.Column<int>(type: "int", nullable: true),
+                    ReportReasson = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReportDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reports", x => x.ReportId);
+                    table.ForeignKey(
+                        name: "FK_Reports_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Accounts",
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Reports_Comments_CmtId",
+                        column: x => x.CmtId,
+                        principalTable: "Comments",
+                        principalColumn: "CmtId",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Reports_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "CourseId",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Accounts_Id",
+                table: "Accounts",
+                column: "Id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -522,9 +620,9 @@ namespace Cursus.MVC.Migrations.CursusDB
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Carts_AccountId1",
+                name: "IX_Carts_AccountId",
                 table: "Carts",
-                column: "AccountId1");
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Carts_CourseId",
@@ -532,9 +630,9 @@ namespace Cursus.MVC.Migrations.CursusDB
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_AccountId1",
+                name: "IX_Comments_AccountId",
                 table: "Comments",
-                column: "AccountId1");
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_LessionId",
@@ -542,9 +640,14 @@ namespace Cursus.MVC.Migrations.CursusDB
                 column: "LessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Courses_AccountId1",
+                name: "IX_CourseDiscounts_DiscountsDiscountId",
+                table: "CourseDiscounts",
+                column: "DiscountsDiscountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Courses_AccountId",
                 table: "Courses",
-                column: "AccountId1");
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Courses_CategoryId",
@@ -552,9 +655,9 @@ namespace Cursus.MVC.Migrations.CursusDB
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Enrolls_AccountId1",
+                name: "IX_Enrolls_AccountId",
                 table: "Enrolls",
-                column: "AccountId1");
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Enrolls_CourseId",
@@ -567,19 +670,59 @@ namespace Cursus.MVC.Migrations.CursusDB
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Otps_AccountId1",
+                name: "IX_Otps_AccountId",
                 table: "Otps",
-                column: "AccountId1");
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Rates_AccountId1",
+                name: "IX_Progresses_AccId",
+                table: "Progresses",
+                column: "AccId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Progresses_LessonId",
+                table: "Progresses",
+                column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rates_AccountId",
                 table: "Rates",
-                column: "AccountId1");
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rates_CourseId",
                 table: "Rates",
                 column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reports_AccountId",
+                table: "Reports",
+                column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reports_CmtId",
+                table: "Reports",
+                column: "CmtId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reports_CourseId",
+                table: "Reports",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subscribes_InstructorId",
+                table: "Subscribes",
+                column: "InstructorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subscribes_UserId",
+                table: "Subscribes",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tradings_AccountId",
+                table: "Tradings",
+                column: "AccountId");
         }
 
         /// <inheritdoc />
@@ -604,10 +747,7 @@ namespace Cursus.MVC.Migrations.CursusDB
                 name: "Carts");
 
             migrationBuilder.DropTable(
-                name: "Comments");
-
-            migrationBuilder.DropTable(
-                name: "Discounts");
+                name: "CourseDiscounts");
 
             migrationBuilder.DropTable(
                 name: "Enrolls");
@@ -637,7 +777,10 @@ namespace Cursus.MVC.Migrations.CursusDB
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Discounts");
+
+            migrationBuilder.DropTable(
+                name: "Comments");
 
             migrationBuilder.DropTable(
                 name: "Lessons");
@@ -650,6 +793,9 @@ namespace Cursus.MVC.Migrations.CursusDB
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Cursus.Application.Account;
 using AutoMapper;
 using Cursus.MVC.Services;
-using Cursus.MVC.Areas.Identity.Data;
+
 using Microsoft.AspNetCore.Identity;
 using Cursus.Infrastructure.Enroll;
 using Cursus.MVC.Models;
@@ -25,15 +25,15 @@ namespace Cursus.MVC.Controllers
         private readonly ICourseRepository _courseRepository;
         private readonly IEnrollRepository _enrollRepository;
         private readonly IMapper mapper;
-        private readonly UserManager<CursusMVCUser> _userManager;
-        private readonly IUserStore<CursusMVCUser> _userStore;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IAccountService _accountService;
         private readonly ICourseService _courseService;
         private readonly IEnrollService _enrollService;
         private readonly ICertificateService _certificateService;
         private readonly ICartService _cartService;
 
-        public CertificateController(ISendEmail sendEmail, ICourseRepository courseRepository, IEnrollRepository enrollRepository, IMapper _mapper, UserManager<CursusMVCUser> userManager, IUserStore<CursusMVCUser> userStore, IAccountService accountService, ICourseService courseService, IEnrollService enrollService, ICertificateService certificateService, ICartService cartService)
+        public CertificateController(ISendEmail sendEmail, ICourseRepository courseRepository, IEnrollRepository enrollRepository, IMapper _mapper, UserManager<ApplicationUser> userManager, IUserStore<ApplicationUser> userStore, IAccountService accountService, ICourseService courseService, IEnrollService enrollService, ICertificateService certificateService, ICartService cartService)
         {
             _sendEmail = sendEmail;
             this._courseRepository = courseRepository;

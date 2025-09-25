@@ -5,7 +5,7 @@ using Cursus.Application.Comment;
 using Cursus.Application.Enroll;
 using Cursus.Application.Progress;
 using Cursus.Domain.Models;
-using Cursus.MVC.Areas.Identity.Data;
+
 using Cursus.MVC.Models;
 using Cursus.MVC.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -18,14 +18,14 @@ namespace Cursus.MVC.Controllers
         private readonly ICommentService _commentService;
         private readonly IMapper _mapper;
         private readonly IAccountService _accountService;
-        private readonly UserManager<CursusMVCUser> _userManager;
-        private readonly IUserStore<CursusMVCUser> _userStore;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IProgressService _progressService;
         private readonly ICourseService _courseService;
         private readonly IEnrollService _enrollService;
         private readonly ILessonService _lessonService;
 
-        public CommentController(ICommentService commentService, IMapper mapper, IAccountService accountService, UserManager<CursusMVCUser> userManager, IUserStore<CursusMVCUser> userStore, IProgressService progressService, ICourseService courseService, IEnrollService enrollService, ILessonService lessonService)
+        public CommentController(ICommentService commentService, IMapper mapper, IAccountService accountService, UserManager<ApplicationUser> userManager, IUserStore<ApplicationUser> userStore, IProgressService progressService, ICourseService courseService, IEnrollService enrollService, ILessonService lessonService)
         {
             _commentService = commentService;
             _mapper = mapper;

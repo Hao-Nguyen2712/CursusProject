@@ -5,7 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Cursus.MVC.Areas.Identity.Data;
+using Cursus.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -15,12 +15,12 @@ namespace Cursus.MVC.Areas.Identity.Pages.Account
 {
     public class LogoutModel : PageModel
     {
-        private readonly SignInManager<CursusMVCUser> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-        public LogoutModel(SignInManager<CursusMVCUser> signInManager, ILogger<LogoutModel> logger, IHttpContextAccessor httpContextAccessor)
+        public LogoutModel(SignInManager<ApplicationUser> signInManager, ILogger<LogoutModel> logger, IHttpContextAccessor httpContextAccessor)
         {
             _signInManager = signInManager;
             _logger = logger;

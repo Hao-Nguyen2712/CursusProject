@@ -6,7 +6,6 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Cursus.Domain.Models;
-using Cursus.MVC.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +16,15 @@ namespace Cursus.MVC.Areas.Identity.Pages.Account.Manage
 {
     public class ChangePasswordModel : PageModel
     {
-        private readonly UserManager<CursusMVCUser> _userManager;
-        private readonly SignInManager<CursusMVCUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<ChangePasswordModel> _logger;
         private readonly Cursus.Domain.Models.CursusDBContext _db;
         private readonly IEmailSender _emailSender;
 
         public ChangePasswordModel(
-            UserManager<CursusMVCUser> userManager,
-            SignInManager<CursusMVCUser> signInManager,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
             ILogger<ChangePasswordModel> logger,
             CursusDBContext db,
             IEmailSender emailSender)
