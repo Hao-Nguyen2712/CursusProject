@@ -30,39 +30,60 @@
 										<a class="flex-sm-fill text-sm-center nav-link" data-bs-toggle="tab" href="#nav-video" role="tab" aria-selected="false"><i class="fas fa-video me-2"></i>Video</a>
 									</div>
 									
-									<div class="tab-content">
-										<div class="tab-pane fade show active" id="nav-basic" role="tabpanel">
-											<div class="new-section mt-30">
-												<div class="form_group">
-													<label class="label25">Lecture Title<span class="text-danger">*</span></label>
-													<input class="form_input_1" type="text" placeholder="Title here">
-												</div>
+								<div class="tab-content">
+									<div class="tab-pane fade show active" id="nav-basic" role="tabpanel">
+										<div class="new-section mt-30">
+											<div class="form_group">
+												<label class="label25">Lecture Title<span class="text-danger">*</span></label>
+												<input class="form_input_1" type="text" placeholder="Title here">
 											</div>
-											<div class="ui search focus lbel25 mt-30">	
-												<label>Description<span class="text-danger">*</span></label>
-												<div class="text-editor">			
-													<div id="editor2"></div>
+										</div>
+										<div class="ui search focus lbel25 mt-30">	
+											<label>Description<span class="text-danger">*</span></label>
+											<div class="text-editor">			
+												<div id="editor2"></div>
+											</div>
+										</div>
+										<!-- Lesson Thumbnail Section -->
+										<div class="thumbnail-into mt-30">
+											<div class="row">
+												<div class="col-lg-6 col-md-12">
+													<label class="label25 text-left">Lesson Thumbnail</label>
+													<div class="thumb-item">
+														<img id="lessonThumbnailContainer" src="~/images/thumbnail-demo.jpg" alt="" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px;">
+														<div class="thumb-dt">
+															<div class="upload-btn">
+																<form id="lessonThumbnailForm" enctype="multipart/form-data">
+																	<input class="uploadBtn-main-input" type="file"
+																		id="lessonThumbnailInput" accept="image/*">
+																	<label for="lessonThumbnailInput" title="Upload">Choose
+																		Lesson Thumbnail</label>
+																</form>
+															</div>
+															<span class="uploadBtn-main-file">Size: 590x300 pixels.
+																Supports: jpg,jpeg, or png</span>
+														</div>
+													</div>
 												</div>
 											</div>
 										</div>
-										<div class="tab-pane fade" id="nav-video" role="tabpanel">
-											<div class="lecture-video-dt mt-30">
-												<div class="video-category">
-													<label><input type="radio" name="colorRadio" value="youtube"><span>YouTube</span></label>
-													<div class="youtube video-box">
-														<div class="new-section">
-															<div class="ui search focus mt-30 lbel25">
-																<label>Youtube URL<span class="text-danger">*</span></label>
-																<div class="ui left icon input swdh19">
-																	<input class="prompt srch_explore" type="text" placeholder="Youtube Video URL" name="" id="videoLink" value="">															
-																</div>
+									</div>
+									<div class="tab-pane fade" id="nav-video" role="tabpanel">
+										<div class="lecture-video-dt mt-30">
+											<div class="video-category">
+												<label><input type="radio" name="colorRadio" value="youtube"><span>YouTube</span></label>
+												<div class="youtube video-box">
+													<div class="new-section">
+														<div class="ui search focus mt-30 lbel25">
+															<label>Youtube URL<span class="text-danger">*</span></label>
+															<div class="ui left icon input swdh19">
+																<input class="prompt srch_explore" type="text" placeholder="Youtube Video URL" name="" id="videoLink" value="">															
 															</div>
 														</div>
 													</div>
 												</div>
-										</div>
-
-									</div>
+											</div>
+									</div>									</div>
 									
 								</div>
 							</div>
@@ -630,13 +651,17 @@
                     return;
                 }
 
+				// Get the lesson thumbnail URL if available
+				var thumbnailUrl = window.currentLessonThumbnailUrl || null;
+				
 				$.ajax({
 					url: "/Instructor/AddLesson",
 					type: "GET",
 					data: { 
 						title: title,
 						description: description, 
-						videoLink: videoLink 
+						videoLink: videoLink,
+						thumbnailUrl: thumbnailUrl
 					},
 					success: function (data) {
                         debugger;
@@ -697,4 +722,7 @@
         });
         
 	</script>
+	
+	<!-- Lesson Thumbnail Upload Script -->
+	<script src="~/js/lessonThumbnail.js" asp-append-version="true"></script>
 }

@@ -54,7 +54,7 @@ namespace Cursus.MVC.Controllers
             return View(homePageView);
         }
         [HttpPost]
-        public IActionResult EnrollCourse(int courseId)
+        public async Task<IActionResult> EnrollCourse(int courseId)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace Cursus.MVC.Controllers
                 var account = _accountService.GetAccountByUserID(userID);
                 var course = _courseService.GetCourseById(courseId);
                 _enrollService.EnrollCourse(courseId, accountId);
-                _sendEmail.SendEmailAsync(account.Email, "Enroll Course", Service.EmailSender.Enroll(account.FullName, course.CourseName));
+                await _sendEmail.SendEmailAsync(account.Email, "Enroll Course", $"Enrolled in course: {course.CourseName}");
                 return Json(new { success = true });
             }
             catch (Exception ex)
@@ -74,7 +74,7 @@ namespace Cursus.MVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult EnrollCourseFree(int courseId)
+        public async Task<IActionResult> EnrollCourseFree(int courseId)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace Cursus.MVC.Controllers
                 var account = _accountService.GetAccountByUserID(userID);
                 var course = _courseService.GetCourseById(courseId);
                 _enrollService.EnrollCourse(courseId, accountId);
-                _sendEmail.SendEmailAsync(account.Email, "Enroll Course Free", Service.EmailSender.Enroll(account.FullName, course.CourseName));
+                await _sendEmail.SendEmailAsync(account.Email, "Enroll Course Free", $"Enrolled in free course: {course.CourseName}");
                 return Json(new { success = true });
             }
             catch (Exception ex)

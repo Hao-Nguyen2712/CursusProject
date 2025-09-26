@@ -1,0 +1,61 @@
+@{
+    ViewData["Title"] = "Revenue Analytics";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="sa4d25">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="section_padding_130">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="dashboard_tab_content">
+                                <div class="orders_table">
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                            <div class="table_title">
+                                                <h2>Revenue Analytics</h2>
+                                                <p>Comprehensive revenue analysis and reporting</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="coming-soon-container text-center">
+                                        <i class="uil uil-chart-line" style="font-size: 4rem; color: #007bff;"></i>
+                                        <h3>Revenue Analytics</h3>
+                                        <p class="text-muted">@ViewBag.Message</p>
+                                        <div class="alert alert-info">
+                                            <strong>Features to be implemented:</strong>
+                                            <ul class="list-unstyled mt-2">
+                                                <li>• Monthly/yearly revenue charts</li>
+                                                <li>• Revenue by course category</li>
+                                                <li>• Payment method breakdown</li>
+                                                <li>• Instructor commission tracking</li>
+                                                <li>• Revenue forecasting</li>
+                                                <li>• Downloadable reports</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .coming-soon-container {
+            padding: 3rem;
+        }
+        
+        .coming-soon-container ul li {
+            text-align: left;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+}

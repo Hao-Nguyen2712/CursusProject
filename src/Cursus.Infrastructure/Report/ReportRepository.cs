@@ -22,22 +22,30 @@ namespace Cursus.Infrastructure.Report
 
         public void DeleteReport(int ReportId)
         {
-            throw new NotImplementedException();
+            var report = _context.Reports.Find(ReportId);
+            if (report != null)
+            {
+                _context.Reports.Remove(report);
+                _context.SaveChanges();
+            }
         }
 
         public List<Domain.Models.Report> GetAllReport()
         {
-            return _context.Reports.ToList();
+            return _context.Reports
+                .OrderByDescending(r => r.ReportDate)
+                .ToList();
         }
 
         public Domain.Models.Report GetReportById(int ReportId)
         {
-            throw new NotImplementedException();
+            return _context.Reports.Find(ReportId);
         }
 
         public void UpdateReport(Domain.Models.Report Report)
         {
-            throw new NotImplementedException();
+            _context.Reports.Update(Report);
+            _context.SaveChanges();
         }
     }
 }

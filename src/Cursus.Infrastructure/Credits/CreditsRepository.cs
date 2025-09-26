@@ -63,6 +63,15 @@ namespace Cursus.Infrastructure.Credits
             return tradings;
 		}
 
+		public List<Domain.Models.Trading> GetAllTradingForAdmin()
+		{
+			var tradings = _dbContext.Tradings
+				.Include(t => t.Account)
+				.OrderByDescending(t => t.TdDate)
+				.ToList();
+            return tradings;
+		}
+
 		public Domain.Models.Trading AddTrading(Domain.Models.Trading trading, string userID)
 		{
 			Domain.Models.Account account = _dbContext.Accounts.FirstOrDefault(x => x.Id == userID);

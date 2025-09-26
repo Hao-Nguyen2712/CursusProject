@@ -2,14 +2,6 @@
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using QuestPDF.Previewer;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.AccessControl;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cursus.Application.Certificate
 {
@@ -17,7 +9,8 @@ namespace Cursus.Application.Certificate
     {
         private static readonly Dictionary<string, bool> screenshotTaken = new Dictionary<string, bool>();
 
-        public async void GenerateCertificateToPDF(string fullName, string courseName, string outputPath)
+        // Server-side PDF generation method removed - using client-side PDF generation only
+        /*public async void GenerateCertificateToPDF(string fullName, string courseName, string outputPath)
         {
             // Cấu hình giấy phép QuestPDF
             QuestPDF.Settings.License = LicenseType.Community;
@@ -83,7 +76,7 @@ namespace Cursus.Application.Certificate
     </html>";
 
             string downloadsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
-            string imagePath = await GenerateImageFromHtml(htmlContent, Path.Combine(downloadsPath, outputPath));
+            // Server-side PDF generation removed - using client-side only
 
             Document.Create(container =>
             {
@@ -122,28 +115,9 @@ namespace Cursus.Application.Certificate
             // {
             //     File.Delete(imagePath);
             // }
-        }
+        }*/
 
-        public static async Task<string> GenerateImageFromHtml(string html, string outputPath)
-        {
-            // Tải trình duyệt nếu chưa được tải
-            await new BrowserFetcher().DownloadAsync(BrowserFetcher.DefaultRevision);
-
-            // Khởi chạy trình duyệt
-            var browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
-            var page = await browser.NewPageAsync();
-
-            // Thiết lập nội dung HTML
-            await page.SetContentAsync(html);
-
-            // Chụp ảnh màn hình và lưu vào đường dẫn chỉ định
-            await page.ScreenshotAsync(outputPath, new ScreenshotOptions { FullPage = true });
-
-            // Đóng trình duyệt
-            await browser.CloseAsync();
-
-            return outputPath;
-        }
+        // GenerateImageFromHtml method removed - using client-side PDF generation only
     }
 }
 

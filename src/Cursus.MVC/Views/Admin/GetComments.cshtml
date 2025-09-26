@@ -1,0 +1,61 @@
+@{
+    ViewData["Title"] = "Comment Moderation";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="sa4d25">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="section_padding_130">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="dashboard_tab_content">
+                                <div class="orders_table">
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                            <div class="table_title">
+                                                <h2>Comment Moderation</h2>
+                                                <p>Review and moderate user comments across the platform</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="coming-soon-container text-center">
+                                        <i class="uil uil-comments" style="font-size: 4rem; color: #6c757d;"></i>
+                                        <h3>Comment Moderation</h3>
+                                        <p class="text-muted">@ViewBag.Message</p>
+                                        <div class="alert alert-info">
+                                            <strong>Features to be implemented:</strong>
+                                            <ul class="list-unstyled mt-2">
+                                                <li>• View all user comments</li>
+                                                <li>• Filter by reported comments</li>
+                                                <li>• Approve/reject comments</li>
+                                                <li>• Bulk moderation actions</li>
+                                                <li>• Comment analytics</li>
+                                                <li>• User behavior tracking</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .coming-soon-container {
+            padding: 3rem;
+        }
+        
+        .coming-soon-container ul li {
+            text-align: left;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+}

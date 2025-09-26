@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Cursus.MVC.Services;
 
 namespace Cursus.MVC.Areas.Identity.Pages.Account.Manage
 {
@@ -20,14 +21,14 @@ namespace Cursus.MVC.Areas.Identity.Pages.Account.Manage
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<ChangePasswordModel> _logger;
         private readonly Cursus.Domain.Models.CursusDBContext _db;
-        private readonly IEmailSender _emailSender;
+        private readonly EmailSender _emailSender;
 
         public ChangePasswordModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<ChangePasswordModel> logger,
             CursusDBContext db,
-            IEmailSender emailSender)
+            EmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -124,7 +125,8 @@ namespace Cursus.MVC.Areas.Identity.Pages.Account.Manage
                 {
                     account.Password = Input.NewPassword;
                     _db.Accounts.Update(account);
-                    await _emailSender.SendEmailAsync(account.Email, "Change Password", Service.EmailSender.EmailChangePassword(account.FullName));
+                    var htmlContent = _emailSender.EmailChangePassword(account.FullName);
+                    await _emailSender.SendEmailAsync(account.Email, "Change Password", htmlContent);
                     await _db.SaveChangesAsync();
                 }
 

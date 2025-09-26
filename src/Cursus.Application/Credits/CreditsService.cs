@@ -1,6 +1,8 @@
 ﻿using Cursus.Application.lib;
 using Cursus.Application.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -17,28 +19,31 @@ namespace Cursus.Application.Credits
     public class CreditsService : ICreditsService
     {
         private readonly ICreditsRepository _creditsRepository;
+        private readonly VnPayConfig _vnPayConfig;
+        private readonly ExchangeRateConfig _exchangeRateConfig;
 
-		public CreditsService(ICreditsRepository creditsRepository)
+		public CreditsService(ICreditsRepository creditsRepository, IOptions<VnPayConfig> vnPayConfig, IOptions<ExchangeRateConfig> exchangeRateConfig)
 		{
 			_creditsRepository = creditsRepository;
+			_vnPayConfig = vnPayConfig.Value;
+			_exchangeRateConfig = exchangeRateConfig.Value;
 		}
-
-		private const string ApiBaseUrl = "https://v6.exchangerate-api.com/v6/";
-        private const string ApiKey = "50b9de7e7d868bcac5711146";
         public string CreateRequestUrl(double money, string bankCode)
         {
             DateTime currentDate = DateTime.Now;
             var tick = DateTime.Now.Ticks.ToString();
             var vnpay = new VnPayLibrary();
-            vnpay.AddRequestData("vnp_Version", "2.1.0");
-            vnpay.AddRequestData("vnp_Command", "pay");
-            vnpay.AddRequestData("vnp_TmnCode", "7OB7OEJA");
+            
+            // Use configuration values instead of hard-coded ones
+            vnpay.AddRequestData("vnp_Version", _vnPayConfig.Version);
+            vnpay.AddRequestData("vnp_Command", _vnPayConfig.Command);
+            vnpay.AddRequestData("vnp_TmnCode", _vnPayConfig.TmnCode);
             vnpay.AddRequestData("vnp_Amount", (money * 100).ToString()); //Số tiền thanh toán. Số tiền không mang các ký tự phân tách thập phân, phần nghìn, ký tự tiền tệ. Để gửi số tiền thanh toán là 100,000 VND (một trăm nghìn VNĐ) thì merchant cần nhân thêm 100 lần (khử phần thập phân), sau đó gửi sang VNPAY là: 10000000
 
             vnpay.AddRequestData("vnp_CreateDate", currentDate.ToString("yyyyMMddHHmmss"));
-            vnpay.AddRequestData("vnp_CurrCode", "VND");
-            vnpay.AddRequestData("vnp_IpAddr", "127.0.0.1");
-            vnpay.AddRequestData("vnp_Locale", "vn");
+            vnpay.AddRequestData("vnp_CurrCode", _vnPayConfig.CurrCode);
+            vnpay.AddRequestData("vnp_IpAddr", _vnPayConfig.IpAddr);
+            vnpay.AddRequestData("vnp_Locale", _vnPayConfig.Locale);
             if (bankCode == "QR")
             {
                 vnpay.AddRequestData("vnp_BankCode", "");
@@ -54,10 +59,10 @@ namespace Cursus.Application.Credits
 
             vnpay.AddRequestData("vnp_OrderInfo", "Thanh toán đơn hàng");
             vnpay.AddRequestData("vnp_OrderType", "order"); //default value: other
-            vnpay.AddRequestData("vnp_ReturnUrl", "https://cursusmvc20240730144315.azurewebsites.net/Credits/Return");
+            vnpay.AddRequestData("vnp_ReturnUrl", _vnPayConfig.ReturnUrl);
             vnpay.AddRequestData("vnp_TxnRef", tick); // Mã tham chiếu của giao dịch tại hệ thống của merchant. Mã này là duy nhất dùng để phân biệt các đơn hàng gửi sang VNPAY. Không được trùng lặp trong ngày
 
-            var paymentURl = vnpay.CreateRequestUrl("https://sandbox.vnpayment.vn/paymentv2/vpcpay.html", "BO57TPO2AHVZL3OMMIHKEK7XN4Q6ETF5");
+            var paymentURl = vnpay.CreateRequestUrl(_vnPayConfig.BaseUrl, _vnPayConfig.HashSecret);
             return paymentURl;
         }
 
@@ -65,8 +70,8 @@ namespace Cursus.Application.Credits
         {
             using (var client = new HttpClient())
             {
-                // Build the request URL
-                string requestUrl = $"{ApiBaseUrl}{ApiKey}/latest/USD";
+                // Build the request URL using configuration
+                string requestUrl = $"{_exchangeRateConfig.ApiBaseUrl}{_exchangeRateConfig.ApiKey}/latest/USD";
 
                 try
                 {
@@ -118,7 +123,7 @@ namespace Cursus.Application.Credits
             var vnp_SecureHash = collection.FirstOrDefault(p => p.Key == "vnp_SecureHash").Value;
             var vnp_ResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
             var vnp_OrderInfo = vnpay.GetResponseData("vnp_OrderInfo");
-            bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, "BO57TPO2AHVZL3OMMIHKEK7XN4Q6ETF5");
+            bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, _vnPayConfig.HashSecret);
             if (!checkSignature)
             {
                 return new VnPaymentResponseViewModel
@@ -162,6 +167,12 @@ namespace Cursus.Application.Credits
 		public List<Trading> GetAllTrading(string userID)
 		{
             var listTrading = _creditsRepository.GetAllTrading(userID);
+            return listTrading;
+		}
+
+		public List<Trading> GetAllTradingForAdmin()
+		{
+            var listTrading = _creditsRepository.GetAllTradingForAdmin();
             return listTrading;
 		}
 

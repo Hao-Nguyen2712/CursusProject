@@ -129,7 +129,7 @@
                                                         <a asp-action="GetCourseDetail" asp-controller="Course"
                                                             asp-route-id="@course.CourseId"
                                                             class="fcrse_img d-flex justify-content-center align-items-center">
-                                                            <img src="@course.CourseAvatar" alt="Avata">
+                                                            <img src="@(string.IsNullOrEmpty(course.CourseAvatar) ? Url.Content("~/images/courses/placeholder.jpg") : course.CourseAvatar)" alt="@course.CourseName">
                                                             <div class="course-overlay"></div>
                                                         </a>
                                                     </div>

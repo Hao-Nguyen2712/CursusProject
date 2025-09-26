@@ -1,0 +1,61 @@
+@{
+    ViewData["Title"] = "Review Management";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="sa4d25">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="section_padding_130">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="dashboard_tab_content">
+                                <div class="orders_table">
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                            <div class="table_title">
+                                                <h2>Review Management</h2>
+                                                <p>Monitor and manage course reviews and ratings</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="coming-soon-container text-center">
+                                        <i class="uil uil-star" style="font-size: 4rem; color: #ffc107;"></i>
+                                        <h3>Review Management</h3>
+                                        <p class="text-muted">@ViewBag.Message</p>
+                                        <div class="alert alert-info">
+                                            <strong>Features to be implemented:</strong>
+                                            <ul class="list-unstyled mt-2">
+                                                <li>• View all course reviews</li>
+                                                <li>• Moderate inappropriate reviews</li>
+                                                <li>• Rating distribution analytics</li>
+                                                <li>• Review authenticity verification</li>
+                                                <li>• Instructor review responses</li>
+                                                <li>• Review quality scoring</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .coming-soon-container {
+            padding: 3rem;
+        }
+        
+        .coming-soon-container ul li {
+            text-align: left;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+}

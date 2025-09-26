@@ -35,6 +35,12 @@
             return id;
         }
 
+        public async Task<int> GetAccountIDByUserIDAsync(string userID)
+        {
+            int id = await _accountRepository.GetAccountIDByUserIDAsync(userID);
+            return id;
+        }
+
 
         public string getAccountName(string userID)
         {
@@ -65,6 +71,11 @@
         public Domain.Models.Account UpdateAccountLevel(string userID)
         {
             return _accountRepository.UpdateAccountLevel(userID);
+        }
+
+        public List<Domain.Models.Account> GetAllAccounts()
+        {
+            return _accountRepository.GetAllAccount();
         }
     }
 }

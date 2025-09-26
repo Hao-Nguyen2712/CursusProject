@@ -1,0 +1,102 @@
+/* ================================================================================== 
+Sticky Footer Fix - Keeps footer at bottom when content is less
+===================================================================================== */
+
+/* Apply flexbox layout to html and body */
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+/* Make the wrapper (main content area) flex and grow */
+.wrapper {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ensure the main content area grows to fill available space */
+.main-content {
+    flex: 1 0 auto;
+}
+
+/* Footer should stick to bottom */
+.footer {
+    flex-shrink: 0;
+    margin-top: auto;
+}
+
+/* For layouts with sidebar navigation */
+body.has-sidebar .wrapper {
+    margin-left: 280px; /* Adjust based on your sidebar width */
+    min-height: calc(100vh - 70px); /* Adjust based on your header height */
+}
+
+/* Responsive adjustments */
+@media (max-width: 1199px) {
+    body.has-sidebar .wrapper {
+        margin-left: 0;
+    }
+}
+
+/* Fix for specific layout structures in the project */
+.sa4d25 {
+    flex: 1 0 auto;
+    min-height: calc(100vh - 140px); /* Adjust based on header + footer height */
+}
+
+/* Ensure content containers also participate in flex layout */
+.container,
+.container-fluid {
+    flex: 1 0 auto;
+}
+
+/* Override any existing footer positioning that might conflict */
+.footer.mt-30,
+.footer.mt-40,
+.footer.mt-50 {
+    margin-top: auto !important;
+}
+
+/* Additional fixes for specific layouts */
+.dashboard_main {
+    flex: 1 0 auto;
+    min-height: calc(100vh - 140px);
+}
+
+/* Fix for instructor dashboard layout */
+.instructor_dashboard {
+    min-height: calc(100vh - 140px);
+}
+
+/* Fix for student dashboard layout */
+.student_dashboard {
+    min-height: calc(100vh - 140px);
+}
+
+/* Ensure forms and content containers take full height when needed */
+.form-container,
+.content-area {
+    min-height: 60vh;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    body.has-sidebar .wrapper {
+        margin-left: 0;
+        min-height: calc(100vh - 60px); /* Adjust for mobile header */
+    }
+    
+    .sa4d25,
+    .dashboard_main,
+    .instructor_dashboard,
+    .student_dashboard {
+        min-height: calc(100vh - 120px);
+    }
+}

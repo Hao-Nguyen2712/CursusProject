@@ -523,15 +523,17 @@
 									<div class="thumbnail-into">
 										<div class="row">
 											<div class="col-lg-5 col-md-6">
-												<label class="label25 text-left">Course thumbnail*</label>
+												<label class="label25 text-left">Lesson thumbnail*</label>
 												<div class="thumb-item">
-													<img src="images/thumbnail-demo.jpg" alt="">
+													<img id="lessonThumbnailContainer" src="~/images/thumbnail-demo.jpg" alt="">
 													<div class="thumb-dt">
 														<div class="upload-btn">
-															<input class="uploadBtn-main-input" type="file"
-																id="ThumbFile__input--source">
-															<label for="ThumbFile__input--source" title="Zip">Choose
-																Thumbnail</label>
+															<form id="lessonThumbnailForm" enctype="multipart/form-data">
+																<input class="uploadBtn-main-input" type="file"
+																	id="lessonThumbnailInput" accept="image/*">
+																<label for="lessonThumbnailInput" title="Upload">Choose
+																	Lesson Thumbnail</label>
+															</form>
 														</div>
 														<span class="uploadBtn-main-file">Size: 590x300 pixels.
 															Supports: jpg,jpeg, or png</span>
@@ -709,4 +711,7 @@
 			$(".sortable").disableSelection();
 		});
 	</script>
+	
+	<!-- Lesson Thumbnail Upload Script -->
+	<script src="~/js/lessonThumbnail.js" asp-append-version="true"></script>
 }

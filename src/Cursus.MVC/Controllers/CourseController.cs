@@ -295,7 +295,7 @@ namespace Cursus.MVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult Subscribe(int id)
+        public async Task<IActionResult> Subscribe(int id)
         {
             ClaimsPrincipal claims = this.User;
             var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -315,12 +315,12 @@ namespace Cursus.MVC.Controllers
             }
             var subVM = _mapper.Map<Subscribe>(subscrise);
             _subscriseService.AddSub(subVM);
-            _sendEmail.SendEmailAsync(instructorMail, "Subscription Notification", Service.EmailSender.Subscriber(account.FullName, instructorUsername));
+            await _sendEmail.SendEmailAsync(instructorMail, "Subscription Notification", $"New subscriber: {account.FullName}");
             return Json(new { success = true });
         }
 
         [HttpPost]
-        public IActionResult UnSubscribe(int id)
+        public async Task<IActionResult> UnSubscribe(int id)
         {
             ClaimsPrincipal claims = this.User;
             var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -328,7 +328,7 @@ namespace Cursus.MVC.Controllers
             var instructorMail = instructor.Email;
             var instructorId = instructor.Id;
             _subscriseService.UnSub(instructorId, userID);
-            _sendEmail.SendEmailAsync(instructorMail, "Subscription Notification", Service.EmailSender.UnSubscriber());
+            await _sendEmail.SendEmailAsync(instructorMail, "Subscription Notification", "User unsubscribed");
             return Json(new { success = true });
         }
 
@@ -421,7 +421,7 @@ namespace Cursus.MVC.Controllers
         }
 
         [HttpGet]
-        public IActionResult UnEnroll(int courseId)
+        public async Task<IActionResult> UnEnroll(int courseId)
         {
             ClaimsPrincipal claims = this.User;
             var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -459,22 +459,22 @@ namespace Cursus.MVC.Controllers
 
             var course = _courseService.GetCourseById(courseId);
             var account = _accountService.GetAccountByUserID(userID);
-            _sendEmail.SendEmailAsync(account.Email, "UnEnroll Course", Service.EmailSender.UnEnroll(account.FullName, course.CourseName));
+            await _sendEmail.SendEmailAsync(account.Email, "UnEnroll Course", $"Unenrolled from course: {course.CourseName}");
             TempData["Status"] = "UnEnrollSuccess";
             return RedirectToAction("GetCourseDetail", "Course", new { id = courseId });
         }
 
         [Authorize]
-        public IActionResult GetAllPurchasedCourse(int accountId)
+        public async Task<IActionResult> GetAllPurchasedCourse(int accountId)
         {
-            var user = _userManager.GetUserAsync(User);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return Unauthorized();
             }
             ClaimsPrincipal claims = this.User;
             var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
-            int id = _accountService.GetAccountIDByUserID(userID);
+            int id = await _accountService.GetAccountIDByUserIDAsync(userID);
             var course = _courseService.GetAllPurchasedCourseByAccountId(id);
             List<CourseViewModel> listCourse = _mapper.Map<List<CourseViewModel>>(course);
             List<PurchasedViewModel> listPurchase = new List<PurchasedViewModel>();

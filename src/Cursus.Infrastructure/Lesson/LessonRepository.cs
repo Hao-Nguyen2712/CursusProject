@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Cursus.Domain;
-using Cursus.Infrastructure;
 using Cursus.Application;
 using Cursus.Domain.Models;
 
@@ -66,7 +60,8 @@ namespace Cursus.Infrastructure
                                       .FirstOrDefault();
             return lessonID;
         }
-        public int getLessonIDEsc(int courseID) {
+        public int getLessonIDEsc(int courseID)
+        {
             var lessonID = _db.Lessons.Where(l => l.CourseId == courseID)
                                       .OrderBy(l => l.LessionId)
                                       .Select(l => l.LessionId)

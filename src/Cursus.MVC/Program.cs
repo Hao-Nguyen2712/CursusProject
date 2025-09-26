@@ -1,4 +1,5 @@
 using AutoMapper;
+using CloudinaryDotNet;
 using Cursus.Application;
 using Cursus.Application.Account;
 using Cursus.Application.Admin;
@@ -42,8 +43,8 @@ using Cursus.Infrastructure.Student;
 using Cursus.Infrastructure.Subscription;
 using Cursus.Infrastructure.Subscrise;
 using Cursus.MVC.Mapper;
-using Cursus.MVC.Service;
 using Cursus.MVC.Services;
+using Cursus.MVC.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.StaticFiles;
@@ -88,6 +89,18 @@ namespace Cursus.MVC
             var provider = new FileExtensionContentTypeProvider();
             provider.Mappings[".xlsx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             builder.Services.AddSingleton(provider);
+
+            // Configure Cloudinary
+            builder.Services.AddSingleton(serviceProvider =>
+            {
+                var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+                var account = new CloudinaryDotNet.Account(
+                    configuration["Cloudinary:CloudName"],
+                    configuration["Cloudinary:ApiKey"],
+                    configuration["Cloudinary:ApiSecret"]
+                );
+                return new Cloudinary(account);
+            });
 
             builder.Services.AddScoped<ILessonService, LessonService>();
             builder.Services.AddScoped<ILessonRepository, LessonRepository>();
@@ -142,6 +155,12 @@ namespace Cursus.MVC
             builder.Services.AddScoped<IProgressRepository, ProgressRepository>();
             builder.Services.AddScoped<IProgressService, ProgressService>();
 
+            // Configure VNPay and ExchangeRate settings
+            builder.Services.Configure<Cursus.Application.Models.VnPayConfig>(
+                builder.Configuration.GetSection("VnPay"));
+            builder.Services.Configure<Cursus.Application.Models.ExchangeRateConfig>(
+                builder.Configuration.GetSection("ExchangeRate"));
+
             builder.Services.AddScoped<ICreditsService, CreditsService>();
             builder.Services.AddScoped<ICreditsRepository, CreditsRepository>();
 
@@ -156,6 +175,9 @@ namespace Cursus.MVC
 
             builder.Services.AddScoped<ICertificateService, CertificateService>();
 
+            // Configure Email settings
+            builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("Email"));
+            
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             builder.Services.AddTransient<ISendEmail, SendEmail>();
 
@@ -206,7 +228,6 @@ namespace Cursus.MVC
             builder.Services.AddSingleton(mapperConfig.CreateMapper());
 
             builder.Services.AddRazorPages();
-            builder.Services.AddTransient<Cursus.MVC.Service.EmailSender>();
 
             // Register the database seeder
             builder.Services.AddScoped<DatabaseSeeder>();
@@ -262,3 +283,4 @@ namespace Cursus.MVC
         }
     }
 }
+

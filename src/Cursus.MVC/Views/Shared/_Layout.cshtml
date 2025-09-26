@@ -41,6 +41,7 @@
     <link href="~/css/night-mode.css" rel="stylesheet" asp-append-version="true">
     <link href="~/css/student_dashboard.css" rel="stylesheet">
     <link href="~/css/student_responsive.css" rel="stylesheet">
+    <link href="~/css/sticky-footer.css" rel="stylesheet" asp-append-version="true">
 
     <!-- Vendor Stylesheets -->
     <link href="~/lib/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" asp-append-version="true">
@@ -58,7 +59,7 @@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 
-<body>
+<body class="has-sidebar">
     <span id="notification"></span>
     <header class="header clearfix">
         <button type="button" id="toggleMenu" class="toggle_menu">
@@ -200,7 +201,9 @@
     </nav>
     <!-- Left Sidebar End -->
     <div class="wrapper">
-        @RenderBody()
+        <main class="main-content">
+            @RenderBody()
+        </main>
         <footer class="footer mt-30">
             <div class="container">
                 <div class="row">

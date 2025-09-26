@@ -1,28 +1,25 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Cursus.Domain.Models;
+using Cursus.MVC.Services;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+using System.Text.Encodings.Web;
 
 namespace Cursus.MVC.Areas.Identity.Pages.Account
 {
     public class ForgotPasswordModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IEmailSender _emailSender;
+        private readonly EmailSender _emailSender;
 
-        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
+        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, EmailSender emailSender)
         {
             _userManager = userManager;
             _emailSender = emailSender;
@@ -74,7 +71,7 @@ namespace Cursus.MVC.Areas.Identity.Pages.Account
                 await _emailSender.SendEmailAsync(
                     Input.Email,
                     "Reset Password",
-                    Service.EmailSender.EmailConfirm(user.UserName, $"<h3>To reset your password, please click the link below: </h3><div style='text-align: center;'><a style='color: white;' class='link-confirm' href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Reset Password</a></div>"));
+                    _emailSender.EmailConfirm(user.UserName, $"<h3>To reset your password, please click the link below: </h3><div style='text-align: center;'><a style='color: white;' class='link-confirm' href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Reset Password</a></div>"));
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }

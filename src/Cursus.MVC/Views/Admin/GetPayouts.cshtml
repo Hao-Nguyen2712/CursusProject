@@ -1,0 +1,61 @@
+@{
+    ViewData["Title"] = "Instructor Payouts";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="sa4d25">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="section_padding_130">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="dashboard_tab_content">
+                                <div class="orders_table">
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                            <div class="table_title">
+                                                <h2>Instructor Payouts</h2>
+                                                <p>Manage instructor earnings and payout schedules</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="coming-soon-container text-center">
+                                        <i class="uil uil-credit-card" style="font-size: 4rem; color: #28a745;"></i>
+                                        <h3>Instructor Payouts</h3>
+                                        <p class="text-muted">@ViewBag.Message</p>
+                                        <div class="alert alert-info">
+                                            <strong>Features to be implemented:</strong>
+                                            <ul class="list-unstyled mt-2">
+                                                <li>• View instructor earnings</li>
+                                                <li>• Process payout requests</li>
+                                                <li>• Payout history tracking</li>
+                                                <li>• Commission rate management</li>
+                                                <li>• Payment method setup</li>
+                                                <li>• Automated payout scheduling</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .coming-soon-container {
+            padding: 3rem;
+        }
+        
+        .coming-soon-container ul li {
+            text-align: left;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+}

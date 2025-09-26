@@ -19,5 +19,25 @@ namespace Cursus.Application.Comment
             List<Cursus.Domain.Models.Comment> comments = _commentRepository.GetCommentsByLessonID(lessonID);
             return comments;
         }
+
+        public Cursus.Domain.Models.Comment GetCommentById(int commentId)
+        {
+            return _commentRepository.GetCommentById(commentId);
+        }
+
+        public void UpdateComment(Cursus.Domain.Models.Comment comment)
+        {
+            _commentRepository.UpdateComment(comment);
+        }
+
+        public List<Cursus.Domain.Models.Comment> GetPendingComments()
+        {
+            return _commentRepository.GetPendingComments();
+        }
+
+        public List<Cursus.Domain.Models.Comment> GetAllComments()
+        {
+            return _commentRepository.GetAllComments();
+        }
     }
 }

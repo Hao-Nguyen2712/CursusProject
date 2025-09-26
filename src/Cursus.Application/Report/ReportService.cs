@@ -20,7 +20,7 @@ namespace Cursus.Application.Report
 
         public void DeleteReport(int ReportId)
         {
-            throw new NotImplementedException();
+            _reportRepository.DeleteReport(ReportId);
         }
 
         public List<Domain.Models.Report> GetAllReport()
@@ -30,12 +30,17 @@ namespace Cursus.Application.Report
 
         public Domain.Models.Report GetReportById(int ReportId)
         {
-            throw new NotImplementedException();
+            return _reportRepository.GetReportById(ReportId);
         }
 
         public void UpdateReport(Domain.Models.Report Report)
         {
-            throw new NotImplementedException();
+            _reportRepository.UpdateReport(Report);
+        }
+
+        public List<Domain.Models.Report> GetAllReports()
+        {
+            return _reportRepository.GetAllReport();
         }
     }
 }

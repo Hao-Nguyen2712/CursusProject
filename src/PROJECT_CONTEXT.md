@@ -1,6 +1,16 @@
 # Project Cursus: Bối cảnh và Lịch sử Nhiệm vụ
 
-Tài liệu này dùng để ghi lại bối cảnh kỹ thuật và các quyết định đã được đưa ra trong dự án Cursus. Vui lòng cung cấp tài liệu này làm bối cảnh cho các nhiệm vụ trong tương lai để đảm bảo tính nhất quán.
+Tài liệu này dùng để ghi lại bối cảnh kỹ thuật và các quyết định đã được### **Cloudinary Integration**: M### Đã hoàn thành
+- ✅ **Database & Migrations**: Hệ thống database Code-First hoạt động ổn định với Entity Framework Core 8.
+- ✅ **Identity System**: ASP.NET Core Identity được cấu hình đúng với `ApplicationUser`.
+- ✅ **Database Seeding**: DatabaseSeeder tạo đầy đủ dữ liệu mẫu bao gồm admin, instructors, students, courses.
+- ✅ **Authentication**: Admin login hoạt động với credentials (`admin@cursus.com` / `TempPassword123!`).
+- ✅ **Course Display**: Courses hiển thị chính xác trên home page sau khi sửa status mismatch.
+- ✅ **Dark Mode Infrastructure**: CSS và JavaScript cho dark mode đã sẵn sàng.
+- ✅ **Image Upload System**: Cloudinary integration hoàn tất với auto-optimization và smart cropping.
+- ✅ **Admin System Monitoring**: Dashboard analytics với enrollment stats, completion rates, user demographics.
+- ✅ **Admin Content Moderation**: Comment approval workflow và report management system. from Azure Blob Storage to Cloudinary for image upload functionality.
+- ⚠️ **Production Settings**: Cần review và cấu hình các settings cho production environment.ưa ra trong dự án Cursus. Vui lòng cung cấp tài liệu này làm bối cảnh cho các nhiệm vụ trong tương lai để đảm bảo tính nhất quán.
 
 ## 1. Kiến trúc Dự án
 
@@ -109,6 +119,47 @@ Mục tiêu là tìm hiểu hệ thống upload hình ảnh cho instructors.
     -   `validateImage.js` - Handles avatar uploads with validation
 -   [x] **Xác định configuration issue**: `blobStorageConnectionString` đang để trống, cần cấu hình Azure Blob Storage.
 
+### Nhiệm vụ: Migration từ Azure Blob Storage sang Cloudinary
+
+Mục tiêu là chuyển đổi hệ thống upload từ Azure Blob Storage sang Cloudinary để có performance và features tốt hơn.
+
+-   [x] **Phân tích Azure Blob implementation**: Review code hiện tại trong InstructorController.cs để hiểu flow upload.
+-   [x] **Cập nhật project dependencies**: Thay `Azure.Storage.Blobs` bằng `CloudinaryDotNet` package.
+-   [x] **Cập nhật configuration**: Thêm Cloudinary settings vào appsettings.json.
+-   [x] **Refactor InstructorController**: 
+    -   Thay Azure BlobContainerClient bằng Cloudinary SDK
+    -   Cập nhật 3 upload endpoints với Cloudinary upload logic
+    -   Thêm image transformations (resizing, optimization)
+    -   Implement proper error handling
+-   [x] **Dependency Injection setup**: Register Cloudinary service trong Program.cs.
+
+### Nhiệm vụ: Triển khai System Monitoring và Content Moderation cho Admin Dashboard
+
+Mục tiêu là phát triển hệ thống giám sát hệ thống và quản lý nội dung cho admin dashboard.
+
+-   [x] **Phân tích yêu cầu**: Xác định cần thiết kế System Monitoring analytics và Content Moderation workflow.
+-   [x] **Tạo View Models**:
+    -   Tạo `SystemMonitoringViewModel.cs` với metrics về enrollment, completion rates, user analytics
+    -   Tạo `ContentModerationViewModel.cs` với pending comments và report management
+    -   Thêm nested view models cho charts data và monthly trends
+-   [x] **Mở rộng Service Layer**:
+    -   Thêm `GetAllEnrolls()` method vào `IEnrollService` và `EnrollService`
+    -   Thêm `GetAllComments()` method vào `ICommentService` và `CommentService`
+    -   Cập nhật Application layer với new service methods
+-   [x] **Cập nhật AdminController**:
+    -   Thêm `SystemMonitoring()` action với comprehensive analytics calculations
+    -   Thêm `ContentModeration()` action với comment approval workflow
+    -   Implement null safety checks và error handling
+-   [x] **Sửa Dependency Injection Issues**:
+    -   Xác định và sửa duplicate `_accountService` field declarations
+    -   Sửa constructor parameter assignments từ `_accountService` sang `accountService`
+    -   Loại bỏ tất cả references đến undefined `_accountService` field
+-   [x] **Testing và Validation**:
+    -   Build successful với 0 errors
+    -   Application runs correctly trên `http://localhost:5205`
+    -   Database operations hoạt động bình thường
+    -   Admin dashboard features accessible và functional
+
 ## 4. Tình trạng Hệ thống Hiện tại
 
 ### Đã hoàn thành
@@ -120,7 +171,7 @@ Mục tiêu là tìm hiểu hệ thống upload hình ảnh cho instructors.
 - ✅ **Dark Mode Infrastructure**: CSS và JavaScript cho dark mode đã sẵn sàng.
 
 ### Cần cấu hình
-- ⚠️ **Azure Blob Storage**: Cần cấu hình connection string cho image upload functionality.
+- ⚠️ **Cloudinary Configuration**: Cần cấu hình credentials cho image upload functionality.
 - ⚠️ **Production Settings**: Cần review và cấu hình các settings cho production environment.
 
 ### Đã dọn dẹp
@@ -144,13 +195,13 @@ Mục tiêu là tìm hiểu hệ thống upload hình ảnh cho instructors.
 - **Lý do**: Phân biệt giữa courses đã được duyệt và courses đang chờ duyệt.
 - **Implementation**: DatabaseSeeder tạo courses với status "Approved".
 
-## 6. Cấu trúc File Upload System
+## 6. Cấu trúc File Upload System (Cloudinary)
 
 ### Endpoints
 ```csharp
-POST /Instructor/UploadImage        // Course thumbnails
-POST /Instructor/UploadAvatar       // Instructor profile pictures  
-POST /Instructor/UploadAvatarStudent // Student profile pictures (admin function)
+POST /Instructor/UploadImage        // Course thumbnails (800x600, optimized)
+POST /Instructor/UploadAvatar       // Instructor profile pictures (300x300, face-cropped)
+POST /Instructor/UploadAvatarStudent // Student profile pictures (300x300, face-cropped)
 ```
 
 ### Frontend Integration
@@ -159,11 +210,23 @@ POST /Instructor/UploadAvatarStudent // Student profile pictures (admin function
 // validateImage.js - Avatar uploads with client-side validation
 ```
 
-### Storage Configuration
-```csharp
-private string blobStorageConnectionString = ""; // Needs Azure configuration
-private string blobStorageContainerName = "images";
+### Cloudinary Configuration
+```json
+{
+  "Cloudinary": {
+    "CloudName": "your-cloud-name",
+    "ApiKey": "your-api-key", 
+    "ApiSecret": "your-api-secret"
+  }
+}
 ```
+
+### Upload Features
+- **Organized Folders**: `cursus/course_images/`, `cursus/instructor_avatars/`, `cursus/student_avatars/`
+- **Auto Transformations**: Automatic resizing and optimization
+- **Face Detection**: Smart cropping for avatars using gravity="face"
+- **Format Optimization**: Auto quality and format selection
+- **Unique URLs**: GUID-based public IDs to prevent conflicts
 
 ## 7. Hướng dẫn cho Developers
 
@@ -171,6 +234,11 @@ private string blobStorageContainerName = "images";
 - **URL**: `/Identity/Account/Login`
 - **Email**: `admin@cursus.com`
 - **Password**: `TempPassword123!`
+
+### Admin Dashboard Features
+- **System Monitoring**: `/Admin/SystemMonitoring` - Analytics dashboard với enrollment metrics, completion rates, user demographics
+- **Content Moderation**: `/Admin/ContentModeration` - Comment approval workflow và report management
+- **User Management**: Existing account management và instructor approval workflows
 
 ### Database Reset
 ```bash
@@ -184,13 +252,35 @@ dotnet ef database update
 - JavaScript tự động lưu preference trong localStorage
 - CSS theme được áp dụng thông qua `.night-mode` class
 
-### Image Upload Configuration
-Để enable image upload, cần cấu hình Azure Blob Storage connection string trong `appsettings.json`:
+### Cloudinary Configuration
+Để enable image upload với Cloudinary, cần cấu hình credentials trong `appsettings.json`:
 ```json
 {
-  "BlobStorage": {
-    "ConnectionString": "your-azure-blob-connection-string",
-    "ContainerName": "images"
+  "Cloudinary": {
+    "CloudName": "your-cloud-name",
+    "ApiKey": "your-api-key",
+    "ApiSecret": "your-api-secret"
   }
 }
 ```
+
+### Cloudinary Features Được Triển Khai
+- **Smart Cropping**: Avatar images sử dụng face detection
+- **Auto Optimization**: Tự động tối ưu chất lượng và format
+- **Responsive Images**: Có thể tạo multiple sizes từ một upload
+- **Folder Organization**: Images được organize theo folders (course_images, instructor_avatars, student_avatars)
+- **Secure URLs**: Tất cả URLs đều sử dụng HTTPS
+
+### System Monitoring Features
+- **Real-time Analytics**: Total users, enrollments, completion rates
+- **Course Statistics**: Performance metrics và completion tracking
+- **User Demographics**: User distribution và activity patterns
+- **Monthly Trends**: Enrollment trends với visual charts
+- **Performance Metrics**: System health và usage statistics
+
+### Content Moderation Workflow
+- **Pending Comments**: Review và approve/reject user comments
+- **Bulk Operations**: Mass approval/rejection capabilities
+- **Report Management**: Handle user-generated reports
+- **Moderation History**: Track moderation actions và approval rates
+- **Administrative Controls**: Comprehensive content oversight tools

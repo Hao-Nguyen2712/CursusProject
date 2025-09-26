@@ -1,10 +1,10 @@
 @using Cursus.Application.Account
 @using Microsoft.AspNetCore.Http
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
-@using Cursus.MVC.Areas.Identity.Data
+@using Cursus.Domain.Models
 @using Microsoft.AspNetCore.Identity
-@inject SignInManager<CursusMVCUser> SignInManager
-@inject UserManager<CursusMVCUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @inject IAccountService _accountService
 <!DOCTYPE html>
 <html lang="en">
@@ -39,6 +39,7 @@
 	<link href="~/css/instructor-dashboard.css" rel="stylesheet">
 	<link href="~/css/instructor-responsive.css" rel="stylesheet">
 	<link href="~/css/night-mode.css" rel="stylesheet">
+	<link href="~/css/sticky-footer.css" rel="stylesheet" asp-append-version="true">
 	
 
 
@@ -60,7 +61,7 @@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 
-<body>
+<body class="has-sidebar">
     <!-- Header Start -->
     <header class="header clearfix">
         <button type="button" id="toggleMenu" class="toggle_menu">
@@ -269,8 +270,9 @@
     <!-- Left Sidebar End -->
     <!-- Body Start -->
     <div class="wrapper">
-        @RenderBody()
-
+        <main class="main-content">
+            @RenderBody()
+        </main>
         <footer class="footer mt-40">
             <div class="container-fluid">
                 <div class="row">
