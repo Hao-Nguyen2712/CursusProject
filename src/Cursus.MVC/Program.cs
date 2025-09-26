@@ -1,5 +1,6 @@
 using AutoMapper;
 using CloudinaryDotNet;
+using DotNetEnv;
 using Cursus.Application;
 using Cursus.Application.Account;
 using Cursus.Application.Admin;
@@ -56,7 +57,14 @@ namespace Cursus.MVC
     {
         public static async Task Main(string[] args)
         {
+            // Load environment variables from .env file
+            Env.Load();
+            
             var builder = WebApplication.CreateBuilder(args);
+            
+            // Add environment variables to configuration
+            builder.Configuration.AddEnvironmentVariables();
+            
             var connectionString = builder.Configuration.GetConnectionString("CursusMVCContextConnection") ?? throw new InvalidOperationException("Connection string 'CursusMVCContextConnection' not found.");
             var config = builder.Configuration;
 
