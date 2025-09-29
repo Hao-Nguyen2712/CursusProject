@@ -7,23 +7,26 @@
 <style>
     .course-column {
         display: inline-block;
-        width: calc(33.33% - 20px); /* Chiều rộng của mỗi cột, tính cả khoảng cách giữa chúng */
-        margin-right: 20px; /* Khoảng cách giữa các cột */
-        vertical-align: top; /* Đảm bảo các cột nằm ngang */
-        margin-bottom: 20px; /* Khoảng cách dưới của mỗi cột */
-        box-sizing: border-box; /* Đảm bảo các padding và border không làm thay đổi kích thước */
+        width: calc(33.33% - 20px);
+        margin-right: 20px;
+        vertical-align: top;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+    }
+    
+    .category-header {
+        margin-bottom: 30px;
+        padding: 20px 0;
     }
 </style>
 
-<div class="text-center">
-    <div class="sa4d25">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-xl-9 col-lg-8">
-                    <div class="section3125">
-                        <div class="grp_titles pt-0">
-                            <div class="ht_title">Courses in @Model.CategoryName</div>
-                        </div>
+<div class="category-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="section3125">
+                    <div class="grp_titles pt-0">
+                        <h2 class="ht_title">Courses in @(Model.CategoryName ?? "Category")</h2>
                     </div>
                 </div>
             </div>
@@ -40,7 +43,7 @@
                 <div class="course-column">
                     <div class="fcrse_1 mb-20">
                         <a href="@Url.Action("GetCourseDetail", "Course", new { id = course.CourseId })" class="hf_img position-relative d-block">
-                            <img src="@course.CourseAvatar" alt="@course.CourseName">
+                            <img src="@(string.IsNullOrEmpty(course.CourseAvatar) ? Url.Content("~/images/courses/placeholder.jpg") : course.CourseAvatar)" alt="@course.CourseName">
                             <div class="course-overlay d-flex flex-column justify-content-center align-items-center">
                                 @if (course.Discount != null && course.Discount > 0)
                                 {
@@ -54,15 +57,14 @@
                         </a>
                         <div class="hs_content">
                             <a href="@Url.Action("GetCourseDetail", "Course", new { id = course.CourseId })" class="crse14s title900">@course.CourseName</a>
-                            <a href="#" class="crse-cate">@Model.CategoryName</a>
+                            <a href="#" class="crse-cate">@(Model.CategoryName ?? "Category")</a>
                             <p class="crse-desc limiteText">@course.CourseShortDes</p>
                             <p class="crse-desc limiteText">@course.CourseDescription</p>
                             <div class="auth1lnkprce mt-2">
                                 <div class="prce142">$@course.CourseMoney?.ToString("0.00")</div>
-                                <button class="shrt-cart-btn" id="AddToCart-@course.CourseId"
-																value="@course.CourseId" title="cart">
-																<i class="uil uil-shopping-cart-alt"></i>
-								</button>	
+                                <button class="shrt-cart-btn" id="AddToCart-@course.CourseId" value="@course.CourseId" title="cart">
+                                    <i class="uil uil-shopping-cart-alt"></i>
+                                </button>	
                             </div>
                         </div>
                     </div>
@@ -71,7 +73,12 @@
         }
         else
         {
-            <p>No courses found for this category.</p>
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <h4>No courses found for this category.</h4>
+                    <p>Please check back later or browse other categories.</p>
+                </div>
+            </div>
         }
     </div>
 </div>

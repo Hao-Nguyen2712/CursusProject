@@ -29,12 +29,15 @@ namespace Cursus.MVC.Controllers
 
         public IActionResult GetCategory(int CategoryId)
         {
-
             var courses = _categoryService.GetCategory(CategoryId);
+            
+            // Get the category information to display the name
+            var category = _categoryService.FindCategoryById(CategoryId);
 
             var categoryViewModel = new CategoryViewModel
             {
                 CategoryId = CategoryId,
+                CategoryName = category?.CategoryName ?? "Unknown Category",
                 CoursesVM = courses.Select(course => new CourseViewModel
                 {
                     CourseId = course.CourseId,

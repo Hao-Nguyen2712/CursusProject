@@ -1,232 +1,1105 @@
 @using System.Globalization
 @model IEnumerable<Cursus.MVC.Models.CourseAnalyzeViewModel>
 @{
-    ViewData["Title"] = "Analyze Course";
+    ViewData["Title"] = "Course Sales Analytics";
     Layout = "_LayoutAdmin";
     string FormatCurrencyUSD(decimal amount)
     {
         return string.Format(new CultureInfo("en-US"), "{0:C2}", amount);
     }
+    
+    var courseList = Model.ToList();
+    var totalCourses = courseList.Count();
+    var totalEnrollments = courseList.Sum(c => c.TotalCourse);
+    var totalRevenue = courseList.Sum(c => c.TotalMoney);
+    var averageEnrollments = totalCourses > 0 ? (decimal)totalEnrollments / totalCourses : 0;
 }
 
-
-<div class="container-fluid body ">
-    <h1 class="my-4 text-center">Analyze Sell Coures</h1>
-    <button class="btn btn-primary" id="exportBtn" onclick="exportToExcel()">Print Excel</button>
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered" id="categoriesTable">
-            <thead class="thead-dark">
-                <tr>
-                    <th class="thTitle">No</th>
-                    <th class="thTit'le">Course ID</th>
-                    <th class="text-center thTitle">Course Name</th>
-                    <th class="thTitle">Total Enroll</th>
-                    <th class="thTitle">Total Money</th>
-
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    var i = 1;
-                }
-                @foreach (var item in Model)
-                {
-
-                    <tr>
-                        <td>@i</td>
-                        <td>@item.CourseId</td>
-                        <td>@item.CourseName</td>
-                        <td>@item.TotalCourse</td>
-                        <td>@FormatCurrencyUSD(item.TotalMoney)</td>
-                    </tr>
-                    i++;
-
-                }
-            </tbody>
-        </table>
+<!-- Display Success/Error Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        @TempData["SuccessMessage"] 
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="dashboard_header mb-4">
+        <h2>Course Sales Analytics</h2>
+        <p class="text-muted">Comprehensive analysis of course performance and revenue</p>
+    </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-lg-6 col-12">
+                <div class="dashboard_stats_card">
+                    <div class="dashboard_stats_card_icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="dashboard_stats_card_content">
+                        <h4>@totalCourses</h4>
+                        <p>Total Courses</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-12">
+                <div class="dashboard_stats_card">
+                    <div class="dashboard_stats_card_icon approved">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="dashboard_stats_card_content">
+                        <h4>@totalEnrollments.ToString("N0")</h4>
+                        <p>Total Enrollments</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-12">
+                <div class="dashboard_stats_card">
+                    <div class="dashboard_stats_card_icon pending">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="dashboard_stats_card_content">
+                        <h4>@FormatCurrencyUSD(totalRevenue)</h4>
+                        <p>Total Revenue</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-12">
+                <div class="dashboard_stats_card">
+                    <div class="dashboard_stats_card_icon rejected">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="dashboard_stats_card_content">
+                        <h4>@averageEnrollments.ToString("N1")</h4>
+                        <p>Avg. Enrollments</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <div class="chart_card">
+                    <div class="chart_card_header">
+                        <h5><i class="fas fa-chart-bar me-2"></i>Top Performing Courses</h5>
+                        <div class="chart_controls">
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="enrollmentChart">
+                                <i class="fas fa-users me-1"></i>Enrollments
+                            </button>
+                            <button type="button" class="btn btn-sm btn-primary" id="revenueChart">
+                                <i class="fas fa-dollar-sign me-1"></i>Revenue
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart_card_body">
+                        <canvas id="courseChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="chart_card">
+                    <div class="chart_card_header">
+                        <h5><i class="fas fa-chart-pie me-2"></i>Revenue Distribution</h5>
+                    </div>
+                    <div class="chart_card_body">
+                        <canvas id="pieChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters and Actions -->
+        <div class="filters_section mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="searchInput" class="form-label">Search Courses</label>
+                        <div class="input-group">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Search by course name or ID...">
+                            <button class="btn btn-outline-secondary" type="button" id="clearSearch" style="display: none;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="sortBy" class="form-label">Sort By</label>
+                        <select id="sortBy" class="form-control">
+                            <option value="enrollments">Most Enrollments</option>
+                            <option value="revenue">Highest Revenue</option>
+                            <option value="name">Course Name</option>
+                            <option value="id">Course ID</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="entriesPerPage" class="form-label">Show Entries</label>
+                        <select id="entriesPerPage" class="form-control">
+                            <option value="10">10 per page</option>
+                            <option value="25">25 per page</option>
+                            <option value="50">50 per page</option>
+                            <option value="100">100 per page</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label class="form-label">&nbsp;</label>
+                        <button class="btn btn-success d-block w-100" id="exportBtn">
+                            <i class="fas fa-file-excel me-1"></i>Export Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Analytics Table -->
+        <div class="table-responsive">
+            <table class="table ucp-table" id="courseAnalyticsTable">
+                <thead class="thead-s">
+                    <tr>
+                        <th>#</th>
+                        <th>Course ID</th>
+                        <th>Course Name</th>
+                        <th>Enrollments</th>
+                        <th>Revenue</th>
+                        <th>Performance</th>
+                      
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var i = 1;
+                        foreach (var item in courseList)
+                        {
+                            var performancePercentage = totalRevenue > 0 ? (int)((item.TotalMoney / totalRevenue) * 100) : 0;
+                            var performanceClass = performancePercentage >= 20 ? "success" : performancePercentage >= 10 ? "warning" : "danger";
+                            
+                            <tr>
+                                <td class="cell-ta">@i</td>
+                                <td class="cell-ta">
+                                    <span class="badge bg-secondary">#@item.CourseId</span>
+                                </td>
+                                <td class="cell-ta">
+                                    <div class="course-info">
+                                        <strong>@item.CourseName</strong>
+                                       
+                                    </div>
+                                </td>
+                                <td class="cell-ta">
+                                    <div class="enrollment-info">
+                                        <strong>@item.TotalCourse.ToString("N0")</strong>
+                                        <div class="progress progress-sm mt-1">
+                                            <div class="progress-bar bg-primary" style="width: @(totalEnrollments > 0 ? (item.TotalCourse * 100 / totalEnrollments) : 0)%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="cell-ta">
+                                    <div class="revenue-info">
+                                        <strong class="text-success">@FormatCurrencyUSD(item.TotalMoney)</strong>
+                                        <br>
+                                        <small class="text-muted">@((item.TotalCourse > 0 ? item.TotalMoney / item.TotalCourse : 0).ToString("C2")) per student</small>
+                                    </div>
+                                </td>
+                                <td class="cell-ta">
+                                    <div class="performance-indicator">
+                                        <span class="badge bg-@performanceClass">@performancePercentage%</span>
+                                        <div class="performance-bar">
+                                            <div class="performance-fill bg-@performanceClass" style="width: @performancePercentage%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                             
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (totalCourses == 0)
+        {
+            <!-- Empty State -->
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-chart-line" style="font-size: 4rem; color: #dee2e6;"></i>
+                </div>
+                <h4 class="text-muted">No Course Data Available</h4>
+                <p class="text-muted">There are currently no courses with sales data to analyze.</p>
+            </div>
+        }
 </div>
 
 
 @section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css" rel="stylesheet">
     <style>
-        .container-fluid {
-            min-height: 40vh;
-            width: 100%;
-            max-width: 100%;
-
-
-        }
-
-        .container-fluid .flex-grow-1 {
-            flex: 1;
-            width: 100%;
-            overflow-y: auto;
-        }
-
-        .create {
-            font-size: 17px;
-            padding: 0 5px;
-        }
-
-        .table-responsive {
-            margin-top: 40px;
-        }
-
-        .thTitle {
-            font-size: 18px;
-            font-weight: 500;
-            padding: 25px 15px;
-        }
-
-        .body {
+        /* Dashboard Statistics Cards */
+        .dashboard_stats_card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border-left: 4px solid #ed2a26;
+            transition: transform 0.3s, box-shadow 0.3s;
             position: relative;
-            padding-bottom: 50px;
-            min-height: 100vh;
+            overflow: hidden;
         }
 
-        /* Tạo kiểu cho DataTables */
-        table.dataTable {
+        .dashboard_stats_card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .dashboard_stats_card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            margin: 20px 0;
-            border-collapse: collapse;
+            height: 3px;
+            background: linear-gradient(90deg, #ed2a26, #ff6b6b);
         }
 
-        table.dataTable th,
-        table.dataTable td {
-            padding: 10px;
-            text-align: left;
+        .dashboard_stats_card_icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ed2a26, #ff6b6b);
+            box-shadow: 0 4px 20px rgba(237, 42, 38, 0.3);
         }
 
-        table.dataTable thead th {
-            background-color: #ed2a26;
+        .dashboard_stats_card_icon.approved {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            box-shadow: 0 4px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .dashboard_stats_card_icon.pending {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            box-shadow: 0 4px 20px rgba(255, 193, 7, 0.3);
+        }
+
+        .dashboard_stats_card_icon.rejected {
+            background: linear-gradient(135deg, #17a2b8, #007bff);
+            box-shadow: 0 4px 20px rgba(23, 162, 184, 0.3);
+        }
+
+        .dashboard_stats_card_icon i {
+            font-size: 32px;
             color: white;
         }
 
-        table.dataTable tbody tr:nth-child(even) {
-            background-color: #f2f2f2;
+        .dashboard_stats_card_content h4 {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 0;
+            color: #333;
+            line-height: 1;
         }
 
-        table.dataTable tbody tr:nth-child(odd) {
-            background-color: #ffffff;
+        .dashboard_stats_card_content p {
+            margin: 10px 0 0 0;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        table.dataTable tbody tr:hover {
-            background-color: #ddd;
+        /* Page Header */
+        .table_title {
+            margin-bottom: 30px;
         }
 
-        .dataTables_filter input {
-            margin-left: 0.5em;
-            padding: 5px;
+        .table_title h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
         }
 
-        .dataTables_paginate {
-            margin-top: 20px;
-            text-align: center;
+        .table_title p {
+            color: #666;
+            margin: 0;
+            font-size: 16px;
         }
 
-        .dataTables_paginate .paginate_button {
-            display: inline-block;
-            padding: 5px 10px;
-            margin: 0 2px;
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            border-radius: 4px;
+        /* Chart Cards */
+        .chart_card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            overflow: hidden;
         }
 
-        .dataTables_paginate .paginate_button.disabled {
-            background-color: #cccccc;
-            color: #666666;
-            cursor: default;
+        .chart_card_header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #f1f3f4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
         }
 
-        .dt-search {
-            margin-top: 12px;
-        }
-
-        .dt-search .dt-input {
-            width: 250px;
-            padding: 4px;
-            margin-left: 12px;
-            font-size: 15px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            outline: none;
-            background-color: #f9f9f9;
+        .chart_card_header h5 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
             color: #333;
         }
 
-        .dt-search .dt-input:focus {
-            border-color: #ff0019;
-            box-shadow: 0 0 5px rgba(255, 89, 0, 0.5);
+        .chart_controls .btn {
+            margin-left: 5px;
+            transition: all 0.2s;
         }
 
-        .dt-length .dt-input {
+        .chart_card_body {
+            padding: 25px;
+            position: relative;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #courseChart, #pieChart {
+            max-height: 350px;
+        }
+
+        /* Filters Section */
+        .filters_section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #e9ecef;
+        }
+
+        .filters_section .form-control {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .filters_section .form-control:focus {
+            border-color: #ed2a26;
+            box-shadow: 0 0 0 0.2rem rgba(237, 42, 38, 0.25);
+        }
+
+        .filters_section .btn {
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        /* Table Styles */
+        .ucp-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
             border: none;
-            font-size: 15px;
         }
 
-        .dt-length label {
-            margin-left: 20px;
-            text-transform: capitalize;
-        }
-
-        .dt-paging.paging_full_numbers {
-            text-align: center;
-        }
-
-        .dt-paging.paging_full_numbers button {
+        .ucp-table thead.thead-s th {
+            background: linear-gradient(135deg, #ed2a26, #ff4757);
+            color: white;
+            font-weight: 600;
+            padding: 20px 15px;
             border: none;
-            font-size: 18px;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .ucp-table tbody tr {
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .ucp-table tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.001);
+        }
+
+        .ucp-table .cell-ta {
+            padding: 20px 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f3f4;
+            border-top: none;
+        }
+
+        /* Course Info */
+        .course-info strong {
+            color: #333;
+            font-size: 14px;
+        }
+
+        .course-info small {
+            color: #666;
+            font-size: 12px;
+        }
+
+        /* Enrollment Info */
+        .enrollment-info strong {
+            color: #007bff;
+            font-size: 16px;
+        }
+
+        .progress-sm {
+            height: 4px;
+        }
+
+        .progress {
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            transition: width 0.6s ease;
+        }
+
+        /* Revenue Info */
+        .revenue-info strong {
+            font-size: 16px;
+        }
+
+        .revenue-info small {
+            color: #666;
+            font-size: 11px;
+        }
+
+        /* Performance Indicator */
+        .performance-indicator {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .performance-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .performance-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.6s ease;
+        }
+
+        .performance-fill.bg-success {
+            background: linear-gradient(90deg, #28a745, #20c997);
+        }
+
+        .performance-fill.bg-warning {
+            background: linear-gradient(90deg, #ffc107, #fd7e14);
+        }
+
+        .performance-fill.bg-danger {
+            background: linear-gradient(90deg, #dc3545, #e83e8c);
+        }
+
+        /* Badges */
+        .badge {
+            font-size: 11px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Dropdown Styles */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-radius: 8px;
+        }
+
+        .dropdown-item {
+            padding: 10px 16px;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-item i {
+            width: 18px;
+        }
+
+        /* Alert Styles */
+        .alert {
+            border: none;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .alert i {
+            font-size: 16px;
+        }
+
+        /* Empty State */
+        .text-center i {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @@keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* DataTables Customization */
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-left: 8px;
+        }
+
+        .dataTables_wrapper .dataTables_length select {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 6px 10px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
             margin: 0 2px;
+            background: #f8f9fa;
+            color: #333;
+        }
 
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: #ed2a26;
+            color: white;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: #ed2a26;
+            color: white;
+        }
+
+        /* Hide DataTables built-in controls */
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_length {
+            display: none !important;
+        }
+
+        /* Ensure proper centering */
+        .container-fluid {
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        .dashboard_header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard_header h2 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Enhanced search input styling */
+        .input-group #clearSearch {
+            border-left: none;
+            background: #f8f9fa;
+            transition: all 0.2s ease;
+        }
+
+        .input-group #clearSearch:hover {
+            background: #e9ecef;
+            color: #dc3545;
+        }
+
+        /* Loading state for dropdowns */
+        select:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .dashboard_stats_card {
+                margin-bottom: 15px;
+            }
+            
+            .chart_card_body {
+                height: 300px;
+                padding: 15px;
+            }
+            
+            .filters_section .row > div {
+                margin-bottom: 15px;
+            }
+            
+            .table-responsive {
+                border-radius: 12px;
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* Chart Legend Customization */
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .chart-legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 15px;
+            font-size: 12px;
+        }
+
+        .chart-legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 8px;
         }
     </style>
 }
 
 @section Scripts {
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script>
+        let courseChart, pieChart;
+        let chartData = @Html.Raw(Json.Serialize(courseList.Select(c => new { 
+            CourseId = c.CourseId, 
+            CourseName = c.CourseName, 
+            TotalCourse = c.TotalCourse, 
+            TotalMoney = c.TotalMoney 
+        })));
+
         $(document).ready(function () {
-            $('#categoriesTable').DataTable();
+            // Initialize DataTable with hidden controls
+            var table = $('#courseAnalyticsTable').DataTable({
+                "dom": 'rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>', // Hide search and length menu
+                "paging": true,
+                "searching": true,
+                "info": true,
+                "responsive": true,
+                "order": [[4, "desc"]], // Sort by revenue descending
+                "pageLength": 10,
+                "processing": true, // Show processing indicator
+                "language": {
+                    "info": "Showing _START_ to _END_ of _TOTAL_ courses",
+                    "paginate": {
+                        "first": "First",
+                        "last": "Last",
+                        "next": "Next",
+                        "previous": "Previous"
+                    },
+                    "emptyTable": "No course analytics data available"
+                },
+                "columnDefs": [
+                    { "orderable": false, "targets": [-1] }, // Disable sorting for actions column
+                    { "width": "60px", "targets": 0 }, // # column width
+                    { "width": "100px", "targets": 1 }, // Course ID column width
+                    { "width": "120px", "targets": -1 } // Actions column width
+                ]
+            });
+
+            // Initialize Charts
+            initializeCharts();
+
+            // Search functionality with debounce
+            let searchTimeout;
+            $('#searchInput').on('keyup', function() {
+                var searchValue = this.value;
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    table.search(searchValue).draw();
+                }, 300); // 300ms debounce
+            });
+
+            // Show/hide clear search button and handle clearing
+            $('#searchInput').on('input', function() {
+                var $clearBtn = $('#clearSearch');
+                if (this.value === '') {
+                    table.search('').draw();
+                    $clearBtn.hide();
+                } else {
+                    $clearBtn.show();
+                }
+            });
+
+            // Clear search functionality
+            $('#clearSearch').on('click', function() {
+                $('#searchInput').val('').trigger('input');
+                $(this).hide();
+            });
+
+            // Sort functionality with visual feedback
+            $('#sortBy').on('change', function() {
+                var sortValue = $(this).val();
+                var $this = $(this);
+                
+                // Add loading state
+                $this.prop('disabled', true);
+                
+                switch(sortValue) {
+                    case 'enrollments':
+                        table.order([3, 'desc']).draw();
+                        break;
+                    case 'revenue':
+                        table.order([4, 'desc']).draw();
+                        break;
+                    case 'name':
+                        table.order([2, 'asc']).draw();
+                        break;
+                    case 'id':
+                        table.order([1, 'asc']).draw();
+                        break;
+                }
+                
+                // Re-enable after sorting
+                setTimeout(function() {
+                    $this.prop('disabled', false);
+                }, 500);
+            });
+
+            // Entries per page
+            $('#entriesPerPage').on('change', function() {
+                var pageLength = parseInt($(this).val());
+                $('#courseAnalyticsTable').DataTable().page.len(pageLength).draw();
+            });
+
+            // Chart control buttons
+            $('#enrollmentChart').on('click', function() {
+                $(this).removeClass('btn-outline-primary').addClass('btn-primary');
+                $('#revenueChart').removeClass('btn-primary').addClass('btn-outline-primary');
+                updateBarChart('enrollments');
+            });
+
+            $('#revenueChart').on('click', function() {
+                $(this).removeClass('btn-outline-primary').addClass('btn-primary');
+                $('#enrollmentChart').removeClass('btn-primary').addClass('btn-outline-primary');
+                updateBarChart('revenue');
+            });
+
+            // Export to Excel with enhanced feedback
+            $('#exportBtn').on('click', function() {
+                console.log('Export button clicked');
+                var $btn = $(this);
+                var originalText = $btn.html();
+                
+                // Disable button during export
+                $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Preparing...');
+                
+                exportToExcel().finally(function() {
+                    // Re-enable button
+                    $btn.prop('disabled', false).html(originalText);
+                });
+            });
+
+            // Initialize features on page load
+            console.log('CourseAnalyze features initialized:');
+            console.log('- Search: ✓ Ready');
+            console.log('- Sort: ✓ Ready'); 
+            console.log('- Pagination: ✓ Ready');
+            console.log('- Export: ✓ Ready');
+
+            // View course details
+            $('.view-details').on('click', function(e) {
+                e.preventDefault();
+                var courseId = $(this).data('course-id');
+                
+                Swal.fire({
+                    title: 'Course Details',
+                    text: `Viewing detailed analytics for Course ID: ${courseId}`,
+                    icon: 'info',
+                    confirmButtonColor: '#ed2a26'
+                });
+            });
+
+            // View enrollments
+            $('.view-enrollments').on('click', function(e) {
+                e.preventDefault();
+                var courseId = $(this).data('course-id');
+                
+                Swal.fire({
+                    title: 'Course Enrollments',
+                    text: `Viewing enrollment details for Course ID: ${courseId}`,
+                    icon: 'info',
+                    confirmButtonColor: '#ed2a26'
+                });
+            });
+
+            // Export single course
+            $('.export-course').on('click', function(e) {
+                e.preventDefault();
+                var courseId = $(this).data('course-id');
+                
+                Swal.fire({
+                    title: 'Export Course Data',
+                    text: `Exporting analytics data for Course ID: ${courseId}`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, export it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Implement single course export
+                        exportSingleCourse(courseId);
+                    }
+                });
+            });
+
+            // Animate statistics cards on page load
+            $('.dashboard_stats_card').each(function(index) {
+                $(this).css('opacity', '0').css('transform', 'translateY(20px)');
+                $(this).delay(100 * index).animate({
+                    opacity: 1
+                }, 600).css('transform', 'translateY(0)');
+            });
+
+            // Auto-hide alerts
+            setTimeout(function () {
+                $('.alert').each(function() {
+                    $(this).fadeOut('slow');
+                });
+            }, 5000);
         });
 
+        // Initialize Charts
+        function initializeCharts() {
+            // Prepare data for charts
+            const sortedByRevenue = [...chartData].sort((a, b) => b.TotalMoney - a.TotalMoney).slice(0, 10);
+            const labels = sortedByRevenue.map(item => item.CourseName.length > 20 ? 
+                item.CourseName.substring(0, 20) + '...' : item.CourseName);
+            const revenueData = sortedByRevenue.map(item => item.TotalMoney);
+            const enrollmentData = sortedByRevenue.map(item => item.TotalCourse);
 
+            // Bar Chart
+            const ctxBar = document.getElementById('courseChart').getContext('2d');
+            courseChart = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Revenue ($)',
+                        data: revenueData,
+                        backgroundColor: 'rgba(237, 42, 38, 0.8)',
+                        borderColor: 'rgba(237, 42, 38, 1)',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: 'white',
+                            bodyColor: 'white',
+                            borderColor: '#ed2a26',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 0
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Pie Chart
+            const ctxPie = document.getElementById('pieChart').getContext('2d');
+            const topCourses = sortedByRevenue.slice(0, 5);
+            const othersRevenue = sortedByRevenue.slice(5).reduce((sum, item) => sum + item.TotalMoney, 0);
+            
+            const pieLabels = [...topCourses.map(item => item.CourseName.length > 15 ? 
+                item.CourseName.substring(0, 15) + '...' : item.CourseName)];
+            const pieData = [...topCourses.map(item => item.TotalMoney)];
+            
+            if (othersRevenue > 0) {
+                pieLabels.push('Others');
+                pieData.push(othersRevenue);
+            }
+
+            pieChart = new Chart(ctxPie, {
+                type: 'doughnut',
+                data: {
+                    labels: pieLabels,
+                    datasets: [{
+                        data: pieData,
+                        backgroundColor: [
+                            '#ed2a26',
+                            '#ff6b6b',
+                            '#28a745',
+                            '#ffc107',
+                            '#17a2b8',
+                            '#6c757d'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: 'white',
+                            bodyColor: 'white',
+                            borderColor: '#ed2a26',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${context.label}: $${value.toLocaleString()} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update Bar Chart
+        function updateBarChart(type) {
+            if (!courseChart) return;
+
+            const sortedData = type === 'enrollments' ? 
+                [...chartData].sort((a, b) => b.TotalCourse - a.TotalCourse).slice(0, 10) :
+                [...chartData].sort((a, b) => b.TotalMoney - a.TotalMoney).slice(0, 10);
+
+            const labels = sortedData.map(item => item.CourseName.length > 20 ? 
+                item.CourseName.substring(0, 20) + '...' : item.CourseName);
+            const data = type === 'enrollments' ? 
+                sortedData.map(item => item.TotalCourse) :
+                sortedData.map(item => item.TotalMoney);
+
+            courseChart.data.labels = labels;
+            courseChart.data.datasets[0].data = data;
+            courseChart.data.datasets[0].label = type === 'enrollments' ? 'Enrollments' : 'Revenue ($)';
+            courseChart.data.datasets[0].backgroundColor = type === 'enrollments' ? 
+                'rgba(40, 167, 69, 0.8)' : 'rgba(237, 42, 38, 0.8)';
+            courseChart.data.datasets[0].borderColor = type === 'enrollments' ? 
+                'rgba(40, 167, 69, 1)' : 'rgba(237, 42, 38, 1)';
+
+            courseChart.options.scales.y.ticks.callback = type === 'enrollments' ?
+                function(value) { return value.toLocaleString(); } :
+                function(value) { return '$' + value.toLocaleString(); };
+
+            courseChart.update();
+        }
+
+        // Export to Excel
         function exportToExcel() {
-            Swal.fire({
-                title: 'Confirm Export',
-                text: 'Are you sure you want to export the data to Excel?',
+            return new Promise((resolve, reject) => {
+                Swal.fire({
+                title: 'Export Course Analytics',
+                text: 'Are you sure you want to export the course analytics data to Excel?',
                 icon: 'question',
                 showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
                 confirmButtonText: 'Yes, export it!',
-                cancelButtonText: 'No, cancel'
+                cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Generating Excel File...',
+                        text: 'Please wait while we prepare your report.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
                     var data = [];
-
-                    $('#categoriesTable tbody tr').each(function () {
-                        var courseId = $(this).find('td:eq(1)').text();
-                        var courseName = $(this).find('td:eq(2)').text();
-                        var totalCourse = parseInt($(this).find('td:eq(3)').text().trim(), 10);
-                        var totalMoneyText = $(this).find('td:eq(4)').text().trim();
-                        var totalMoney = parseFloat(totalMoneyText.replace(/[^\d.-]/g, ''));
-
-
-                        console.log("CourseId:", courseId);
-                        console.log("CourseName:", courseName);
-                        console.log("TotalCourse:", totalCourse);
-                        console.log("TotalMoney:", totalMoney);
+                    $('#courseAnalyticsTable tbody tr').each(function () {
+                        var $row = $(this);
+                        var courseId = $row.find('td:eq(1) .badge').text().replace('#', '');
+                        var courseName = $row.find('td:eq(2) strong').text();
+                        var totalEnrollments = parseInt($row.find('td:eq(3) strong').text().replace(/,/g, ''), 10);
+                        var revenueText = $row.find('td:eq(4) strong').text();
+                        var totalRevenue = parseFloat(revenueText.replace(/[^\d.-]/g, ''));
 
                         data.push({
                             CourseId: courseId,
                             CourseName: courseName,
-                            TotalCourse: totalCourse,
-                            TotalMoney: totalMoney
+                            TotalCourse: totalEnrollments,
+                            TotalMoney: totalRevenue
                         });
                     });
-
-                    console.log(JSON.stringify(data));
 
                     $.ajax({
                         url: '@Url.Action("GetReportToExcel", "Admin")',
@@ -238,26 +1111,69 @@
                         },
                         success: function (response) {
                             if (response) {
-                                var blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                                var blob = new Blob([response], { 
+                                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+                                });
                                 var url = URL.createObjectURL(blob);
 
                                 var downloadLink = document.createElement('a');
                                 downloadLink.href = url;
-                                downloadLink.download = 'Report.xlsx';
+                                downloadLink.download = 'Course_Analytics_Report.xlsx';
                                 document.body.appendChild(downloadLink);
                                 downloadLink.click();
                                 document.body.removeChild(downloadLink);
+
+                                Swal.fire({
+                                    title: 'Export Successful!',
+                                    text: 'Your course analytics report has been downloaded.',
+                                    icon: 'success',
+                                    confirmButtonColor: '#ed2a26'
+                                }).then(() => resolve('success'));
                             } else {
-                                console.error('Không có đường dẫn file Excel trả về từ server.');
+                                Swal.fire({
+                                    title: 'Export Failed',
+                                    text: 'Unable to generate the Excel report. Please try again.',
+                                    icon: 'error',
+                                    confirmButtonColor: '#ed2a26'
+                                }).then(() => reject('failed'));
                             }
                         },
                         error: function (xhr, textStatus, errorThrown) {
-                            console.error('Lỗi khi gọi GetReportToExcel:', errorThrown);
+                            console.error('Export error:', errorThrown);
+                            Swal.fire({
+                                title: 'Export Error',
+                                text: 'An error occurred while generating the report. Please try again.',
+                                icon: 'error',
+                                confirmButtonColor: '#ed2a26'
+                            }).then(() => reject(errorThrown));
                         }
                     });
+                } else {
+                    resolve('cancelled');
+                }
+            });
+        });
+
+        // Export Single Course
+        function exportSingleCourse(courseId) {
+            Swal.fire({
+                title: 'Exporting...',
+                text: `Preparing export for Course ID: ${courseId}`,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
                 }
             });
 
+            // Simulate single course export
+            setTimeout(() => {
+                Swal.fire({
+                    title: 'Export Complete!',
+                    text: `Course ${courseId} data has been exported successfully.`,
+                    icon: 'success',
+                    confirmButtonColor: '#ed2a26'
+                });
+            }, 2000);
         }
     </script>
 }

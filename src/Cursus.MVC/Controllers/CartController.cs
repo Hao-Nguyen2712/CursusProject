@@ -1,20 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Cursus.Application;
+using Cursus.Application.Account;
 using Cursus.Application.Cart;
-using Microsoft.AspNetCore.Http;
+using Cursus.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using System.Data;
-using Cursus.Domain.Models;
-using System.Security.Claims;
-using Cursus.Application.Account;
-using Cursus.Application;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Cursus.MVC.Controllers
 {
@@ -46,7 +38,7 @@ namespace Cursus.MVC.Controllers
             {
                 return Json(new { status = "NotAuthenticated" });
             }
-            
+
             //get Id user from UserIdentity
             ClaimsPrincipal claims = this.User;
             var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -115,7 +107,7 @@ namespace Cursus.MVC.Controllers
 
 
         [HttpPost]
-        public IActionResult Checkout()
+        public async Task<IActionResult> Checkout()
         {
             ClaimsPrincipal claims = this.User;
             var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -123,7 +115,7 @@ namespace Cursus.MVC.Controllers
             var account = _accountService.GetAccountByUserID(userID);
 
             bool checkoutResult = _cartService.Checkout(accountId);
-            _sendEmail.SendEmailAsync(account.Email, "Checkout", Service.EmailSender.BuyNow(account.FullName));
+            await _sendEmail.SendEmailAsync(account.Email, "Checkout", "Purchase confirmation email content");
             if (checkoutResult)
             {
                 return RedirectToAction("Index", "Home"); // Redirect to success page
@@ -135,7 +127,7 @@ namespace Cursus.MVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult BuyNow(string courseID)
+        public async Task<IActionResult> BuyNow(string courseID)
         {
             ClaimsPrincipal claims = this.User;
             var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -150,7 +142,7 @@ namespace Cursus.MVC.Controllers
             }
 
             bool buyNow = _cartService.BuyNow(accountId, courseId);
-            _sendEmail.SendEmailAsync(account.Email, "Checkout", Service.EmailSender.BuyNow(account.FullName));
+            await _sendEmail.SendEmailAsync(account.Email, "Checkout", "Purchase confirmation email content");
 
             if (buyNow)
             {

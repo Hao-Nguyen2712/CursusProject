@@ -15,6 +15,7 @@ namespace Cursus.Application.Account
         public Domain.Models.Account GetAccountIdById(string id);
 
         public int GetAccountIDByUserID(string userID);
+        public Task<int> GetAccountIDByUserIDAsync(string userID);
 
         public string getAccountName(string userID);
 

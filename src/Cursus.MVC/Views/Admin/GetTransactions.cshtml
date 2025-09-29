@@ -1,0 +1,211 @@
+@model List<Cursus.MVC.Models.TradingViewModel>
+@{
+    ViewData["Title"] = "Transaction Management";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="sa4d25">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="section_padding_130">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="dashboard_tab_content">
+                                <div class="orders_table">
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                            <div class="table_title">
+                                                <h2>Transaction Management</h2>
+                                                <p>Monitor and manage all financial transactions</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    @if (TempData["SuccessMessage"] != null)
+                                    {
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            @TempData["SuccessMessage"]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    }
+
+                                    @if (TempData["ErrorMessage"] != null)
+                                    {
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            @TempData["ErrorMessage"]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    }
+
+                                    <!-- Transaction Summary Cards -->
+                                    @if (Model != null && Model.Any())
+                                    {
+                                        var totalTransactions = Model.Count;
+                                        var totalAmount = Model.Sum(t => t.TdMoney ?? 0);
+                                        var averageTransaction = totalTransactions > 0 ? totalAmount / totalTransactions : 0;
+                                        
+                                        <div class="row mb-4">
+                                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                                <div class="card stat-card">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Total Transactions</h5>
+                                                        <h2 class="text-primary">@totalTransactions</h2>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                                <div class="card stat-card">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Total Amount</h5>
+                                                        <h2 class="text-success">$@totalAmount.ToString("N2")</h2>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                                <div class="card stat-card">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Average Transaction</h5>
+                                                        <h2 class="text-info">$@averageTransaction.ToString("N2")</h2>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                                <div class="card stat-card">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Payment Methods</h5>
+                                                        <h2 class="text-warning">@Model.Select(t => t.TdMethodPayment).Distinct().Count()</h2>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    <div class="order_table">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Transaction ID</th>
+                                                        <th scope="col">User</th>
+                                                        <th scope="col">Amount</th>
+                                                        <th scope="col">Payment Method</th>
+                                                        <th scope="col">Date</th>
+                                                        <th scope="col">Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model != null && Model.Any())
+                                                    {
+                                                        @foreach (var transaction in Model)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="order_detail">
+                                                                        <span class="order_id">#@transaction.TdId</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="order_detail">
+                                                                        <span>Account ID: @transaction.AccountId</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="order_detail">
+                                                                        <span class="@(transaction.TdMoney >= 0 ? "text-success" : "text-danger")">
+                                                                            $@(transaction.TdMoney?.ToString("N2") ?? "0.00")
+                                                                        </span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="order_detail">
+                                                                        @if (transaction.TdMethodPayment == "VNPay")
+                                                                        {
+                                                                            <span class="badge bg-primary">VNPay</span>
+                                                                        }
+                                                                        else if (transaction.TdMethodPayment == "PayPal")
+                                                                        {
+                                                                            <span class="badge bg-info">PayPal</span>
+                                                                        }
+                                                                        else if (transaction.TdMethodPayment == "Payout")
+                                                                        {
+                                                                            <span class="badge bg-warning">Payout</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="badge bg-secondary">@(transaction.TdMethodPayment ?? "Unknown")</span>
+                                                                        }
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="order_detail">
+                                                                        <span class="order_date">@(transaction.TdDate?.ToString("MMM dd, yyyy HH:mm") ?? "N/A")</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="order_detail">
+                                                                        <span class="badge bg-success">Completed</span>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td colspan="6" class="text-center">
+                                                                <div class="empty_state">
+                                                                    <i class="uil uil-money-bill" style="font-size: 3rem; color: #ccc;"></i>
+                                                                    <h4>No Transactions Found</h4>
+                                                                    <p>There are currently no transactions to display.</p>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .stat-card {
+            margin-bottom: 1rem;
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        
+        .stat-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .stat-card h5 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty_state {
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+        }
+        
+        .table td {
+            vertical-align: middle;
+        }
+    </style>
+}

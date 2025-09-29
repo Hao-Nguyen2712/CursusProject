@@ -1,0 +1,270 @@
+@model Cursus.MVC.ViewModels.SystemMonitoringViewModel
+@{
+    ViewData["Title"] = "System Monitoring";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="sa4d25">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="section_padding_130">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="dashboard_tab_content">
+                                <div class="orders_table">
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                            <div class="table_title">
+                                                <h2>System Monitoring Dashboard</h2>
+                                                <p>Monitor system performance, user activity, and course statistics</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @if (TempData["SuccessMessage"] != null)
+                                    {
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            @TempData["SuccessMessage"]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    }
+
+                                    @if (TempData["ErrorMessage"] != null)
+                                    {
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            @TempData["ErrorMessage"]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    }
+
+                                    <!-- Overview Statistics -->
+                                    <div class="row mb-4">
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="card stat-card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Total Users</h5>
+                                                    <h2 class="text-primary">@Model.TotalUsers</h2>
+                                                    <small class="text-muted">
+                                                        Instructors: @Model.ActiveInstructors | Students: @Model.ActiveStudents
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="card stat-card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Total Courses</h5>
+                                                    <h2 class="text-success">@Model.TotalCourses</h2>
+                                                    <small class="text-muted">
+                                                        Active: @Model.ActiveCourses | Pending: @Model.PendingCourses
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="card stat-card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Total Enrollments</h5>
+                                                    <h2 class="text-warning">@Model.TotalEnrollments</h2>
+                                                    <small class="text-muted">
+                                                        Active: @Model.ActiveEnrollments | Completed: @Model.CompletedEnrollments
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="card stat-card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Completion Rate</h5>
+                                                    <h2 class="text-info">@Model.EnrollmentCompletionRate.ToString("F1")%</h2>
+                                                    <small class="text-muted">Overall course completion</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Charts Row -->
+                                    <div class="row mb-4">
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5>Course Completion Rates</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    @if (Model.CourseCompletionData.Any())
+                                                    {
+                                                        @foreach (var course in Model.CourseCompletionData.Take(5))
+                                                        {
+                                                            <div class="mb-3">
+                                                                <div class="d-flex justify-content-between">
+                                                                    <span class="fw-bold">@course.CourseName</span>
+                                                                    <span>@course.CompletionRate.ToString("F1")%</span>
+                                                                </div>
+                                                                <div class="progress" style="height: 8px;">
+                                                                    <div class="progress-bar bg-success" style="width: @(course.CompletionRate)%"></div>
+                                                                </div>
+                                                                <small class="text-muted">@course.CompletedEnrollments/@course.TotalEnrollments enrollments completed</small>
+                                                            </div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="text-muted">No completion data available</p>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5>Monthly Enrollment Trends</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    @if (Model.MonthlyEnrollmentData.Any())
+                                                    {
+                                                        <div class="enrollment-chart">
+                                                            @foreach (var month in Model.MonthlyEnrollmentData.TakeLast(6))
+                                                            {
+                                                                var maxEnrollments = Model.MonthlyEnrollmentData.Max(m => m.EnrollmentCount);
+                                                                var barHeight = maxEnrollments > 0 ? (double)month.EnrollmentCount / maxEnrollments * 100 : 0;
+                                                                
+                                                                <div class="enrollment-bar-container mb-3">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <span>@month.Month</span>
+                                                                        <span class="fw-bold">@month.EnrollmentCount</span>
+                                                                    </div>
+                                                                    <div class="progress" style="height: 20px;">
+                                                                        <div class="progress-bar bg-primary" style="width: @(barHeight)%"></div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="text-muted">No enrollment data available</p>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Recent Activity -->
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5>Recent Enrollments</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    @if (Model.RecentEnrollments.Any())
+                                                    {
+                                                        <div class="table-responsive">
+                                                            <table class="table table-hover">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Date</th>
+                                                                        <th>Student</th>
+                                                                        <th>Course</th>
+                                                                        <th>Status</th>
+                                                                        <th>Progress</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @foreach (var enrollment in Model.RecentEnrollments)
+                                                                    {
+                                                                        <tr>
+                                                                            <td>@enrollment.EnrollDate.ToString("MMM dd, yyyy")</td>
+                                                                            <td>@(enrollment.Account?.FullName ?? "Unknown")</td>
+                                                                            <td>@(enrollment.Course?.CourseName ?? "Unknown")</td>
+                                                                            <td>
+                                                                                @if (enrollment.EnrollStatus == "Active")
+                                                                                {
+                                                                                    <span class="badge bg-primary">Active</span>
+                                                                                }
+                                                                                else if (enrollment.EnrollStatus == "Completed")
+                                                                                {
+                                                                                    <span class="badge bg-success">Completed</span>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <span class="badge bg-secondary">@enrollment.EnrollStatus</span>
+                                                                                }
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="progress" style="width: 100px; height: 8px;">
+                                                                                    <div class="progress-bar" style="width: @(enrollment.EnrollFinish ?? "0")%"></div>
+                                                                                </div>
+                                                                                <small>@(enrollment.EnrollFinish ?? "0")%</small>
+                                                                            </td>
+                                                                        </tr>
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="text-center">
+                                                            <i class="uil uil-users-alt" style="font-size: 3rem; color: #ccc;"></i>
+                                                            <h4>No Recent Activity</h4>
+                                                            <p>No recent enrollments found.</p>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .stat-card {
+            margin-bottom: 1rem;
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        
+        .stat-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .stat-card h5 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+        
+        .enrollment-chart {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .enrollment-bar-container {
+            padding: 0.5rem;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        
+        .progress {
+            background-color: #e9ecef;
+        }
+        
+        .table td {
+            vertical-align: middle;
+        }
+    </style>
+}

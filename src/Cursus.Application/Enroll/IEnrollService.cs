@@ -33,5 +33,6 @@ namespace Cursus.Application.Enroll
         public void EnrollCourseFree(int courseId, int accountId);
         public Domain.Models.Enroll GetEnrollByAccoutIDAndCourseID(int accountID, int courseID);
         public Domain.Models.Enroll getEnrollByStatus(int courseId, int accountID);
+        public List<Cursus.Domain.Models.Enroll> GetAllEnrolls();
     }
 }

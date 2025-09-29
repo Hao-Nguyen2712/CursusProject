@@ -9,7 +9,8 @@ namespace Cursus.Application.Certificate
 {
     public interface ICertificateService
     {
+        // Server-side PDF generation methods removed - using client-side PDF generation only
         //public Account GenerateCertificate(Account account, Course course, string outputPath);
-        public void GenerateCertificateToPDF(string fullName, string courseName, string outputPath);
+        //public void GenerateCertificateToPDF(string fullName, string courseName, string outputPath);
     }
 }

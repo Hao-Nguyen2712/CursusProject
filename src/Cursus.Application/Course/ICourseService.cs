@@ -35,6 +35,8 @@ namespace Cursus.Application
         public Domain.Models.Course UpdateCourseEdit(Domain.Models.Course course);
         public Domain.Models.Course GetCourseByCourseID(int courseID);
         public int GetSubByAccountID(string accountID);
+        public List<Course> GetAllCourseActive();
+        public List<Course> GetAllCoursePending();
         
     }
 }

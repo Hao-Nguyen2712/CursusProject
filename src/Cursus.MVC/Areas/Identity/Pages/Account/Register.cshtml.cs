@@ -22,6 +22,7 @@ using Microsoft.Extensions.Logging;
 using Cursus.Domain;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Cursus.Domain.Models;
+using Cursus.MVC.Services;
 
 namespace Cursus.MVC.Areas.Identity.Pages.Account
 {
@@ -32,7 +33,7 @@ namespace Cursus.MVC.Areas.Identity.Pages.Account
 		private readonly IUserStore<ApplicationUser> _userStore;
 		private readonly IUserEmailStore<ApplicationUser> _emailStore;
 		private readonly ILogger<RegisterModel> _logger;
-		private readonly IEmailSender _emailSender;
+		private readonly EmailSender _emailSender;
 		private readonly Cursus.Domain.Models.CursusDBContext _db;
 		private readonly RoleManager<IdentityRole> _roleManager;
 
@@ -41,7 +42,7 @@ namespace Cursus.MVC.Areas.Identity.Pages.Account
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender,
+            EmailSender emailSender,
             CursusDBContext db,
             RoleManager<IdentityRole> roleManager)
         {
@@ -147,10 +148,11 @@ namespace Cursus.MVC.Areas.Identity.Pages.Account
 						values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
 						protocol: Request.Scheme);
 
+					var htmlContent = _emailSender.EmailConfirm(user.UserName, $"<h3>To confirm your email address to register, please click the link below: </h3><div style='text-align: center;'><a style='color: white;' class='link-confirm' href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Confirm Email</a></div>");
 					await _emailSender.SendEmailAsync(
 						Input.Email, 
 						"Confirm your email",
-                        Service.EmailSender.EmailConfirm(user.UserName, $"<h3>To confirm your email address to register, please click the link below: </h3><div style='text-align: center;'><a style='color: white;' class='link-confirm' href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Confirm Email</a></div>"));
+                        htmlContent);
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
 					{

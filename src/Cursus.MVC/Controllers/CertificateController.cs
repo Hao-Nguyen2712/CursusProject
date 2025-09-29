@@ -14,7 +14,7 @@ using Cursus.MVC.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Cursus.Infrastructure;
-using Cursus.Application.Certificate;
+// using Cursus.Application.Certificate; // Removed - using client-side PDF only
 using Cursus.Application.Cart;
 
 namespace Cursus.MVC.Controllers
@@ -30,10 +30,10 @@ namespace Cursus.MVC.Controllers
         private readonly IAccountService _accountService;
         private readonly ICourseService _courseService;
         private readonly IEnrollService _enrollService;
-        private readonly ICertificateService _certificateService;
+        // private readonly ICertificateService _certificateService; // Removed - using client-side PDF only
         private readonly ICartService _cartService;
 
-        public CertificateController(ISendEmail sendEmail, ICourseRepository courseRepository, IEnrollRepository enrollRepository, IMapper _mapper, UserManager<ApplicationUser> userManager, IUserStore<ApplicationUser> userStore, IAccountService accountService, ICourseService courseService, IEnrollService enrollService, ICertificateService certificateService, ICartService cartService)
+        public CertificateController(ISendEmail sendEmail, ICourseRepository courseRepository, IEnrollRepository enrollRepository, IMapper _mapper, UserManager<ApplicationUser> userManager, IUserStore<ApplicationUser> userStore, IAccountService accountService, ICourseService courseService, IEnrollService enrollService, ICartService cartService)
         {
             _sendEmail = sendEmail;
             this._courseRepository = courseRepository;
@@ -44,7 +44,7 @@ namespace Cursus.MVC.Controllers
             _accountService = accountService;
             _courseService = courseService;
             _enrollService = enrollService;
-            _certificateService = certificateService;
+            // _certificateService = certificateService; // Removed - using client-side PDF only
             _cartService = cartService;
         }
 
@@ -59,7 +59,7 @@ namespace Cursus.MVC.Controllers
             // Giả sử bạn có logic để đánh dấu hoàn thành khóa học tại đây
 
             // Gửi email thông báo
-            await _sendEmail.SendEmailAsync(userEmail, subject, 0);
+            await _sendEmail.SendEmailAsync(userEmail, subject, $"Congratulations! You have completed the course: {subject}");
 
             return Ok("Enroll completion email sent successfully.");
         }
@@ -138,7 +138,8 @@ namespace Cursus.MVC.Controllers
 
             return View(enrollViewModels);
         }
-        [HttpPost]
+        // Server-side PDF generation removed - using client-side PDF generation only
+        /*[HttpPost]
         [Authorize]
         public async Task<IActionResult> GenerateCertificate(int enrollId)
         {
@@ -192,6 +193,6 @@ namespace Cursus.MVC.Controllers
             _certificateService.GenerateCertificateToPDF(fullName, CourseName, outputPath);
 
             return Ok(new { success = true });
-        }
+        }*/
     }
 }

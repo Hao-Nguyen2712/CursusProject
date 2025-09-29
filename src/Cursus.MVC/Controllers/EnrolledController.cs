@@ -19,6 +19,7 @@ using Cursus.Application.Cart;
 
 using Cursus.MVC.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Authorization;
 namespace Cursus.MVC.Controllers
 {
     public class EnrolledController : Controller
@@ -53,8 +54,10 @@ namespace Cursus.MVC.Controllers
             var homePageView = _mapper.Map<HomePageViewViewModel>(homepage);
             return View(homePageView);
         }
+        
         [HttpPost]
-        public IActionResult EnrollCourse(int courseId)
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> EnrollCourse(int courseId)
         {
             try
             {
@@ -64,7 +67,7 @@ namespace Cursus.MVC.Controllers
                 var account = _accountService.GetAccountByUserID(userID);
                 var course = _courseService.GetCourseById(courseId);
                 _enrollService.EnrollCourse(courseId, accountId);
-                _sendEmail.SendEmailAsync(account.Email, "Enroll Course", Service.EmailSender.Enroll(account.FullName, course.CourseName));
+                await _sendEmail.SendEmailAsync(account.Email, "Enroll Course", $"Enrolled in course: {course.CourseName}");
                 return Json(new { success = true });
             }
             catch (Exception ex)
@@ -74,7 +77,8 @@ namespace Cursus.MVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult EnrollCourseFree(int courseId)
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> EnrollCourseFree(int courseId)
         {
             try
             {
@@ -85,7 +89,7 @@ namespace Cursus.MVC.Controllers
                 var account = _accountService.GetAccountByUserID(userID);
                 var course = _courseService.GetCourseById(courseId);
                 _enrollService.EnrollCourse(courseId, accountId);
-                _sendEmail.SendEmailAsync(account.Email, "Enroll Course Free", Service.EmailSender.Enroll(account.FullName, course.CourseName));
+                await _sendEmail.SendEmailAsync(account.Email, "Enroll Course Free", $"Enrolled in free course: {course.CourseName}");
                 return Json(new { success = true });
             }
             catch (Exception ex)

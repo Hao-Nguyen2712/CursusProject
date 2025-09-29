@@ -1,0 +1,398 @@
+@model Cursus.Domain.ViewModels.InstructorPayoutsViewModel
+@{
+    ViewData["Title"] = "Instructor Payouts";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="sa4d25">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="section_padding_130">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="dashboard_tab_content">
+                                
+                                <!-- Payout Overview Cards -->
+                                <div class="row mb-4">
+                                    <div class="col-lg-3 col-md-6 mb-3">
+                                        <div class="card bg-warning text-dark">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <h4 class="mb-0">@Model.TotalPendingPayouts.ToString("C")</h4>
+                                                        <small>Pending Payouts</small>
+                                                        <div class="small">@Model.PendingPayoutCount requests</div>
+                                                    </div>
+                                                    <div class="align-self-center">
+                                                        <i class="uil uil-clock fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-lg-3 col-md-6 mb-3">
+                                        <div class="card bg-success text-white">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <h4 class="mb-0">@Model.TotalPaidOut.ToString("C")</h4>
+                                                        <small>Total Paid Out</small>
+                                                        <div class="small">@Model.CompletedPayoutCount completed</div>
+                                                    </div>
+                                                    <div class="align-self-center">
+                                                        <i class="uil uil-check-circle fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-lg-3 col-md-6 mb-3">
+                                        <div class="card bg-info text-white">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <h4 class="mb-0">@Model.CurrentMonthPayouts.ToString("C")</h4>
+                                                        <small>This Month</small>
+                                                        <div class="small">@Model.AveragePayoutAmount.ToString("C") avg</div>
+                                                    </div>
+                                                    <div class="align-self-center">
+                                                        <i class="uil uil-calendar-alt fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-lg-3 col-md-6 mb-3">
+                                        <div class="card bg-primary text-white">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <h4 class="mb-0">@Model.TotalActiveInstructors</h4>
+                                                        <small>Active Instructors</small>
+                                                        <div class="small">@Model.AverageProcessingTime.Days avg days</div>
+                                                    </div>
+                                                    <div class="align-self-center">
+                                                        <i class="uil uil-users-alt fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Filters and Actions -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-header d-flex justify-content-between align-items-center">
+                                                <h5 class="mb-0">Payout Management</h5>
+                                                <div>
+                                                    <button type="button" class="btn btn-success" onclick="bulkProcessPayouts()">
+                                                        <i class="uil uil-check"></i> Process Selected
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <form asp-action="GetPayouts" method="get" class="row g-3 mb-3">
+                                                    <div class="col-md-3">
+                                                        <label for="startDate" class="form-label">Start Date</label>
+                                                        <input type="date" class="form-control" id="startDate" name="startDate" 
+                                                               value="@Model.StartDate.ToString("yyyy-MM-dd")">
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label for="endDate" class="form-label">End Date</label>
+                                                        <input type="date" class="form-control" id="endDate" name="endDate" 
+                                                               value="@Model.EndDate.ToString("yyyy-MM-dd")">
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label for="status" class="form-label">Status</label>
+                                                        <select class="form-select" id="status" name="status">
+                                                            <option value="">All Statuses</option>
+                                                            <option value="0" selected="@(Model.StatusFilter == Cursus.Domain.ViewModels.PayoutStatus.Pending ? "selected" : null)">Pending</option>
+                                                            <option value="1" selected="@(Model.StatusFilter == Cursus.Domain.ViewModels.PayoutStatus.Processing ? "selected" : null)">Processing</option>
+                                                            <option value="2" selected="@(Model.StatusFilter == Cursus.Domain.ViewModels.PayoutStatus.Completed ? "selected" : null)">Completed</option>
+                                                            <option value="3" selected="@(Model.StatusFilter == Cursus.Domain.ViewModels.PayoutStatus.Failed ? "selected" : null)">Failed</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-3 d-flex align-items-end">
+                                                        <button type="submit" class="btn btn-primary me-2">
+                                                            <i class="uil uil-filter"></i> Filter
+                                                        </button>
+                                                        <a href="@Url.Action("GetPayouts")" class="btn btn-outline-secondary">
+                                                            <i class="uil uil-refresh"></i> Reset
+                                                        </a>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Pending Payouts Table -->
+                                @if (Model.PendingPayouts.Any())
+                                {
+                                    <div class="row mb-4">
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5 class="mb-0">Pending Payouts</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>
+                                                                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                                                                    </th>
+                                                                    <th>Instructor</th>
+                                                                    <th>Amount</th>
+                                                                    <th>Request Date</th>
+                                                                    <th>Payment Method</th>
+                                                                    <th>Status</th>
+                                                                    <th>Actions</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach (var payout in Model.PendingPayouts)
+                                                                {
+                                                                    <tr class="@(payout.IsOverdue ? "table-warning" : "")">
+                                                                        <td>
+                                                                            <input type="checkbox" class="payout-checkbox" value="@payout.PayoutId">
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="d-flex flex-column">
+                                                                                <span class="fw-bold">@payout.InstructorName</span>
+                                                                                <small class="text-muted">@payout.InstructorEmail</small>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="fw-bold text-success">@payout.Amount.ToString("C")</td>
+                                                                        <td>
+                                                                            @payout.RequestDate.ToString("MMM dd, yyyy")
+                                                                            @if (payout.IsOverdue)
+                                                                            {
+                                                                                <br><small class="text-warning">Overdue</small>
+                                                                            }
+                                                                        </td>
+                                                                        <td>@payout.PaymentMethod</td>
+                                                                        <td>
+                                                                            <span class="badge bg-@GetStatusColor(payout.Status)">
+                                                                                @payout.Status
+                                                                            </span>
+                                                                        </td>
+                                                                        <td>
+                                                                            <form asp-action="ProcessPayout" method="post" style="display: inline;">
+                                                                                <input type="hidden" name="payoutId" value="@payout.PayoutId">
+                                                                                <button type="submit" class="btn btn-sm btn-success" 
+                                                                                        onclick="return confirm('Process this payout?')">
+                                                                                    <i class="uil uil-check"></i> Process
+                                                                                </button>
+                                                                            </form>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                <!-- Instructor Earnings Summary -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Instructor Earnings Summary</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Instructor</th>
+                                                                <th>Total Earnings</th>
+                                                                <th>Paid Out</th>
+                                                                <th>Available</th>
+                                                                <th>Courses</th>
+                                                                <th>Students</th>
+                                                                <th>Last Payout</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var instructor in Model.InstructorEarnings)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="d-flex flex-column">
+                                                                            <span class="fw-bold">@instructor.InstructorName</span>
+                                                                            <small class="text-muted">@instructor.Email</small>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="fw-bold">@instructor.TotalEarnings.ToString("C")</td>
+                                                                    <td class="text-success">@instructor.PaidOut.ToString("C")</td>
+                                                                    <td class="text-warning">@instructor.AvailableBalance.ToString("C")</td>
+                                                                    <td>@instructor.CoursesCount</td>
+                                                                    <td>@instructor.TotalStudents</td>
+                                                                    <td>
+                                                                        @if (instructor.LastPayoutDate != default)
+                                                                        {
+                                                                            @instructor.LastPayoutDate.ToString("MMM dd, yyyy")
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="text-muted">Never</span>
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Payout History -->
+                                @if (Model.PayoutHistory.Any())
+                                {
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5 class="mb-0">Recent Payout History</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Instructor</th>
+                                                                    <th>Amount</th>
+                                                                    <th>Status</th>
+                                                                    <th>Request Date</th>
+                                                                    <th>Completed Date</th>
+                                                                    <th>Processing Time</th>
+                                                                    <th>Processed By</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach (var history in Model.PayoutHistory.Take(20))
+                                                                {
+                                                                    <tr>
+                                                                        <td>@history.InstructorName</td>
+                                                                        <td class="fw-bold">@history.Amount.ToString("C")</td>
+                                                                        <td>
+                                                                            <span class="badge bg-@GetStatusColor(history.Status)">
+                                                                                @history.Status
+                                                                            </span>
+                                                                        </td>
+                                                                        <td>@history.RequestDate.ToString("MMM dd, yyyy")</td>
+                                                                        <td>
+                                                                            @if (history.CompletedDate.HasValue)
+                                                                            {
+                                                                                @history.CompletedDate.Value.ToString("MMM dd, yyyy")
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span class="text-muted">-</span>
+                                                                            }
+                                                                        </td>
+                                                                        <td>@history.ProcessingTime.Days days</td>
+                                                                        <td>@history.ProcessedBy</td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    public string GetStatusColor(Cursus.Domain.ViewModels.PayoutStatus status)
+    {
+        return status switch
+        {
+            Cursus.Domain.ViewModels.PayoutStatus.Pending => "warning",
+            Cursus.Domain.ViewModels.PayoutStatus.Processing => "info",
+            Cursus.Domain.ViewModels.PayoutStatus.Completed => "success",
+            Cursus.Domain.ViewModels.PayoutStatus.Failed => "danger",
+            Cursus.Domain.ViewModels.PayoutStatus.Cancelled => "secondary",
+            _ => "secondary"
+        };
+    }
+}
+
+@section Scripts {
+    <script>
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.payout-checkbox');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+            });
+        }
+
+        function bulkProcessPayouts() {
+            const checkedBoxes = document.querySelectorAll('.payout-checkbox:checked');
+            
+            if (checkedBoxes.length === 0) {
+                alert('Please select at least one payout to process.');
+                return;
+            }
+
+            if (!confirm(`Process ${checkedBoxes.length} payout(s)?`)) {
+                return;
+            }
+
+            const payoutIds = Array.from(checkedBoxes).map(cb => cb.value);
+            
+            // Create a form dynamically and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '@Url.Action("BulkProcessPayouts")';
+            
+            payoutIds.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'payoutIds';
+                input.value = id;
+                form.appendChild(input);
+            });
+            
+            // Add anti-forgery token
+            const token = document.querySelector('input[name="__RequestVerificationToken"]');
+            if (token) {
+                form.appendChild(token.cloneNode());
+            }
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Auto-refresh data every 30 seconds
+        setInterval(() => {
+            // You can implement real-time updates here if needed
+            console.log('Checking for payout updates...');
+        }, 30000);
+    </script>
+}

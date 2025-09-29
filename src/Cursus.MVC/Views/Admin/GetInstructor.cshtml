@@ -1,284 +1,576 @@
 @model IEnumerable<Cursus.MVC.Models.AccountViewModel>
 @{
-    ViewData["Title"] = "List Instructor";
-    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Instructor Management";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 @{
     var successMessage = TempData["SuccessMessage"] as string;
     var errorMessage = TempData["ErrorMessage"] as string;
+    var totalInstructors = Model.Count(x => x.IsDelete != "true");
+    var activeInstructors = Model.Count(x => x.IsDelete != "true");
 }
 
-<div class="container-fluid vh-100 d-flex flex-column">
-    <h1 class="my-4 text-center">Instructor List</h1>
-    <div class="mt-4 flex-grow-1">
-        @if (!string.IsNullOrEmpty(successMessage))
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                @successMessage
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div class="sa4d25">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="section_padding_130">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="dashboard_tab_content">
+                                <!-- Header and Statistics -->
+                                <div class="orders_table">
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                            <div class="table_title">
+                                                <h2>Instructor Management</h2>
+                                                <p>Manage and monitor instructor accounts across the platform</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Statistics Cards -->
+                                    <div class="row mb-4">
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="dashboard_stats_card">
+                                                <div class="dashboard_stats_card_icon">
+                                                    <i class="uil uil-graduation-cap"></i>
+                                                </div>
+                                                <div class="dashboard_stats_card_content">
+                                                    <h4>@totalInstructors</h4>
+                                                    <p>Total Instructors</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="dashboard_stats_card">
+                                                <div class="dashboard_stats_card_icon approved">
+                                                    <i class="uil uil-check-circle"></i>
+                                                </div>
+                                                <div class="dashboard_stats_card_content">
+                                                    <h4>@activeInstructors</h4>
+                                                    <p>Active Instructors</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="dashboard_stats_card">
+                                                <div class="dashboard_stats_card_icon pending">
+                                                    <i class="uil uil-venus"></i>
+                                                </div>
+                                                <div class="dashboard_stats_card_content">
+                                                    <h4>@(Model.Count(x => x.Gender == "Female" && x.IsDelete != "true"))</h4>
+                                                    <p>Female Instructors</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="dashboard_stats_card">
+                                                <div class="dashboard_stats_card_icon rejected">
+                                                    <i class="uil uil-mars"></i>
+                                                </div>
+                                                <div class="dashboard_stats_card_content">
+                                                    <h4>@(Model.Count(x => x.Gender == "Male" && x.IsDelete != "true"))</h4>
+                                                    <p>Male Instructors</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Filters -->
+                                    <div class="row mb-4">
+                                        <div class="col-xl-12">
+                                            <div class="filters_section">
+                                                <div class="d-flex align-items-center flex-wrap">
+                                                    <div class="form-group me-3">
+                                                        <input type="text" id="searchInput" class="form-control" placeholder="Search instructors...">
+                                                    </div>
+                                                    <div class="form-group me-3">
+                                                        <select id="genderFilter" class="form-control">
+                                                            <option value="">All Genders</option>
+                                                            <option value="Male">Male</option>
+                                                            <option value="Female">Female</option>
+                                                        </select>
+                                                    </div>
+                                                    <button type="button" id="clearFilters" class="btn btn-secondary">Clear Filters</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Alert Messages -->
+                                    @if (!string.IsNullOrEmpty(successMessage))
+                                    {
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            <i class="uil uil-check-circle me-2"></i>@successMessage
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    }
+
+                                    @if (!string.IsNullOrEmpty(errorMessage))
+                                    {
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <i class="uil uil-times-circle me-2"></i>@errorMessage
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    }
+
+                                    <!-- Instructors Table -->
+                                    <div class="row">
+                                        <div class="col-xl-12">
+                                            <div class="table-responsive">
+                                                <table id="instructorsTable" class="table ucp-table">
+                                                    <thead class="thead-s">
+                                                        <tr>
+                                                            <th class="text-center">No</th>
+                                                            <th class="cell-ta">Full Name</th>
+                                                            <th class="cell-ta">Email</th>
+                                                            <th class="cell-ta">Phone</th>
+                                                            <th class="cell-ta">Gender</th>
+                                                            <th class="cell-ta">Status</th>
+                                                            <th class="cell-ta">Courses</th>
+                                                            <th class="text-center">Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @{
+                                                            var i = 1;
+                                                        }
+                                                        @foreach (var item in Model)
+                                                        {
+                                                            if (item.IsDelete != "true")
+                                                            {
+                                                                <tr>
+                                                                    <td class="text-center">@i</td>
+                                                                    <td class="cell-ta">
+                                                                        <div class="d-flex align-items-center">
+                                                                            <div class="user-avatar me-2">
+                                                                                <img src="@(string.IsNullOrEmpty(item.Avatar) ? "/images/default-avatar.png" : item.Avatar)" alt="Avatar" class="rounded-circle" width="32" height="32">
+                                                                            </div>
+                                                                            <div>
+                                                                                <span class="fw-semibold">@item.FullName</span>
+                                                                                <small class="d-block text-muted">@item.Username</small>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="cell-ta">@item.Email</td>
+                                                                    <td class="cell-ta">@(string.IsNullOrEmpty(item.Phone) ? "Not provided" : item.Phone)</td>
+                                                                    <td class="cell-ta">
+                                                                        <span class="badge bg-info">@item.Gender</span>
+                                                                    </td>
+                                                                    <td class="cell-ta">
+                                                                        <span class="badge bg-success">Active</span>
+                                                                    </td>
+                                                                    <td class="cell-ta">
+                                                                        <span class="badge bg-primary">0 Courses</span>
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        <div class="dropdown">
+                                                                            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                                                Actions
+                                                                            </button>
+                                                                            <ul class="dropdown-menu">
+                                                                                <li><a class="dropdown-item" href="#" onclick="viewInstructor(@item.AccountId)"><i class="uil uil-eye me-1"></i>View Details</a></li>
+                                                                                <li><a class="dropdown-item" href="#" onclick="viewCourses(@item.AccountId)"><i class="uil uil-book-open me-1"></i>View Courses</a></li>
+                                                                                <li><hr class="dropdown-divider"></li>
+                                                                                <li><a class="dropdown-item text-danger actionBtnDelete" href="#" data-url="@Url.Action("RemoveInstructor", "Admin", new { id = item.AccountId })"><i class="uil uil-trash-alt me-1"></i>Delete</a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                i++;
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        }
-
-        @if (!string.IsNullOrEmpty(errorMessage))
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                @errorMessage
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-        <table id="categoriesTable" class="table table-striped table-hover">
-            <thead class="thead-dark">
-                <tr>
-                    <th>No</th>
-                    <th scope="col">FullName</th>
-                    <th scope="col">Phone</th>
-                    <th scope="col">Gender</th>
-                    <th scope="col">Gmail</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    var i = 1;
-                }
-                @foreach (var item in Model)
-                {
-                    if (item.IsDelete != "true")
-                    {
-
-                        <tr>
-                            <td>@i</td>
-                            <td>@item.FullName</td>
-                            <td>@item.Phone</td>
-                            <td>@item.Gender</td>
-                            <td>@item.Email</td>
-                            <td>
-                                <a href="#" class="btn btn-danger btn-sm actionBtnDelete" data-id="@item.AccountId"
-                                    data-url="@Url.Action("RemoveInstructor", "Admin", new { id = item.AccountId })">
-                                    Delete
-                                </a>
-                            </td>
-                        </tr>
-                        i++;
-                    }
-                }
-
-            </tbody>
-        </table>
-        <nav>
-            <ul id="pagination" class="pagination justify-content-center">
-
-            </ul>
-        </nav>
+        </div>
     </div>
 </div>
 @section Styles {
     <style>
-     .container-fluid {
-            min-height: 40vh;
-            width: 100%;
-            max-width: 100%;
-           
-           
-        }
-        .container-fluid .flex-grow-1 {
-            flex: 1;       
-            width: 100%;
-            overflow-y: auto;
+        /* Dashboard Statistics Cards */
+        .dashboard_stats_card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border-left: 4px solid #ed2a26;
+            transition: transform 0.2s;
         }
 
-        h1 {
-            font-family: 'Arial', sans-serif;
-            font-weight: bold;
+        .dashboard_stats_card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .dashboard_stats_card_icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ed2a26, #ff6b6b);
+        }
+
+        .dashboard_stats_card_icon.approved {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .dashboard_stats_card_icon.pending {
+            background: linear-gradient(135deg, #e83e8c, #fd7e14);
+        }
+
+        .dashboard_stats_card_icon.rejected {
+            background: linear-gradient(135deg, #007bff, #17a2b8);
+        }
+
+        .dashboard_stats_card_icon i {
+            font-size: 24px;
+            color: white;
+        }
+
+        .dashboard_stats_card_content h4 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
             color: #333;
         }
 
-        .table {
-            margin-top: 20px;
+        .dashboard_stats_card_content p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Table Styles */
+        .table_title {
+            margin-bottom: 30px;
+        }
+
+        .table_title h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .table_title p {
+            color: #666;
+            margin: 0;
+        }
+
+        /* Filters Section */
+        .filters_section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .filters_section .form-control {
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        .filters_section .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 6px;
+        }
+
+        /* Table Responsive */
+        .ucp-table {
+            background: white;
+            border-radius: 8px;
             overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .table th,
-        .table td {
-            text-align: center;
+        .ucp-table thead.thead-s th {
+            background: linear-gradient(135deg, #ed2a26, #ff4757);
+            color: white;
+            font-weight: 600;
+            padding: 15px;
+            border: none;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .ucp-table tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        .ucp-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .ucp-table .cell-ta {
+            padding: 15px;
             vertical-align: middle;
+            border-bottom: 1px solid #eee;
         }
 
-        .table thead {
-            background-color: #343a40;
-            color: white;
+        /* User Avatar */
+        .user-avatar img {
+            object-fit: cover;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .table tbody tr:nth-child(even) {
-            background-color: #f2f2f2;
+        /* Badges */
+        .badge {
+            font-size: 11px;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-weight: 500;
         }
 
-        .table-hover tbody tr:hover {
-            background-color: #e9ecef;
+        /* Dropdown Styles */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-radius: 8px;
         }
 
-        .btn-sm {
-            padding: 5px 10px;
-            font-size: 0.875rem;
-            border-radius: 4px;
+        .dropdown-item {
+            padding: 8px 16px;
+            font-size: 14px;
+            transition: background-color 0.2s;
         }
 
-        .pagination {
-            margin-top: 20px;
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
         }
 
-        .pagination .page-item .page-link {
-            color: #007bff;
+        .dropdown-item i {
+            width: 16px;
         }
 
-        .pagination .page-item.active .page-link {
-            background-color: #007bff;
-            border-color: #007bff;
-            color: white;
+        /* Alert Styles */
+        .alert {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
         }
 
-        .pagination .page-item .page-link:hover {
-            background-color: #0056b3;
-            color: white;
+        .alert i {
+            font-size: 16px;
         }
 
-        table.dataTable {
-            width: 100%;
-            margin: 20px 0;
-            border-collapse: collapse;
+        /* DataTables Customization */
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-left: 8px;
         }
 
-        table.dataTable th,
-        table.dataTable td {
-            padding: 10px;
-            text-align: left;
+        .dataTables_wrapper .dataTables_length select {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 6px 10px;
         }
 
-        table.dataTable thead th {
-            background-color: #ed2a26;
-            color: white;
-        }
-
-        table.dataTable tbody tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        table.dataTable tbody tr:nth-child(odd) {
-            background-color: #ffffff;
-        }
-
-        table.dataTable tbody tr:hover {
-            background-color: #ddd;
-        }
-
-        .dataTables_filter input {
-            margin-left: 0.5em;
-            padding: 5px;
-        }
-
-        .dataTables_paginate {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .dataTables_paginate .paginate_button {
-            display: inline-block;
-            padding: 5px 10px;
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
             margin: 0 2px;
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        .dataTables_paginate .paginate_button.disabled {
-            background-color: #cccccc;
-            color: #666666;
-            cursor: default;
-        }
-
-        .dt-search {
-            margin-top: 12px;
-        }
-
-        .dt-search .dt-input {
-            width: 250px;
-            padding: 4px;
-            margin-left: 12px;
-            font-size: 15px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            outline: none;
-            background-color: #f9f9f9;
+            background: #f8f9fa;
             color: #333;
         }
 
-        .dt-search .dt-input:focus {
-            border-color: #ff0019;
-            box-shadow: 0 0 5px rgba(255, 89, 0, 0.5);
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: #ed2a26;
+            color: white;
         }
 
-        .dt-length .dt-input {
-            border: none;
-            font-size: 15px;
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: #ed2a26;
+            color: white;
         }
 
-        .dt-length label {
-            margin-left: 20px;
-            text-transform: capitalize;
-        }
-
-        .dt-paging.paging_full_numbers {
-            text-align: center;
-        }
-
-        .dt-paging.paging_full_numbers button {
-            border: none;
-            font-size: 18px;
-            margin: 0 2px;
-
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .dashboard_stats_card {
+                margin-bottom: 15px;
+            }
+            
+            .filters_section .d-flex {
+                flex-direction: column;
+            }
+            
+            .filters_section .form-group {
+                margin-bottom: 10px;
+                margin-right: 0 !important;
+            }
         }
     </style>
 }
 @section Scripts {
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function () {
-            $('#categoriesTable').DataTable();
-        });
-        document.addEventListener('DOMContentLoaded', function () {
-            // Lắng nghe sự kiện click cho tất cả các nút có lớp 'actionBtnDelete'
-            document.querySelectorAll('.actionBtnDelete').forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault(); // Ngăn không thực hiện hành động mặc định của liên kết
+            // Initialize DataTable
+            $('#instructorTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "info": true,
+                "responsive": true,
+                "order": [[1, "asc"]],
+                "pageLength": 10,
+                "language": {
+                    "search": "Search instructors:",
+                    "lengthMenu": "Show _MENU_ instructors per page",
+                    "info": "Showing _START_ to _END_ of _TOTAL_ instructors",
+                    "paginate": {
+                        "first": "First",
+                        "last": "Last",
+                        "next": "Next",
+                        "previous": "Previous"
+                    }
+                },
+                "columnDefs": [
+                    { "orderable": false, "targets": [0, -1] }, // Disable sorting for avatar and actions columns
+                    { "width": "60px", "targets": 0 }, // Avatar column width
+                    { "width": "100px", "targets": -1 } // Actions column width
+                ]
+            });
 
-                    var deleteUrl = this.getAttribute('data-url'); // Lấy URL từ thuộc tính data-url
+            // Filter functionality
+            $('#genderFilter').on('change', function() {
+                var selectedGender = $(this).val();
+                var table = $('#instructorTable').DataTable();
+                
+                if (selectedGender === '') {
+                    table.column(3).search('').draw(); // Gender column index
+                } else {
+                    table.column(3).search(selectedGender).draw();
+                }
+            });
 
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        text: 'You will not be able to recover this instructor!',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes, delete it!',
-                        cancelButtonText: 'No, cancel'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Nếu người dùng xác nhận, chuyển hướng đến URL xóa
-                            window.location.href = deleteUrl;
-                        }
-                    });
+            $('#searchInput').on('keyup', function() {
+                $('#instructorTable').DataTable().search(this.value).draw();
+            });
+
+            // Clear filters
+            $('#clearFilters').on('click', function() {
+                $('#genderFilter').val('');
+                $('#searchInput').val('');
+                $('#instructorTable').DataTable().search('').columns().search('').draw();
+            });
+
+            // Delete confirmation with SweetAlert
+            $('.actionBtnDelete').on('click', function (e) {
+                e.preventDefault();
+                var deleteUrl = $(this).attr('data-url');
+                var instructorName = $(this).closest('tr').find('td:nth-child(2)').text().trim();
+
+                Swal.fire({
+                    title: 'Delete Instructor?',
+                    text: "Are you sure you want to delete instructor: " + instructorName + "?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ed2a26',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Deleting...',
+                            text: 'Please wait while we delete the instructor.',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                        window.location.href = deleteUrl;
+                    }
                 });
             });
-        });
-        setTimeout(function () {
-            var alertList = document.querySelectorAll('.alert');
-            alertList.forEach(function (alert) {
-                var bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            });
-        }, 1500);
-    </script>
 
+            // View instructor details
+            $('.view-instructor').on('click', function(e) {
+                e.preventDefault();
+                var instructorId = $(this).data('instructor-id');
+                var instructorName = $(this).data('instructor-name');
+                
+                // You can implement a modal or redirect to details page
+                Swal.fire({
+                    title: 'Instructor Details',
+                    text: 'Viewing details for: ' + instructorName,
+                    icon: 'info',
+                    confirmButtonColor: '#ed2a26'
+                });
+            });
+
+            // View instructor courses
+            $('.view-courses').on('click', function(e) {
+                e.preventDefault();
+                var instructorId = $(this).data('instructor-id');
+                var instructorName = $(this).data('instructor-name');
+                
+                // You can implement a modal or redirect to courses page
+                Swal.fire({
+                    title: 'Instructor Courses',
+                    text: 'Viewing courses by: ' + instructorName,
+                    icon: 'info',
+                    confirmButtonColor: '#ed2a26'
+                });
+            });
+
+            // Animate statistics cards on page load
+            $('.dashboard_stats_card').each(function(index) {
+                $(this).css('opacity', '0').css('transform', 'translateY(20px)');
+                $(this).delay(100 * index).animate({
+                    opacity: 1
+                }, 500).css('transform', 'translateY(0)');
+            });
+
+            // Update statistics dynamically (example)
+            function updateStatistics() {
+                var totalInstructors = $('#instructorTable tbody tr').length;
+                var activeInstructors = $('#instructorTable tbody tr:has(.badge-success)').length;
+                var femaleInstructors = $('#instructorTable tbody tr:contains("Female")').length;
+                var maleInstructors = $('#instructorTable tbody tr:contains("Male")').length;
+
+                $('.dashboard_stats_card:eq(0) h4').text(totalInstructors);
+                $('.dashboard_stats_card:eq(1) h4').text(activeInstructors);
+                $('.dashboard_stats_card:eq(2) h4').text(femaleInstructors);
+                $('.dashboard_stats_card:eq(3) h4').text(maleInstructors);
+            }
+
+            // Call update statistics after DataTable is loaded
+            setTimeout(updateStatistics, 100);
+
+            // Auto-hide alerts
+            setTimeout(function () {
+                var alertList = document.querySelectorAll('.alert');
+                alertList.forEach(function (alert) {
+                    var bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 1500);
+        });
+    </script>
 }

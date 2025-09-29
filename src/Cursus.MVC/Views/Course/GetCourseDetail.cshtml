@@ -142,11 +142,14 @@
                                     <ul class="_215b31">
                                         @if (ViewBag.IsEnrolled == "Enrolled" || ViewBag.IsEnrolled == "completed")
                                         {
-                                            <li>
-                                                <button class="btn_adcart" id="unEnrollBtn" style="text-decoration: none !important; color: white">
-                                                    UnEnroll
-                                                </button>
-                                            </li>
+                                            @if (User.IsInRole("Student"))
+                                            {
+                                                <li>
+                                                    <button class="btn_adcart" id="unEnrollBtn" style="text-decoration: none !important; color: white">
+                                                        UnEnroll
+                                                    </button>
+                                                </li>
+                                            }
                                             <li>
                                                 @if(ViewBag.LessonID == 0) {
                                                     <button class="btn_adcart"><a class="text-decoration-none" style="color: #fff" id="nonLesson">Go to Course</a></button>
@@ -159,11 +162,21 @@
                                         }
                                         else if (Model.CourseMoney == 0 || ViewBag.IsEnrolled == "Purchased")
                                         {
-                                            <button class="btn_adcart enroll-button"
-                                                    data-course-id="@Model.CourseId">
-                                                Enroll
-                                                now
-                                            </button>
+                                            @if (User.IsInRole("Student"))
+                                            {
+                                                <button class="btn_adcart enroll-button"
+                                                        data-course-id="@Model.CourseId">
+                                                    Enroll
+                                                    now
+                                                </button>
+                                            }
+                                            else if (User.IsInRole("Admin") || User.IsInRole("Instructor"))
+                                            {
+                                                <div class="alert alert-info" role="alert">
+                                                    <i class="fas fa-info-circle"></i>
+                                                    Course enrollment is only available for students.
+                                                </div>
+                                            }
                                         }
                                         else if (ViewBag.IsEnrolled == "")
                                         {

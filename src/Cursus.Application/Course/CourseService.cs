@@ -134,6 +134,16 @@ namespace Cursus.Application
             return _courseRepository.GetSubByAccountID(accountID);
         }
 
+        public List<Course> GetAllCourseActive()
+        {
+            return _courseRepository.GetAllCourse().Where(c => c.CourseStatus == "Active").ToList();
+        }
+
+        public List<Course> GetAllCoursePending()
+        {
+            return _courseRepository.GetAllCourse().Where(c => c.CourseStatus == "Pending").ToList();
+        }
+
     }
 }
 

@@ -135,5 +135,10 @@ namespace Cursus.Application.Enroll
         public Domain.Models.Enroll getEnrollByStatus(int courseId, int accountID) {
             return _enrollRepository.getEnrollByStatus(courseId, accountID);
         }
+
+        public List<Cursus.Domain.Models.Enroll> GetAllEnrolls()
+        {
+            return _enrollRepository.GetAllEnroll();
+        }
 	}
 }

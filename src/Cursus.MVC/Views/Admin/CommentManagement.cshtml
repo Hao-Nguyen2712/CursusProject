@@ -1,0 +1,389 @@
+@model Cursus.MVC.ViewModels.CommentModerationViewModel
+@{
+    ViewData["Title"] = "Comment Management";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="sa4d25">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="section_padding_130">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="dashboard_tab_content">
+                                <!-- Header and Statistics -->
+                                <div class="orders_table">
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                            <div class="table_title">
+                                                <h2>Comment Management</h2>
+                                                <p>Review and moderate user comments across the platform</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Statistics Cards -->
+                                
+
+                                    <!-- Filters -->
+                                    <div class="row mb-4">
+                                        <div class="col-xl-12">
+                                            <div class="filters_section">
+                                                <form method="get" action="@Url.Action("CommentManagement", "Admin")" class="d-flex align-items-center flex-wrap">
+                                                    <div class="form-group me-3">
+                                                        <select name="status" class="form-control">
+                                                            <option value="">All Status</option>
+                                                            <option value="pending" selected="@(Model.StatusFilter == "pending")">Pending</option>
+                                                            <option value="approved" selected="@(Model.StatusFilter == "approved")">Approved</option>
+                                                            <option value="rejected" selected="@(Model.StatusFilter == "rejected")">Rejected</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group me-3">
+                                                        <input type="text" name="search" class="form-control" placeholder="Search comments..." value="@Model.SearchQuery">
+                                                    </div>
+                                                    <div class="form-group me-3">
+                                                        <select name="pageSize" class="form-control">
+                                                            <option value="10" selected="@(Model.PageSize == 10)">10 per page</option>
+                                                            <option value="20" selected="@(Model.PageSize == 20)">20 per page</option>
+                                                            <option value="50" selected="@(Model.PageSize == 50)">50 per page</option>
+                                                        </select>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary me-2">Filter</button>
+                                                    <a href="@Url.Action("CommentManagement", "Admin")" class="btn btn-secondary">Clear</a>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Bulk Actions -->
+                                    <div class="row mb-3">
+                                        <div class="col-xl-12">
+                                            <div class="bulk_actions d-none" id="bulkActions">
+                                                <button type="button" class="btn btn-success me-2" onclick="bulkAction('approve')">
+                                                    <i class="uil uil-check"></i> Approve Selected
+                                                </button>
+                                                <button type="button" class="btn btn-danger me-2" onclick="bulkAction('reject')">
+                                                    <i class="uil uil-times"></i> Reject Selected
+                                                </button>
+                                                <button type="button" class="btn btn-warning" onclick="clearSelection()">
+                                                    <i class="uil uil-refresh"></i> Clear Selection
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Comments Table -->
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th><input type="checkbox" id="selectAll"></th>
+                                                    <th>Comment</th>
+                                                    <th>Author</th>
+                                                    <th>Course/Lesson</th>
+                                                    <th>Date</th>
+                                                   
+                                                  
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.Comments?.Any() == true)
+                                                {
+                                                    @foreach (var comment in Model.Comments)
+                                                    {
+                                                        <tr>
+                                                            <td><input type="checkbox" class="comment-checkbox" value="@comment.CmtId"></td>
+                                                            <td>
+                                                                <div class="comment-content">
+                                                                    <p class="mb-1">@(comment.CmtContent?.Replace("[APPROVED]", "").Replace("[REJECTED]", "") ?? "No content")</p>
+                                                                    
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="author-info">
+                                                                    <strong>@comment.CommenterName</strong><br>
+                                                                    <small class="text-muted">@comment.CommenterEmail</small>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="course-info">
+                                                                    <strong>@comment.CourseName</strong><br>
+                                                                    <small class="text-muted">@comment.LessonTitle</small>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                @comment.CmtDate.ToString("MMM dd, yyyy")<br>
+                                                                <small class="text-muted">@comment.CmtDate.ToString("HH:mm")</small>
+                                                            </td>
+                                                           
+                                                          
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td colspan="8" class="text-center py-4">
+                                                            <i class="uil uil-comment-slash" style="font-size: 3rem; color: #6c757d;"></i>
+                                                            <h5 class="mt-2">No comments found</h5>
+                                                            <p class="text-muted">Try adjusting your filters or search terms.</p>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Pagination -->
+                                    @if (Model.TotalPages > 1)
+                                    {
+                                        <div class="row mt-4">
+                                            <div class="col-xl-12">
+                                                <nav aria-label="Comment pagination">
+                                                    <ul class="pagination justify-content-center">
+                                                        @if (Model.CurrentPage > 1)
+                                                        {
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="@Url.Action("CommentManagement", "Admin", new { page = Model.CurrentPage - 1, status = Model.StatusFilter, search = Model.SearchQuery, pageSize = Model.PageSize })">Previous</a>
+                                                            </li>
+                                                        }
+
+                                                        @for (int i = Math.Max(1, Model.CurrentPage - 2); i <= Math.Min(Model.TotalPages, Model.CurrentPage + 2); i++)
+                                                        {
+                                                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                                                <a class="page-link" href="@Url.Action("CommentManagement", "Admin", new { page = i, status = Model.StatusFilter, search = Model.SearchQuery, pageSize = Model.PageSize })">@i</a>
+                                                            </li>
+                                                        }
+
+                                                        @if (Model.CurrentPage < Model.TotalPages)
+                                                        {
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="@Url.Action("CommentManagement", "Admin", new { page = Model.CurrentPage + 1, status = Model.StatusFilter, search = Model.SearchQuery, pageSize = Model.PageSize })">Next</a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Select All functionality
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.comment-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            toggleBulkActions();
+        });
+
+        // Individual checkbox functionality
+        document.querySelectorAll('.comment-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const selectAll = document.getElementById('selectAll');
+                const allCheckboxes = document.querySelectorAll('.comment-checkbox');
+                const checkedCheckboxes = document.querySelectorAll('.comment-checkbox:checked');
+                
+                selectAll.checked = allCheckboxes.length === checkedCheckboxes.length;
+                selectAll.indeterminate = checkedCheckboxes.length > 0 && checkedCheckboxes.length < allCheckboxes.length;
+                
+                toggleBulkActions();
+            });
+        });
+
+        function toggleBulkActions() {
+            const checkedCheckboxes = document.querySelectorAll('.comment-checkbox:checked');
+            const bulkActions = document.getElementById('bulkActions');
+            
+            if (checkedCheckboxes.length > 0) {
+                bulkActions.classList.remove('d-none');
+            } else {
+                bulkActions.classList.add('d-none');
+            }
+        }
+
+        function bulkAction(action) {
+            const checkedCheckboxes = document.querySelectorAll('.comment-checkbox:checked');
+            const commentIds = Array.from(checkedCheckboxes).map(cb => parseInt(cb.value));
+            
+            if (commentIds.length === 0) {
+                alert('Please select at least one comment.');
+                return;
+            }
+            
+            const actionText = action === 'approve' ? 'approve' : 'reject';
+            if (!confirm(`Are you sure you want to ${actionText} ${commentIds.length} comment(s)?`)) {
+                return;
+            }
+            
+            const url = action === 'approve' ? '@Url.Action("BulkApproveComments", "Admin")' : '@Url.Action("BulkRejectComments", "Admin")';
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                },
+                body: JSON.stringify(commentIds)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message || 'An error occurred.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while processing the request.');
+            });
+        }
+
+        function clearSelection() {
+            document.querySelectorAll('.comment-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            document.getElementById('selectAll').checked = false;
+            document.getElementById('selectAll').indeterminate = false;
+            toggleBulkActions();
+        }
+
+        function viewCommentDetails(commentId) {
+            // Implement comment details modal or redirect
+            console.log('View comment details:', commentId);
+        }
+    </script>
+}
+
+@section Styles {
+    <style>
+        .dashboard_stats_card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid #e3e6f0;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 1rem;
+        }
+
+        .dashboard_stats_card_icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+            background: #5a67d8;
+            float: left;
+            margin-right: 1rem;
+        }
+
+        .dashboard_stats_card_icon.pending {
+            background: #f6ad55;
+        }
+
+        .dashboard_stats_card_icon.approved {
+            background: #48bb78;
+        }
+
+        .dashboard_stats_card_icon.rejected {
+            background: #f56565;
+        }
+
+        .dashboard_stats_card_content h4 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .dashboard_stats_card_content p {
+            margin: 0;
+            color: #718096;
+            font-size: 0.875rem;
+        }
+
+        .filters_section {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e3e6f0;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        .bulk_actions {
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .comment-content {
+            max-width: 300px;
+        }
+
+        .comment-content p {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .author-info, .course-info {
+            min-width: 150px;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+        }
+
+        .pagination .page-link {
+            color: #5a67d8;
+            border-color: #e2e8f0;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #5a67d8;
+            border-color: #5a67d8;
+        }
+
+        .dropdown-menu {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            border: 1px solid #e3e6f0;
+        }
+
+        @@media (max-width: 768px) {
+            .filters_section .d-flex {
+                flex-direction: column;
+            }
+            
+            .filters_section .form-group {
+                margin-bottom: 1rem;
+                margin-right: 0 !important;
+            }
+            
+            .comment-content {
+                max-width: 200px;
+            }
+        }
+    </style>
+}

@@ -7,8 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Cursus.MVC.Models;
-using Cursus.MVC.Service;
+using Cursus.MVC.Services;
 using Cursus.Application.Account;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Text.Encodings.Web;
 using Cursus.MVC.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
@@ -19,11 +20,11 @@ namespace Cursus.MVC.Controllers
     {
         private readonly ICreditsService _creditsService;
         private readonly IAccountService _accountService;
-        private readonly EmailSender _emailSender;
+        private readonly IEmailSender _emailSender;
         private readonly IMapper _mapper;
 
 
-        public CreditsController(ICreditsService creditsService, IMapper mapper, EmailSender emailSender, IAccountService accountService)
+        public CreditsController(ICreditsService creditsService, IMapper mapper, IEmailSender emailSender, IAccountService accountService)
         {
             _creditsService = creditsService;
             _mapper = mapper;
@@ -82,7 +83,7 @@ namespace Cursus.MVC.Controllers
         }
 
         [Authorize(Roles = "Student")]
-        public IActionResult Return()
+        public async Task<IActionResult> Return()
         {
             var response = _creditsService.PaymentExcute(Request.Query);
             if (response == null || response.VnPayResponseCode != "00")
@@ -119,7 +120,9 @@ namespace Cursus.MVC.Controllers
             };
             _creditsService.AddTrading(trading, userID);
             var account = _accountService.GetAccountByUserID(userID);
-            _emailSender.SendEmailAsync(account.Email, "Confirm Payment", Service.EmailSender.PaymentConfirm(account.FullName, moneyacc));
+            var emailSender = (EmailSender)_emailSender;
+            var htmlContent = emailSender.PaymentConfirm(account.FullName, moneyacc);
+            await _emailSender.SendEmailAsync(account.Email, "Confirm Payment", htmlContent);
             TempData["Status"] = "PaySuccess";
 
             return RedirectToAction("Thanks", "Credits");
@@ -132,3 +135,4 @@ namespace Cursus.MVC.Controllers
         }
     }
 }
+

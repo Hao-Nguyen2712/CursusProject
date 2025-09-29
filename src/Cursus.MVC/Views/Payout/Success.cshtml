@@ -13,8 +13,8 @@
                     </div>
                     <div class="cmtk_dt">
                         <h1 class="thnk_coming_title">Success</h1>
-                        <h4 class="thnk_title1">You have successfully withdrawn money. Please check again.</h4>
-                        <p class="thnk_des"><a href="/Home/Index">Click here to back home</a></p>
+                        <h4 class="thnk_title1">You have successfully withdrawn $@ViewBag.WithdrawnAmount. Please check your updated balance.</h4>
+                        <p class="thnk_des"><a href="/Payout">Click here to go back to Payout</a> | <a href="/Home/Index">Back to Home</a></p>
                     </div>
                     <div class="tc_footer_main">
                         <div class="tc_footer_left">
@@ -43,9 +43,16 @@
     <script src="~/js/sweetAlert.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            var Status = '@TempData["Status"]';
+            var Status = '@ViewBag.SuccessMessage';
+            var WithdrawnAmount = '@ViewBag.WithdrawnAmount';
+            
             if (Status === "WithdrawnSuccess") {
-                sweetAlertSuccess("Success!", "You have successfully withdrawn money.");
+                sweetAlertSuccess("Success!", "You have successfully withdrawn $" + WithdrawnAmount + " from your account.");
+                
+                // Auto redirect to Payout page after 3 seconds
+                setTimeout(function() {
+                    window.location.href = '/Payout';
+                }, 3000);
             }
         });
     </script>

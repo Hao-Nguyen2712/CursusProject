@@ -8,10 +8,13 @@ using Cursus.Application.AdminDashBoard;
 using Cursus.Application.Enroll;
 using Cursus.Application.Report;
 using Cursus.Domain.Models;
+using Cursus.Domain.ViewModels;
 using Cursus.Infrastructure;
 using Cursus.Infrastructure.Enroll;
 using Cursus.Infrastructure.Report;
 using Microsoft.EntityFrameworkCore;
+using Moq;
+using NUnit.Framework;
 
 namespace Cursus.Tests.DashboardTest
 {
@@ -22,6 +25,7 @@ namespace Cursus.Tests.DashboardTest
         private ICourseRepository _courseRepository;
         private IReportRepository _reportRepository;
         private IAccountRepository _accountRepository;
+        private Mock<IAdminDashBoardRepository> _mockAdminDashBoardRepository;
         private CursusDBContext _context;
 
         [SetUp]
@@ -36,7 +40,8 @@ namespace Cursus.Tests.DashboardTest
             _courseRepository = new CourseRepository(_context);
             _reportRepository = new ReportRepository(_context);
             _accountRepository = new AccountRepository(_context);
-            _adminDashBoardService = new AdminDashBoardService(_enrollRepository, _accountRepository, _courseRepository, _reportRepository);
+            _mockAdminDashBoardRepository = new Mock<IAdminDashBoardRepository>();
+            _adminDashBoardService = new AdminDashBoardService(_enrollRepository, _accountRepository, _courseRepository, _reportRepository, _mockAdminDashBoardRepository.Object);
         }
 
         [Test]

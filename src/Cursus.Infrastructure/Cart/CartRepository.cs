@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Linq;
-using System.Net.Http;
-using System.Runtime.Intrinsics.Arm;
-using System.Threading.Tasks;
 using Cursus.Application.Cart;
 using Cursus.Domain.Models;
 using Microsoft.EntityFrameworkCore;

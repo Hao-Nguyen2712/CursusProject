@@ -1,109 +1,806 @@
 @model IEnumerable<Cursus.MVC.Models.AccountViewModel>
 @{
-	ViewData["Title"] = "List Instructor Register";
-		 Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-
+    ViewData["Title"] = "Instructor Registration Requests";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
+@section Styles {
+    <style>
+        /* Dashboard Statistics Cards */
+        .dashboard_stats_card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border-left: 4px solid #ed2a26;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
 
-<body>
-	<div class="row text-center">
-			<div class="col-lg-12">
-				<h2 class="st_title"><i class="fa fa-check-circle"></i> Confirm Instructor</h2>
-			</div>
-	</div>
+        .dashboard_stats_card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
 
+        .dashboard_stats_card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #ed2a26, #ff6b6b);
+        }
 
-	<div class="wrapper" style="margin-left: 10px;margin-top: -80px">
-		<div class="sa4d25">
-			<div class="container-fluid">
-				<nav>
-					<div class="row">
-						<div class="course_tabs">
-							<div class="nav nav-tabs tab_crse  justify-content-center">
-								<a class="nav-item nav-link" href="/Admin/GetCourseApprove">Course</a>
-								<a class="nav-item nav-link " href="/Admin/GetListAccount">Account</a>
-								<a class="nav-item nav-link active" href="/Admin/GetListInstructorRegis">Instructor</a>
-							</div>
-						</div>
-					</div>
-				</nav>
-				@{
-					int count_check = 0;
-					@foreach (var Model in Model)
-					{
-						count_check++;
-					}
-					if (count_check == 0)
-					{
-						<h3 class="text-center" style="margin-bottom: 305px;">
-							No Regis Up To Instructor
-						</h3>
-					}
-					else
-					{
+        .dashboard_stats_card_icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ed2a26, #ff6b6b);
+            box-shadow: 0 4px 15px rgba(237, 42, 38, 0.3);
+        }
 
+        .dashboard_stats_card_icon.approved {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
 
-						<div class="row">
-							<div class="col-12">
-								<div class="mt-10">
-									<div class="table-cerificate">
-										<div class="table-responsive">
-											<table class="table table-striped table-bordered" id="content-table">
-                                                <thead class="thead-dark">
-                                                    <tr>
-                                                        <th style="background-color: red; color: white;text-align: center;"
-                                                            scope="col">Item No.
-                                                        </th>
-                                                        <th style="background-color: red; color: white;text-align: center;"
-                                                            scope="col">Account ID
-                                                        </th>
-                                                        <th style="background-color: red; color: white;text-align: center;"
-                                                            scope="col">Username
-                                                        </th>
-                                                        <th style="background-color: red; color: white;text-align: center;"
-                                                            scope="col">Confirm
-                                                        </th>
+        .dashboard_stats_card_icon.pending {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+        }
 
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @{
-                                                        int count = 1;
-                                                        @foreach (var Model in Model)
-                                                        {
-                                                            <tr>
-                                                                <td class="text-center"> @count </td>
-                                                                <td class="text-center"> @Model.AccountId </td>
-                                                                <td class="text-center">@Model.Username</td>
+        .dashboard_stats_card_icon.rejected {
+            background: linear-gradient(135deg, #dc3545, #e83e8c);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
 
-                                                                @{
-                                                                    <td style="margin-left: 50px; text-align: center;">
-                                                                        <a asp-action="ApproveInstructorRegis" asp-asp-controller="Admin"
-                                                                            asp-route-id="@Model.AccountId">
-                                                                            <button class="btn btn-primary" onclick="">Approve</button>
-                                                                        </a>
-                                                                        <a asp-action="RejectInstructorRegis" asp-asp-controller="Admin"
-                                                                            asp-route-id="@Model.AccountId">
-<button class="btn btn-primary" onclick="">Reject</button>
-                                                                        </a>
-                                                                    </td>
-                                                                }
-                                                            </tr>
-                                                            count++;
+        .dashboard_stats_card_icon i {
+            font-size: 28px;
+            color: white;
+        }
 
-                                                        }
-                                                    }
-                                                </tbody>
-                                            </table>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					}
-				}
-			</div>
-		</div>
-	</div>
-</body>
+        .dashboard_stats_card_content h4 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0;
+            color: #333;
+            line-height: 1;
+        }
+
+        .dashboard_stats_card_content p {
+            margin: 8px 0 0 0;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Page Header */
+        .table_title {
+            margin-bottom: 30px;
+        }
+
+        .table_title h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .table_title p {
+            color: #666;
+            margin: 0;
+            font-size: 16px;
+        }
+
+        /* Navigation Tabs */
+        .course_tabs .nav-tabs {
+            border: none;
+            margin-bottom: 20px;
+        }
+
+        .course_tabs .nav-link {
+            border: none;
+            border-radius: 25px;
+            padding: 12px 24px;
+            margin: 0 5px;
+            background: #f8f9fa;
+            color: #666;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .course_tabs .nav-link:hover {
+            background: #ed2a26;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .course_tabs .nav-link.active {
+            background: linear-gradient(135deg, #ed2a26, #ff6b6b);
+            color: white;
+            box-shadow: 0 4px 15px rgba(237, 42, 38, 0.3);
+        }
+
+        /* Filters Section */
+        .filters_section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #e9ecef;
+        }
+
+        .filters_section .form-control {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .filters_section .form-control:focus {
+            border-color: #ed2a26;
+            box-shadow: 0 0 0 0.2rem rgba(237, 42, 38, 0.25);
+        }
+
+        .filters_section .btn {
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        /* Table Styles */
+        .ucp-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            border: none;
+        }
+
+        .ucp-table thead.thead-s th {
+            background: linear-gradient(135deg, #ed2a26, #ff4757);
+            color: white;
+            font-weight: 600;
+            padding: 18px 15px;
+            border: none;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+
+        .ucp-table tbody tr {
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .ucp-table tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.001);
+        }
+
+        .ucp-table .cell-ta {
+            padding: 20px 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f3f4;
+            border-top: none;
+        }
+
+        /* User Avatar */
+        .user-avatar img {
+            object-fit: cover;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Badges */
+        .badge {
+            font-size: 11px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Buttons */
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+
+        /* Empty State */
+        .text-center i {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @@keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Alert Styles */
+        .alert {
+            border: none;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .alert i {
+            font-size: 16px;
+        }
+
+        /* Checkbox Styles */
+        .form-check-input:checked {
+            background-color: #ed2a26;
+            border-color: #ed2a26;
+        }
+
+        .form-check-input:focus {
+            border-color: #ed2a26;
+            box-shadow: 0 0 0 0.25rem rgba(237, 42, 38, 0.25);
+        }
+
+        /* DataTables Customization */
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-left: 8px;
+        }
+
+        .dataTables_wrapper .dataTables_length select {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 6px 10px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin: 0 2px;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: #ed2a26;
+            color: white;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: #ed2a26;
+            color: white;
+        }
+
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .dashboard_stats_card {
+                margin-bottom: 15px;
+            }
+            
+            .filters_section .row > div {
+                margin-bottom: 15px;
+            }
+            
+            .table-responsive {
+                border-radius: 12px;
+            }
+            
+            .btn-sm {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* Ensure proper centering */
+        .container-fluid {
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        .dashboard_header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard_header h2 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .dashboard_stats_card {
+                margin-bottom: 15px;
+            }
+            
+            .filters_section .row > div {
+                margin-bottom: 15px;
+            }
+            
+            .table-responsive {
+                border-radius: 12px;
+            }
+            
+            .btn-sm {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+}
+
+<!-- Display Success/Error Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="dashboard_header mb-4">
+        <h2><i class="fas fa-user-check me-3"></i>Instructor Registration Requests</h2>
+        <p class="text-muted">Review and approve instructor registration applications</p>
+    </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="mb-4">
+            <div class="course_tabs">
+                <div class="nav nav-tabs tab_crse justify-content-center">
+                    <a class="nav-item nav-link" href="/Admin/GetCourseApprove">
+                        <i class="fas fa-book me-2"></i>Course
+                    </a>
+                    <a class="nav-item nav-link" href="/Admin/GetListAccount">
+                        <i class="fas fa-users me-2"></i>Account
+                    </a>
+                    <a class="nav-item nav-link active" href="/Admin/GetListInstructorRegis">
+                        <i class="fas fa-chalkboard-teacher me-2"></i>Instructor
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        @{
+            var instructorList = Model.ToList();
+            int totalRequests = instructorList.Count();
+        }
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-lg-6 col-12">
+                <div class="dashboard_stats_card">
+                    <div class="dashboard_stats_card_icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="dashboard_stats_card_content">
+                        <h4>@totalRequests</h4>
+                        <p>Pending Requests</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-12">
+                <div class="dashboard_stats_card">
+                    <div class="dashboard_stats_card_icon approved">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="dashboard_stats_card_content">
+                        <h4 id="approvedCount">0</h4>
+                        <p>Approved Today</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-12">
+                <div class="dashboard_stats_card">
+                    <div class="dashboard_stats_card_icon pending">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="dashboard_stats_card_content">
+                        <h4>@totalRequests</h4>
+                        <p>Awaiting Review</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-12">
+                <div class="dashboard_stats_card">
+                    <div class="dashboard_stats_card_icon rejected">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="dashboard_stats_card_content">
+                        <h4 id="rejectedCount">0</h4>
+                        <p>Rejected Today</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (totalRequests == 0)
+        {
+            <!-- Empty State -->
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-inbox" style="font-size: 4rem; color: #dee2e6;"></i>
+                </div>
+                <h4 class="text-muted">No Pending Instructor Registrations</h4>
+                <p class="text-muted">There are currently no instructor registration requests awaiting approval.</p>
+            </div>
+        }
+        else
+        {
+            <!-- Filters Section -->
+            <div class="filters_section mb-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="searchInput" class="form-label">Search Requests</label>
+                            <input type="text" id="searchInput" class="form-control" placeholder="Search by username or account ID...">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="bulkAction" class="form-label">Bulk Actions</label>
+                            <div class="d-flex gap-2">
+                                <select id="bulkAction" class="form-control">
+                                    <option value="">Select Action</option>
+                                    <option value="approve">Approve Selected</option>
+                                    <option value="reject">Reject Selected</option>
+                                </select>
+                                <button type="button" id="executeBulkAction" class="btn btn-secondary">
+                                    <i class="fas fa-play me-1"></i>Execute
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Registration Requests Table -->
+            <div class="table-responsive">
+                <table class="table ucp-table" id="instructorRegisTable">
+                    <thead class="thead-s">
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectAll" class="form-check-input">
+                            </th>
+                            <th>#</th>
+                            <th>Account ID</th>
+                            <th>Username</th>
+                            <th>Registration Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int count = 1;
+                            foreach (var instructor in instructorList)
+                            {
+                                <tr>
+                                    <td class="cell-ta">
+                                        <input type="checkbox" class="form-check-input row-checkbox" value="@instructor.AccountId">
+                                    </td>
+                                    <td class="cell-ta">@count</td>
+                                    <td class="cell-ta">
+                                        <span class="badge bg-secondary">#@instructor.AccountId</span>
+                                    </td>
+                                    <td class="cell-ta">
+                                        <div class="d-flex align-items-center">
+                                            <div class="user-avatar me-3">
+                                                <img src="@(string.IsNullOrEmpty(instructor.Avatar) ? "/Images/default-avatar.png" : instructor.Avatar)" 
+                                                     alt="@instructor.Username" class="rounded-circle" width="40" height="40">
+                                            </div>
+                                            <div>
+                                                <strong>@instructor.Username</strong>
+                                                <br>
+                                                <small class="text-muted">@instructor.Email</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="cell-ta">
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock me-1"></i>
+                                            @DateTime.Now.ToString("MMM dd, yyyy")
+                                        </small>
+                                    </td>
+                                    <td class="cell-ta">
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-hourglass-half me-1"></i>Pending
+                                        </span>
+                                    </td>
+                                    <td class="cell-ta">
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-success btn-sm approve-btn" 
+                                                    data-account-id="@instructor.AccountId" 
+                                                    data-username="@instructor.Username"
+                                                    title="Approve Request">
+                                                <i class="fas fa-check me-1"></i>Approve
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm reject-btn" 
+                                                    data-account-id="@instructor.AccountId" 
+                                                    data-username="@instructor.Username"
+                                                    title="Reject Request">
+                                                <i class="fas fa-times me-1"></i>Reject
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                count++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+            // Initialize DataTable
+            $('#instructorRegisTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "info": true,
+                "responsive": true,
+                "order": [[1, "asc"]],
+                "pageLength": 10,
+                "language": {
+                    "search": "Search requests:",
+                    "lengthMenu": "Show _MENU_ requests per page",
+                    "info": "Showing _START_ to _END_ of _TOTAL_ requests",
+                    "paginate": {
+                        "first": "First",
+                        "last": "Last",
+                        "next": "Next",
+                        "previous": "Previous"
+                    },
+                    "emptyTable": "No instructor registration requests found"
+                },
+                "columnDefs": [
+                    { "orderable": false, "targets": [0, -1] }, // Disable sorting for checkbox and actions columns
+                    { "width": "50px", "targets": 0 }, // Checkbox column width
+                    { "width": "60px", "targets": 1 }, // Number column width
+                    { "width": "150px", "targets": -1 } // Actions column width
+                ]
+            });
+
+            // Search functionality
+            $('#searchInput').on('keyup', function() {
+                $('#instructorRegisTable').DataTable().search(this.value).draw();
+            });
+
+            // Select All functionality
+            $('#selectAll').on('change', function() {
+                $('.row-checkbox').prop('checked', this.checked);
+                updateBulkActionButton();
+            });
+
+            // Individual checkbox change
+            $(document).on('change', '.row-checkbox', function() {
+                updateBulkActionButton();
+                updateSelectAllCheckbox();
+            });
+
+            // Update bulk action button state
+            function updateBulkActionButton() {
+                var checkedCount = $('.row-checkbox:checked').length;
+                $('#executeBulkAction').prop('disabled', checkedCount === 0);
+            }
+
+            // Update select all checkbox state
+            function updateSelectAllCheckbox() {
+                var totalCheckboxes = $('.row-checkbox').length;
+                var checkedCheckboxes = $('.row-checkbox:checked').length;
+                
+                $('#selectAll').prop('checked', totalCheckboxes === checkedCheckboxes);
+                $('#selectAll').prop('indeterminate', checkedCheckboxes > 0 && checkedCheckboxes < totalCheckboxes);
+            }
+
+            // Bulk action execution
+            $('#executeBulkAction').on('click', function() {
+                var selectedIds = [];
+                var action = $('#bulkAction').val();
+                
+                $('.row-checkbox:checked').each(function() {
+                    selectedIds.push($(this).val());
+                });
+
+                if (selectedIds.length === 0) {
+                    Swal.fire({
+                        title: 'No Selection',
+                        text: 'Please select at least one request to perform bulk action.',
+                        icon: 'warning',
+                        confirmButtonColor: '#ed2a26'
+                    });
+                    return;
+                }
+
+                if (!action) {
+                    Swal.fire({
+                        title: 'No Action Selected',
+                        text: 'Please select an action to perform.',
+                        icon: 'warning',
+                        confirmButtonColor: '#ed2a26'
+                    });
+                    return;
+                }
+
+                var actionText = action === 'approve' ? 'approve' : 'reject';
+                var actionColor = action === 'approve' ? '#28a745' : '#dc3545';
+
+                Swal.fire({
+                    title: `Bulk ${actionText.charAt(0).toUpperCase() + actionText.slice(1)}?`,
+                    text: `Are you sure you want to ${actionText} ${selectedIds.length} selected request(s)?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: actionColor,
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: `Yes, ${actionText} them!`,
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        performBulkAction(selectedIds, action);
+                    }
+                });
+            });
+
+            // Perform bulk action
+            function performBulkAction(ids, action) {
+                Swal.fire({
+                    title: 'Processing...',
+                    text: `Please wait while we ${action} the selected requests.`,
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Simulate API call - replace with actual implementation
+                setTimeout(() => {
+                    var successCount = ids.length;
+                    var actionText = action === 'approve' ? 'approved' : 'rejected';
+                    
+                    Swal.fire({
+                        title: 'Success!',
+                        text: `Successfully ${actionText} ${successCount} instructor request(s).`,
+                        icon: 'success',
+                        confirmButtonColor: '#ed2a26'
+                    }).then(() => {
+                        // Reload page or update table
+                        location.reload();
+                    });
+                }, 2000);
+            }
+
+            // Individual approve button
+            $('.approve-btn').on('click', function() {
+                var accountId = $(this).data('account-id');
+                var username = $(this).data('username');
+                var $button = $(this);
+
+                Swal.fire({
+                    title: 'Approve Instructor Request?',
+                    text: `Are you sure you want to approve ${username}'s instructor registration?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, approve it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>Processing...');
+                        
+                        // Redirect to approve action
+                        window.location.href = `/Admin/ApproveInstructorRegis?id=${accountId}`;
+                    }
+                });
+            });
+
+            // Individual reject button
+            $('.reject-btn').on('click', function() {
+                var accountId = $(this).data('account-id');
+                var username = $(this).data('username');
+                var $button = $(this);
+
+                Swal.fire({
+                    title: 'Reject Instructor Request?',
+                    text: `Are you sure you want to reject ${username}'s instructor registration?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, reject it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>Processing...');
+                        
+                        // Redirect to reject action
+                        window.location.href = `/Admin/RejectInstructorRegis?id=${accountId}`;
+                    }
+                });
+            });
+
+            // Animate statistics cards on page load
+            $('.dashboard_stats_card').each(function(index) {
+                $(this).css('opacity', '0').css('transform', 'translateY(20px)');
+                $(this).delay(100 * index).animate({
+                    opacity: 1
+                }, 600).css('transform', 'translateY(0)');
+            });
+
+            // Update statistics dynamically
+            function updateStatistics() {
+                var totalRequests = $('#instructorRegisTable tbody tr').length;
+                $('.dashboard_stats_card:eq(0) h4').text(totalRequests);
+                $('.dashboard_stats_card:eq(2) h4').text(totalRequests);
+            }
+
+            // Call update statistics after DataTable is loaded
+            setTimeout(updateStatistics, 100);
+
+            // Auto-hide alerts
+            setTimeout(function () {
+                $('.alert').each(function() {
+                    $(this).fadeOut('slow');
+                });
+            }, 5000);
+
+            // Initialize tooltips
+            $('[title]').tooltip();
+        });
+    </script>
+}

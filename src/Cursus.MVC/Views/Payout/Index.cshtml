@@ -37,7 +37,7 @@
                                         <div class="ui search focus mt-30 lbel25">
                                             <label>Payout</label>
                                             <div class="ui left icon input swdh11 swdh19">
-                                                <input class="prompt srch_explore" type="text" name="balance[add]" value="" id="id_balance" required="" maxlength="5" placeholder="0">
+                                                <input class="prompt srch_explore" type="number" name="balance[add]" value="" id="id_balance" required="" maxlength="5" min="10" step="1" pattern="[0-9]+" placeholder="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                                 <i class="uil uil-dollar-alt icon icon8"></i>
                                             </div>
                                             <span id="error-message" style="color: red; display: none;">The amount entered cannot exceed @ViewBag.accMoney$</span>
@@ -158,12 +158,17 @@
 
                 // Thêm sự kiện 'click' cho button mới
                 payoutButton.addEventListener('click', function () {
-                    var enteredValue = parseFloat(inputBalance.value); // Lấy giá trị người dùng nhập và chuyển đổi sang kiểu số thực
-                    if (inputBalance.value.trim() === '' || isNaN(enteredValue) || enteredValue < 10 || enteredValue > maxBalance) { // Kiểm tra nếu giá trị input rỗng, không phải là số, nhỏ hơn 10 hoặc lớn hơn giá trị tối đa
-                        if (inputBalance.value.trim() === '') {
+                    var inputValue = inputBalance.value.trim();
+                    var enteredValue = parseInt(inputValue); // Chuyển đổi sang kiểu số nguyên
+                    
+                    // Kiểm tra xem có phải là số nguyên hợp lệ không
+                    var isInteger = /^\d+$/.test(inputValue); // Regex chỉ cho phép số nguyên dương
+                    
+                    if (inputValue === '' || !isInteger || isNaN(enteredValue) || enteredValue < 10 || enteredValue > maxBalance) {
+                        if (inputValue === '') {
                             errorMessage.textContent = 'Please enter a value.';
-                        } else if (isNaN(enteredValue)) {
-                            errorMessage.textContent = 'Please enter a positive integer.';
+                        } else if (!isInteger || isNaN(enteredValue)) {
+                            errorMessage.textContent = 'Please enter a positive integer only (no decimals).';
                         } else if (enteredValue < 10) {
                             errorMessage.textContent = 'Please enter a positive integer greater than or equal to 10.';
                         } else if (enteredValue > maxBalance) {
@@ -172,23 +177,25 @@
                         errorMessage.style.display = 'block';
                     } else {
                         errorMessage.style.display = 'none'; // Ẩn thông báo lỗi nếu giá trị hợp lệ
-                        var inputValue = document.getElementById('id_balance').value;
-                        AlertConfirmWhenSubmitForm("Are you sure", "You want to withdraw the ${value}$ from your account?", "info", inputValue); // Thực hiện hàm creditAlert nếu giá trị hợp lệ
-
+                        AlertConfirmWhenSubmitForm("Are you sure", "You want to withdraw $" + enteredValue + " from your account?", "info", inputValue);
                     }
                 });
 
                 inputBalance.addEventListener('input', function () {
-                    var enteredValue = parseFloat(inputBalance.value); // Lấy giá trị người dùng nhập và chuyển đổi sang kiểu số thực
-                    if (inputBalance.value.trim() === '' || isNaN(enteredValue) || enteredValue < 10 || enteredValue > maxBalance) { // Kiểm tra nếu giá trị input rỗng, không phải là số hoặc nhỏ hơn 10
-                        if (inputBalance.value.trim() === '') {
+                    var inputValue = inputBalance.value.trim();
+                    var enteredValue = parseInt(inputValue); // Chuyển đổi sang kiểu số nguyên
+                    
+                    // Kiểm tra xem có phải là số nguyên hợp lệ không
+                    var isInteger = /^\d+$/.test(inputValue); // Regex chỉ cho phép số nguyên dương
+                    
+                    if (inputValue === '' || !isInteger || isNaN(enteredValue) || enteredValue < 10 || enteredValue > maxBalance) {
+                        if (inputValue === '') {
                             errorMessage.textContent = 'Please enter a value.';
-                        } else if (isNaN(enteredValue)) {
-                            errorMessage.textContent = 'Please enter a positive integer.';
+                        } else if (!isInteger || isNaN(enteredValue)) {
+                            errorMessage.textContent = 'Please enter a positive integer only (no decimals).';
                         } else if (enteredValue < 10) {
                             errorMessage.textContent = 'Please enter a positive integer greater than or equal to 10.';
-                        }
-                        else if (enteredValue > maxBalance) {
+                        } else if (enteredValue > maxBalance) {
                             errorMessage.textContent = 'The input value cannot be larger than ' + maxBalance + '.';
                         }
                         errorMessage.style.display = 'block';

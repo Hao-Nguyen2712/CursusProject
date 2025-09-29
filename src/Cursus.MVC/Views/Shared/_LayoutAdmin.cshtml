@@ -29,6 +29,7 @@
     <link href="~/css/instructor-responsive.css" rel="stylesheet" asp-append-version="true">
     <link href="~/css/night-mode.css" rel="stylesheet" asp-append-version="true">
     <link href="~/css/style.css" rel="stylesheet" asp-append-version="true">
+    <link href="~/css/sticky-footer.css" rel="stylesheet" asp-append-version="true">
 
 
     <!-- Vendor Stylesheets -->
@@ -46,7 +47,7 @@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 
-<body>
+<body class="has-sidebar">
     <header class="header clearfix">
         <button type="button" id="toggleMenu" class="toggle_menu">
             <i class='uil uil-bars'></i>
@@ -88,14 +89,7 @@
                                 </div>
                                 <a class="dp_link_12">View Admin Profile</a>
                             </div>
-                            <div class="night_mode_switch__btn">
-                                <a href="#" id="night-mode" class="btn-night-mode">
-                                    <i class="uil uil-moon"></i> Night mode
-                                    <span class="btn-night-mode-switch">
-                                        <span class="uk-switch-button"></span>
-                                    </span>
-                                </a>
-                            </div>
+                          
                             <form class="form-inline item channel_item p-3" asp-area="Identity" asp-page="/Account/Logout"
                                 method="post">
                                 <button type="submit" class="item channel_item p-0"
@@ -120,38 +114,99 @@
                             <span class="menu--label">Dashboard</span>
                         </a>
                     </li>
-                    <li class="menu--item">
-                        <a asp-action="CourseAnalyze" asp-controller="Admin" class="menu--link" title="Analyics">
-                            <i class='uil uil-analysis menu--icon'></i>
-                            <span class="menu--label">Analyics Course</span>
-                        </a>
-                    </li>
+                    
+                    <!-- User Management -->
                     <li class="menu--link menu--item menu--item__has_sub_menu">
-                        <label class="menu--link" title="Pages">
-                            <i class='uil uil-file menu--icon'></i>
-                            <span class="menu--label">Account</span>
+                        <label class="menu--link" title="User Management">
+                            <i class='uil uil-users-alt menu--icon'></i>
+                            <span class="menu--label">User Management</span>
                         </label>
                         <ul class="sub_menu">
                             <li class="sub_menu--item">
-                                <a asp-controller="Admin" asp-action="GetStudent" class="sub_menu--link">Student</a>
+                                <a asp-controller="Admin" asp-action="GetStudent" class="sub_menu--link">Students</a>
                             </li>
                             <li class="sub_menu--item">
-                                <a asp-controller="Admin" asp-action="GetInstructor"
-                                    class="sub_menu--link">Instructor</a>
+                                <a asp-controller="Admin" asp-action="GetInstructor" class="sub_menu--link">Instructors</a>
+                            </li>
+                            <li class="sub_menu--item">
+                                <a asp-controller="Admin" asp-action="GetListAccount" class="sub_menu--link">All Accounts</a>
+                            </li>
+                            <li class="sub_menu--item">
+                                <a asp-controller="Admin" asp-action="GetListInstructorRegis" class="sub_menu--link">Instructor Requests</a>
                             </li>
                         </ul>
                     </li>
-                    
+
+                    <!-- Course Management -->
+                    <li class="menu--link menu--item menu--item__has_sub_menu">
+                        <label class="menu--link" title="Course Management">
+                            <i class='uil uil-book-open menu--icon'></i>
+                            <span class="menu--label">Course Management</span>
+                        </label>
+                        <ul class="sub_menu">
+                            <li class="sub_menu--item">
+                                <a asp-controller="Admin" asp-action="GetCourseApprove" class="sub_menu--link">Course Approval</a>
+                            </li>
+                            <li class="sub_menu--item">
+                                <a asp-controller="Admin" asp-action="GetAllCategories" class="sub_menu--link">Categories</a>
+                            </li>
+                            <li class="sub_menu--item">
+                                <a asp-controller="Admin" asp-action="CourseAnalyze" class="sub_menu--link">Course Analytics</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Financial Management -->
+                    <li class="menu--link menu--item menu--item__has_sub_menu">
+                        <label class="menu--link" title="Financial Management">
+                            <i class='uil uil-dollar-alt menu--icon'></i>
+                            <span class="menu--label">Financial</span>
+                        </label>
+                        <ul class="sub_menu">
+                            <li class="sub_menu--item">
+                                <a asp-controller="Admin" asp-action="GetTransactions" class="sub_menu--link">Transactions</a>
+                            </li>
+                            <li class="sub_menu--item">
+                                <a asp-controller="Admin" asp-action="GetRevenue" class="sub_menu--link">Revenue Reports</a>
+                            </li>
+                            <li class="sub_menu--item">
+                                <a asp-controller="Admin" asp-action="GetPayouts" class="sub_menu--link">Instructor Payouts</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Content Management -->
+                    <li class="menu--link menu--item menu--item__has_sub_menu">
+                        <label class="menu--link" title="Content Management">
+                            <i class='uil uil-edit menu--icon'></i>
+                            <span class="menu--label">Content</span>
+                        </label>
+                        <ul class="sub_menu">
+                            <li class="sub_menu--item">
+                                <a asp-controller="Admin" asp-action="GetReports" class="sub_menu--link">User Reports</a>
+                            </li>
+                            <li class="sub_menu--item">
+                                <a asp-controller="Admin" asp-action="CommentManagement" class="sub_menu--link">Comments</a>
+                            </li>
+                            <li class="sub_menu--item">
+                                <a asp-controller="Admin" asp-action="ReviewManagement" class="sub_menu--link">Reviews</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Promotions -->
                     <li class="menu--item">
-                        <a asp-controller="Admin" asp-action="GetAllCategories" class="menu--link" title="Notifications">
-                            <i class='uil uil-list-ul menu--icon'></i>
-                            <span class="menu--label">Category</span>
+                        <a asp-controller="Admin" asp-action="GetDiscounts" class="menu--link" title="Discounts">
+                            <i class='uil uil-tag-alt menu--icon'></i>
+                            <span class="menu--label">Discounts</span>
                         </a>
                     </li>
+
+                    <!-- System Monitoring -->
                     <li class="menu--item">
-                       <a asp-controller="Admin" asp-action="GetCourseApprove" class="menu--link" title="Confirm">
-                                                        <i class='uil uil-check-circle menu--icon'></i>
-                            <span class="menu--label">Confirm</span>
+                        <a asp-controller="Admin" asp-action="SystemMonitoring" class="menu--link" title="System">
+                            <i class='uil uil-chart-line menu--icon'></i>
+                            <span class="menu--label">System Monitor</span>
                         </a>
                     </li>
                 </ul>
@@ -159,7 +214,9 @@
         </div>
     </nav>
     <div class="wrapper" >
-        @RenderBody()
+        <main class="main-content">
+            @RenderBody()
+        </main>
         <footer class="footer mt-40">
             <div class="container-fluid">
                 <div class="row">

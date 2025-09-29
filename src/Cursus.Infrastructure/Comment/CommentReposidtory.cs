@@ -1,5 +1,6 @@
 ﻿using Cursus.Application.Comment;
 using Cursus.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cursus.Infrastructure.Comment
 {
@@ -21,6 +22,59 @@ namespace Cursus.Infrastructure.Comment
         public List<Domain.Models.Comment> GetCommentsByLessonID(int lessonID)
         {
             return _db.Comments.Where(c => c.LessionId == lessonID).ToList();
+        }
+
+        public Cursus.Domain.Models.Comment GetCommentById(int commentId)
+        {
+            return _db.Comments
+                .Include(c => c.Account)
+                .Include(c => c.Lession)
+                .FirstOrDefault(c => c.CmtId == commentId);
+        }
+
+        public void UpdateComment(Cursus.Domain.Models.Comment comment)
+        {
+            _db.Comments.Update(comment);
+            _db.SaveChanges();
+        }
+
+        public List<Cursus.Domain.Models.Comment> GetPendingComments()
+        {
+            return _db.Comments
+                .Include(c => c.Account)
+                .Include(c => c.Lession)
+                .Where(c => string.IsNullOrEmpty(c.CmtContent) == false)
+                .OrderByDescending(c => c.CmtDate)
+                .Take(20)
+                .ToList();
+        }
+
+        public List<Cursus.Domain.Models.Comment> GetAllComments()
+        {
+            return _db.Comments
+                .Include(c => c.Account)
+                .Include(c => c.Lession)
+                .Include(c => c.Reports)
+                .ToList();
+        }
+
+        public bool DeleteComment(int commentId)
+        {
+            try
+            {
+                var comment = _db.Comments.Find(commentId);
+                if (comment != null)
+                {
+                    _db.Comments.Remove(comment);
+                    _db.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

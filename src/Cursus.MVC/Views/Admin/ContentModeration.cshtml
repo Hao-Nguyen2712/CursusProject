@@ -1,0 +1,429 @@
+@model Cursus.MVC.ViewModels.ContentModerationViewModel
+@{
+    ViewData["Title"] = "Content Moderation";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="sa4d25">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="section_padding_130">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="dashboard_tab_content">
+                                <div class="orders_table">
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                            <div class="table_title">
+                                                <h2>Content Moderation</h2>
+                                                <p>Review and moderate user-generated content</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                            <!-- Filter Bar -->
+                                            <div class="filter-bar mb-3">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <select class="form-select" id="statusFilter">
+                                                            <option value="">All Statuses</option>
+                                                            <option value="Pending">Pending Review</option>
+                                                            <option value="Approved">Approved</option>
+                                                            <option value="Rejected">Rejected</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <select class="form-select" id="typeFilter">
+                                                            <option value="">All Types</option>
+                                                            <option value="Comment">Comments</option>
+                                                            <option value="Report">Reports</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="btn-group">
+                                                            <button type="button" class="btn btn-success" onclick="bulkApprove()">
+                                                                <i class="uil uil-check"></i> Bulk Approve
+                                                            </button>
+                                                            <button type="button" class="btn btn-danger" onclick="bulkReject()">
+                                                                <i class="uil uil-times"></i> Bulk Reject
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @if (TempData["SuccessMessage"] != null)
+                                    {
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            @TempData["SuccessMessage"]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    }
+
+                                    @if (TempData["ErrorMessage"] != null)
+                                    {
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            @TempData["ErrorMessage"]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    }
+
+                                    <!-- Moderation Statistics -->
+                                    <div class="row mb-4">
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="card stat-card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Pending Comments</h5>
+                                                    <h2 class="text-warning">@Model.PendingCommentsCount</h2>
+                                                    <small class="text-muted">Awaiting review</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="card stat-card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Reported Content</h5>
+                                                    <h2 class="text-danger">@Model.ReportedContentCount</h2>
+                                                    <small class="text-muted">User reports</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="card stat-card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Approved Today</h5>
+                                                    <h2 class="text-success">@Model.ApprovedTodayCount</h2>
+                                                    <small class="text-muted">Content approved</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="card stat-card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Approval Rate</h5>
+                                                    <h2 class="text-info">@Model.ApprovalRate.ToString("F1")%</h2>
+                                                    <small class="text-muted">Overall approval rate</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Pending Comments Tab -->
+                                    <div class="row mb-4">
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5>Pending Comments</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    @if (Model.PendingComments.Any())
+                                                    {
+                                                        @foreach (var comment in Model.PendingComments)
+                                                        {
+                                                            <div class="comment-item mb-3 p-3 border rounded">
+                                                                <div class="row">
+                                                                    <div class="col-md-1">
+                                                                        <input type="checkbox" class="form-check-input bulk-select" value="@comment.CmtId" />
+                                                                    </div>
+                                                                    <div class="col-md-11">
+                                                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                                                            <div>
+                                                                                <strong>@(comment.Account?.FullName ?? "Unknown User")</strong>
+                                                                                <small class="text-muted">@comment.CmtDate?.ToString("MMM dd, yyyy hh:mm tt")</small>
+                                                                            </div>
+                                                                            <div class="btn-group">
+                                                                                <button type="button" class="btn btn-success btn-sm" onclick="approveComment(@comment.CmtId)">
+                                                                                    <i class="uil uil-check"></i> Approve
+                                                                                </button>
+                                                                                <button type="button" class="btn btn-danger btn-sm" onclick="rejectComment(@comment.CmtId)">
+                                                                                    <i class="uil uil-times"></i> Reject
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="comment-content">
+                                                                            <p>@comment.CmtContent</p>
+                                                                        </div>
+                                                                        <div class="comment-meta">
+                                                                            <small class="text-muted">
+                                                                                Lesson: <strong>@(comment.Lession?.LessionTilte ?? "Unknown")</strong>
+                                                                            </small>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="text-center">
+                                                            <i class="uil uil-comment-info-alt" style="font-size: 3rem; color: #ccc;"></i>
+                                                            <h4>No Pending Comments</h4>
+                                                            <p>All comments have been reviewed.</p>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Reported Content Tab -->
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5>Reported Content</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    @if (Model.ReportedContent.Any())
+                                                    {
+                                                        <div class="table-responsive">
+                                                            <table class="table table-hover">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Date</th>
+                                                                        <th>Reporter</th>
+                                                                        <th>Content Type</th>
+                                                                        <th>Reason</th>
+                                                                        <th>Description</th>
+                                                                        <th>Status</th>
+                                                                        <th>Actions</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @foreach (var report in Model.ReportedContent)
+                                                                    {
+                                                                        <tr>
+                                                                            <td>@report.ReportDate?.ToString("MMM dd, yyyy")</td>
+                                                                            <td>@(report.Account?.FullName ?? "Unknown")</td>
+                                                                            <td>
+                                                                                @if (report.CmtId.HasValue)
+                                                                                {
+                                                                                    <span class="badge bg-info">Comment</span>
+                                                                                }
+                                                                                else if (report.CourseId.HasValue)
+                                                                                {
+                                                                                    <span class="badge bg-primary">Course</span>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <span class="badge bg-secondary">Other</span>
+                                                                                }
+                                                                            </td>
+                                                                            <td>@report.ReportReasson</td>
+                                                                            <td>
+                                                                                <div class="text-truncate" style="max-width: 200px;" title="@report.ReportReasson">
+                                                                                    @report.ReportReasson
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <span class="badge bg-warning">Pending</span>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="btn-group">
+                                                                                    <button type="button" class="btn btn-success btn-sm" onclick="resolveReport(@report.ReportId, 'Resolved')">
+                                                                                        <i class="uil uil-check"></i>
+                                                                                    </button>
+                                                                                    <button type="button" class="btn btn-secondary btn-sm" onclick="resolveReport(@report.ReportId, 'Dismissed')">
+                                                                                        <i class="uil uil-times"></i>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="text-center">
+                                                            <i class="uil uil-shield-check" style="font-size: 3rem; color: #ccc;"></i>
+                                                            <h4>No Reported Content</h4>
+                                                            <p>No content has been reported.</p>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function approveComment(commentId) {
+            if (confirm('Are you sure you want to approve this comment?')) {
+                $.post('@Url.Action("ApproveComment", "Admin")', { commentId: commentId })
+                    .done(function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    })
+                    .fail(function() {
+                        alert('Error occurred while approving comment.');
+                    });
+            }
+        }
+
+        function rejectComment(commentId) {
+            if (confirm('Are you sure you want to reject this comment?')) {
+                $.post('@Url.Action("RejectComment", "Admin")', { commentId: commentId })
+                    .done(function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    })
+                    .fail(function() {
+                        alert('Error occurred while rejecting comment.');
+                    });
+            }
+        }
+
+        function resolveReport(reportId, status) {
+            if (confirm('Are you sure you want to update this report status?')) {
+                $.post('@Url.Action("ResolveReport", "Admin")', { reportId: reportId, status: status })
+                    .done(function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    })
+                    .fail(function() {
+                        alert('Error occurred while updating report.');
+                    });
+            }
+        }
+
+        function bulkApprove() {
+            var selectedComments = $('.bulk-select:checked').map(function() {
+                return this.value;
+            }).get();
+
+            if (selectedComments.length === 0) {
+                alert('Please select comments to approve.');
+                return;
+            }
+
+            if (confirm('Are you sure you want to approve ' + selectedComments.length + ' comments?')) {
+                $.post('@Url.Action("BulkApproveComments", "Admin")', { commentIds: selectedComments })
+                    .done(function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    })
+                    .fail(function() {
+                        alert('Error occurred while bulk approving comments.');
+                    });
+            }
+        }
+
+        function bulkReject() {
+            var selectedComments = $('.bulk-select:checked').map(function() {
+                return this.value;
+            }).get();
+
+            if (selectedComments.length === 0) {
+                alert('Please select comments to reject.');
+                return;
+            }
+
+            if (confirm('Are you sure you want to reject ' + selectedComments.length + ' comments?')) {
+                $.post('@Url.Action("BulkRejectComments", "Admin")', { commentIds: selectedComments })
+                    .done(function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    })
+                    .fail(function() {
+                        alert('Error occurred while bulk rejecting comments.');
+                    });
+            }
+        }
+
+        // Filter functionality
+        $('#statusFilter, #typeFilter').on('change', function() {
+            // Implement filtering logic if needed
+            console.log('Filter changed');
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .stat-card {
+            margin-bottom: 1rem;
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        
+        .stat-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .stat-card h5 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+        
+        .comment-item {
+            background-color: #f8f9fa;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .comment-item:hover {
+            background-color: #e9ecef;
+        }
+        
+        .comment-content {
+            margin: 0.75rem 0;
+            padding: 0.5rem;
+            background-color: white;
+            border-radius: 0.25rem;
+            border-left: 3px solid #007bff;
+        }
+        
+        .filter-bar {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        
+        .table td {
+            vertical-align: middle;
+        }
+        
+        .btn-group .btn {
+            margin-right: 0.25rem;
+        }
+        
+        .bulk-select {
+            margin-top: 0.25rem;
+        }
+    </style>
+}

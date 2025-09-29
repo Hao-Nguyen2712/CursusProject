@@ -93,7 +93,7 @@ namespace Cursus.MVC.Services
                     Id = "admin-user-1", Email = "admin@cursus.com", Role = "Admin",
                     Username = "admin", FullName = "System Administrator", Phone = "+1234567890",
                     Gender = "Male", DateofBirth = new DateTime(1985, 1, 15),
-                    Description = "System Administrator Account", Avatar = "/images/avatars/admin.jpg",
+                    Description = "System Administrator Account", Avatar = "/images/admin/img-1.png",
                     UserRole = 1, Money = 0m, UpLevel = "Admin",
                     Bio = "Experienced system administrator managing the Cursus platform."
                 },
@@ -101,7 +101,7 @@ namespace Cursus.MVC.Services
                     Id = "instructor-user-2", Email = "instructor1@cursus.com", Role = "Instructor",
                     Username = "johnsmith", FullName = "John Smith", Phone = "+1234567891",
                     Gender = "Male", DateofBirth = new DateTime(1988, 3, 22),
-                    Description = "Senior Web Development Instructor", Avatar = "/images/avatars/john.jpg",
+                    Description = "Senior Web Development Instructor", Avatar = "/images/instructor/img-1.jpg",
                     UserRole = 2, Money = 15000.00m, UpLevel = "Senior",
                     Bio = "Full-stack developer with 8+ years of experience in modern web technologies."
                 },
@@ -109,7 +109,7 @@ namespace Cursus.MVC.Services
                     Id = "instructor-user-3", Email = "instructor2@cursus.com", Role = "Instructor",
                     Username = "maryjohnson", FullName = "Mary Johnson", Phone = "+1234567892",
                     Gender = "Female", DateofBirth = new DateTime(1990, 7, 10),
-                    Description = "Data Science and ML Instructor", Avatar = "/images/avatars/mary.jpg",
+                    Description = "Data Science and ML Instructor", Avatar = "/images/instructor/img-3.jpg",
                     UserRole = 2, Money = 12500.00m, UpLevel = "Senior",
                     Bio = "Data scientist specializing in machine learning and statistical analysis."
                 },
@@ -117,7 +117,7 @@ namespace Cursus.MVC.Services
                     Id = "student-user-4", Email = "student1@cursus.com", Role = "Student",
                     Username = "mikebrown", FullName = "Mike Brown", Phone = "+1234567893",
                     Gender = "Male", DateofBirth = new DateTime(1995, 11, 5),
-                    Description = "Computer Science Student", Avatar = "/images/avatars/mike.jpg",
+                    Description = "Computer Science Student", Avatar = "/images/student/img-1.jpg",
                     UserRole = 3, Money = 500.00m, UpLevel = "Beginner",
                     Bio = "Aspiring software developer currently learning web development."
                 },
@@ -125,7 +125,7 @@ namespace Cursus.MVC.Services
                     Id = "student-user-5", Email = "student2@cursus.com", Role = "Student",
                     Username = "sarahwilson", FullName = "Sarah Wilson", Phone = "+1234567894",
                     Gender = "Female", DateofBirth = new DateTime(1997, 4, 18),
-                    Description = "Marketing Professional Learning Tech", Avatar = "/images/avatars/sarah.jpg",
+                    Description = "Marketing Professional Learning Tech", Avatar = "/images/student/img-2.jpg",
                     UserRole = 3, Money = 750.00m, UpLevel = "Intermediate",
                     Bio = "Marketing professional transitioning to tech through online learning."
                 },
@@ -133,7 +133,7 @@ namespace Cursus.MVC.Services
                     Id = "student-user-6", Email = "student3@cursus.com", Role = "Student",
                     Username = "davidlee", FullName = "David Lee", Phone = "+1234567895",
                     Gender = "Male", DateofBirth = new DateTime(1992, 9, 25),
-                    Description = "Career Changer", Avatar = "/images/avatars/david.jpg",
+                    Description = "Career Changer", Avatar = "/images/student/img-3.jpg",
                     UserRole = 3, Money = 300.00m, UpLevel = "Beginner",
                     Bio = "Former accountant learning programming to change careers."
                 },
@@ -141,7 +141,7 @@ namespace Cursus.MVC.Services
                     Id = "student-user-7", Email = "student4@cursus.com", Role = "Student",
                     Username = "emilydavis", FullName = "Emily Davis", Phone = "+1234567896",
                     Gender = "Female", DateofBirth = new DateTime(1994, 12, 8),
-                    Description = "Graphic Designer Learning Development", Avatar = "/images/avatars/emily.jpg",
+                    Description = "Graphic Designer Learning Development", Avatar = "/images/student/img-4.jpg",
                     UserRole = 3, Money = 950.00m, UpLevel = "Intermediate",
                     Bio = "Creative professional expanding skills into web development."
                 },
@@ -149,7 +149,7 @@ namespace Cursus.MVC.Services
                     Id = "student-user-8", Email = "student5@cursus.com", Role = "Student",
                     Username = "alexgarcia", FullName = "Alex Garcia", Phone = "+1234567897",
                     Gender = "Male", DateofBirth = new DateTime(1996, 6, 30),
-                    Description = "Recent Graduate", Avatar = "/images/avatars/alex.jpg",
+                    Description = "Recent Graduate", Avatar = "/images/student/img-5.jpg",
                     UserRole = 3, Money = 200.00m, UpLevel = "Beginner",
                     Bio = "Recent computer science graduate looking to specialize in data science."
                 },
@@ -157,7 +157,7 @@ namespace Cursus.MVC.Services
                     Id = "instructor-user-9", Email = "instructor3@cursus.com", Role = "Instructor",
                     Username = "lisachen", FullName = "Lisa Chen", Phone = "+1234567898",
                     Gender = "Female", DateofBirth = new DateTime(1987, 2, 14),
-                    Description = "Mobile Development Expert", Avatar = "/images/avatars/lisa.jpg",
+                    Description = "Mobile Development Expert", Avatar = "/images/instructor/img-4.jpg",
                     UserRole = 2, Money = 18000.00m, UpLevel = "Expert",
                     Bio = "Mobile app developer with expertise in iOS and Android development."
                 },
@@ -165,9 +165,50 @@ namespace Cursus.MVC.Services
                     Id = "instructor-user-10", Email = "instructor4@cursus.com", Role = "Instructor",
                     Username = "robertmiller", FullName = "Robert Miller", Phone = "+1234567899",
                     Gender = "Male", DateofBirth = new DateTime(1985, 10, 3),
-                    Description = "Cloud Architecture Specialist", Avatar = "/images/avatars/robert.jpg",
+                    Description = "Cloud Architecture Specialist", Avatar = "/images/instructor/img-5.jpg",
                     UserRole = 2, Money = 22000.00m, UpLevel = "Expert",
                     Bio = "Cloud solutions architect with extensive experience in AWS and Azure."
+                },
+                // Additional users with default avatars (simulating new registrations)
+                new {
+                    Id = "instructor-user-11", Email = "instructor5@cursus.com", Role = "Instructor",
+                    Username = "tomwilson", FullName = "Tom Wilson", Phone = "+1234567800",
+                    Gender = "Male", DateofBirth = new DateTime(1989, 8, 12),
+                    Description = "New Instructor - DevOps Specialist", Avatar = "/images/instructor/img-default.jpg",
+                    UserRole = 2, Money = 0m, UpLevel = "Beginner",
+                    Bio = "Recently joined instructor specializing in DevOps and automation."
+                },
+                new {
+                    Id = "student-user-9", Email = "student6@cursus.com", Role = "Student",
+                    Username = "jenniferdavis", FullName = "Jennifer Davis", Phone = "+1234567801",
+                    Gender = "Female", DateofBirth = new DateTime(1998, 5, 20),
+                    Description = "New Student", Avatar = "/images/student/img-default.jpg",
+                    UserRole = 3, Money = 0m, UpLevel = "Beginner",
+                    Bio = "New student just starting their learning journey."
+                },
+                new {
+                    Id = "student-user-10", Email = "student7@cursus.com", Role = "Student",
+                    Username = "michaeljohnson", FullName = "Michael Johnson", Phone = "+1234567802",
+                    Gender = "Male", DateofBirth = new DateTime(1993, 11, 8),
+                    Description = "New Student", Avatar = "/images/student/img-default.jpg",
+                    UserRole = 3, Money = 0m, UpLevel = "Beginner",
+                    Bio = "New student exploring programming opportunities."
+                },
+                new {
+                    Id = "student-user-11", Email = "student8@cursus.com", Role = "Student",
+                    Username = "amandasmith", FullName = "Amanda Smith", Phone = "+1234567803",
+                    Gender = "Female", DateofBirth = new DateTime(1991, 3, 15),
+                    Description = "New Student", Avatar = "/images/student/img-6.jpg",
+                    UserRole = 3, Money = 100.00m, UpLevel = "Beginner",
+                    Bio = "Student with some programming background looking to advance skills."
+                },
+                new {
+                    Id = "instructor-user-12", Email = "instructor6@cursus.com", Role = "Instructor",
+                    Username = "jessicabrown", FullName = "Jessica Brown", Phone = "+1234567804",
+                    Gender = "Female", DateofBirth = new DateTime(1986, 12, 3),
+                    Description = "UI/UX Design Instructor", Avatar = "/images/instructor/img-6.jpg",
+                    UserRole = 2, Money = 8500.00m, UpLevel = "Intermediate",
+                    Bio = "Creative professional teaching UI/UX design principles."
                 }
             };
 
@@ -254,7 +295,7 @@ namespace Cursus.MVC.Services
                         CourseDescription = "A comprehensive course covering HTML, CSS, JavaScript, React, Node.js, and database management. Perfect for beginners who want to become full-stack developers.",
                         CourseWlearn = "HTML5, CSS3, JavaScript ES6+, React, Node.js, Express, MongoDB, Git, Deployment",
                         CourseRequirement = "Basic computer skills and willingness to learn. No prior programming experience required.",
-                        CourseAvatar = "/images/courses/web-development.jpg", CourseDate = new DateTime(2024, 1, 15),
+                        CourseAvatar = "/images/courses/img-1.jpg", CourseDate = new DateTime(2024, 1, 15),
                         CourseMoney = 299.99m, CourseStatus = "Approved", CourseProcess = 100, Discount = 0.15m, CategoryId = categories[0].CategoryId
                     },
                     new Course
@@ -264,7 +305,7 @@ namespace Cursus.MVC.Services
                         CourseDescription = "Learn to create beautiful iOS applications from the ground up. Covers Swift fundamentals, UIKit, SwiftUI, Core Data, and App Store deployment.",
                         CourseWlearn = "Swift Programming, SwiftUI, UIKit, Core Data, Networking, App Store Guidelines",
                         CourseRequirement = "Mac computer with Xcode installed. Basic programming knowledge helpful but not required.",
-                        CourseAvatar = "/images/courses/ios-development.jpg", CourseDate = new DateTime(2024, 2, 1),
+                        CourseAvatar = "/images/courses/img-2.jpg", CourseDate = new DateTime(2024, 2, 1),
                         CourseMoney = 349.99m, CourseStatus = "Approved", CourseProcess = 95, Discount = 0.20m, CategoryId = categories[1].CategoryId
                     },
                     new Course
@@ -274,7 +315,7 @@ namespace Cursus.MVC.Services
                         CourseDescription = "Comprehensive data science course covering Python, pandas, NumPy, scikit-learn, and TensorFlow. Learn to analyze data and build predictive models.",
                         CourseWlearn = "Python, Pandas, NumPy, Matplotlib, Seaborn, Scikit-learn, TensorFlow, Jupyter Notebooks",
                         CourseRequirement = "Basic mathematics knowledge. Python experience helpful but not required.",
-                        CourseAvatar = "/images/courses/data-science.jpg", CourseDate = new DateTime(2024, 1, 20),
+                        CourseAvatar = "/images/courses/img-3.jpg", CourseDate = new DateTime(2024, 1, 20),
                         CourseMoney = 399.99m, CourseStatus = "Approved", CourseProcess = 100, Discount = 0.25m, CategoryId = categories[2].CategoryId
                     },
                     new Course
@@ -284,7 +325,7 @@ namespace Cursus.MVC.Services
                         CourseDescription = "Learn to architect, deploy, and manage applications on Amazon Web Services. Covers EC2, S3, RDS, Lambda, and more.",
                         CourseWlearn = "AWS Services, EC2, S3, RDS, Lambda, CloudFormation, Security Best Practices",
                         CourseRequirement = "Basic understanding of networking and server concepts. Some programming experience recommended.",
-                        CourseAvatar = "/images/courses/aws-cloud.jpg", CourseDate = new DateTime(2024, 2, 10),
+                        CourseAvatar = "/images/courses/img-4.jpg", CourseDate = new DateTime(2024, 2, 10),
                         CourseMoney = 449.99m, CourseStatus = "Approved", CourseProcess = 85, Discount = 0.10m, CategoryId = categories[4].CategoryId
                     },
                     new Course
@@ -294,7 +335,7 @@ namespace Cursus.MVC.Services
                         CourseDescription = "Deep dive into React ecosystem including hooks, context, Redux for state management, and modern development practices.",
                         CourseWlearn = "React, Redux, React Hooks, Context API, React Router, Testing with Jest",
                         CourseRequirement = "Basic JavaScript knowledge required. HTML/CSS experience recommended.",
-                        CourseAvatar = "/images/courses/react-redux.jpg", CourseDate = new DateTime(2024, 3, 1),
+                        CourseAvatar = "/images/courses/img-5.jpg", CourseDate = new DateTime(2024, 3, 1),
                         CourseMoney = 249.99m, CourseStatus = "Approved", CourseProcess = 75, Discount = 0.30m, CategoryId = categories[0].CategoryId
                     }
                 };

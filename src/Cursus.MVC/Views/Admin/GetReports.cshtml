@@ -1,0 +1,179 @@
+@model List<Cursus.MVC.Models.ReportViewModel>
+@{
+    ViewData["Title"] = "Reports Management";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="sa4d25">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="section_padding_130">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="dashboard_tab_content">
+                                <div class="orders_table">
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                            <div class="table_title">
+                                                <h2>User Reports Management</h2>
+                                                <p>Manage and moderate user reports on courses and comments</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    @if (TempData["SuccessMessage"] != null)
+                                    {
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            @TempData["SuccessMessage"]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    }
+
+                                    @if (TempData["ErrorMessage"] != null)
+                                    {
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            @TempData["ErrorMessage"]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    }
+
+                                    <div class="order_table">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Report ID</th>
+                                                        <th scope="col">Reporter</th>
+                                                        <th scope="col">Type</th>
+                                                        <th scope="col">Target</th>
+                                                        <th scope="col">Reason</th>
+                                                        <th scope="col">Date</th>
+                                                        <th scope="col">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model != null && Model.Any())
+                                                    {
+                                                        @foreach (var report in Model)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="order_detail">
+                                                                        <span class="order_id">#@report.ReportId</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="order_detail">
+                                                                        <span>Account ID: @report.AccountId</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="order_detail">
+                                                                        @if (report.CourseId.HasValue)
+                                                                        {
+                                                                            <span class="badge bg-primary">Course Report</span>
+                                                                        }
+                                                                        else if (report.CmtId.HasValue)
+                                                                        {
+                                                                            <span class="badge bg-warning">Comment Report</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="badge bg-secondary">General Report</span>
+                                                                        }
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="order_detail">
+                                                                        @if (report.CourseId.HasValue)
+                                                                        {
+                                                                            <span>Course ID: @report.CourseId</span>
+                                                                        }
+                                                                        else if (report.CmtId.HasValue)
+                                                                        {
+                                                                            <span>Comment ID: @report.CmtId</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span>N/A</span>
+                                                                        }
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="order_detail">
+                                                                        <span class="order_date">@(report.ReportReasson ?? "No reason provided")</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="order_detail">
+                                                                        <span class="order_date">@(report.ReportDate?.ToString("MMM dd, yyyy") ?? "N/A")</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="order_actions">
+                                                                        @if (report.CourseId.HasValue)
+                                                                        {
+                                                                            <a asp-controller="Course" asp-action="Details" asp-route-id="@report.CourseId" 
+                                                                               class="btn btn-sm btn-outline-primary" target="_blank">
+                                                                                <i class="uil uil-eye"></i> View Course
+                                                                            </a>
+                                                                        }
+                                                                        
+                                                                        <a asp-controller="Admin" asp-action="DeleteReport" asp-route-id="@report.ReportId" 
+                                                                           class="btn btn-sm btn-outline-danger"
+                                                                           onclick="return confirm('Are you sure you want to delete this report?')">
+                                                                            <i class="uil uil-trash"></i> Delete
+                                                                        </a>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td colspan="7" class="text-center">
+                                                                <div class="empty_state">
+                                                                    <i class="uil uil-file-question-alt" style="font-size: 3rem; color: #ccc;"></i>
+                                                                    <h4>No Reports Found</h4>
+                                                                    <p>There are currently no user reports to review.</p>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .order_actions .btn {
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .empty_state {
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+        }
+        
+        .table td {
+            vertical-align: middle;
+        }
+    </style>
+}

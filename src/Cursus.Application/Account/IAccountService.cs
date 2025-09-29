@@ -11,6 +11,7 @@ namespace Cursus.Application.Account
         List<Domain.Models.Account> GetAllAccount();
         Domain.Models.Account GetAccountIdById(string id);
         public int GetAccountIDByUserID(string userID);
+        public Task<int> GetAccountIDByUserIDAsync(string userID);
         public string getAccountName(string userID);
         public Cursus.Domain.Models.Account GetAccountByUserID(string userID);
 
@@ -21,5 +22,6 @@ namespace Cursus.Application.Account
 
         public Domain.Models.Account UpdateAccount(Domain.Models.Account account);
         public Domain.Models.Account UpdateAccountLevel(string userID);
+        public List<Domain.Models.Account> GetAllAccounts();
 	}
 }
