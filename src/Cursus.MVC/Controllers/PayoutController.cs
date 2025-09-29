@@ -32,7 +32,13 @@ namespace Cursus.MVC.Controllers
         public IActionResult Index()
         {
             ClaimsPrincipal claims = this.User;
-            var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userID = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
+            if (string.IsNullOrEmpty(userID))
+            {
+                TempData["Status"] = "InvalidUser";
+                return RedirectToAction("Error404", "Home");
+            }
 
             double accMoney = _creditsService.GetAccMoney(userID);
             ViewBag.accMoney = accMoney;
@@ -45,14 +51,24 @@ namespace Cursus.MVC.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Instructor")]
         public async Task<IActionResult> Index(IFormCollection form)
         {
-            string money = TempData["accMoney"] as string;
-            double accMoney = Double.Parse(money);
-            string balanceInput = form["balance[add]"];
-            int total;
+            string? money = TempData["accMoney"] as string;
+            if (string.IsNullOrEmpty(money) || !double.TryParse(money, out double accMoney))
+            {
+                TempData["Status"] = "InvalidAccountBalance";
+                return RedirectToAction("Error404", "Home");
+            }
 
-            if (!Int32.TryParse(balanceInput, out total))
+            string? balanceInput = form["balance[add]"];
+            if (string.IsNullOrEmpty(balanceInput))
+            {
+                TempData["Status"] = "MissingBalanceInput";
+                return RedirectToAction("Error404", "Home");
+            }
+
+            if (!int.TryParse(balanceInput, out int total))
             {
                 TempData["Status"] = "WithdrawnFail";
                 return RedirectToAction("Error404", "Home");
@@ -71,8 +87,21 @@ namespace Cursus.MVC.Controllers
             }
 
             ClaimsPrincipal claims = this.User;
-            var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
-            _payoutService.UpdateAccMoney(userID, total);
+            var userID = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
+            if (string.IsNullOrEmpty(userID))
+            {
+                TempData["Status"] = "InvalidUser";
+                return RedirectToAction("Error404", "Home");
+            }
+            // Update account money first
+            var updatedAccount = _payoutService.UpdateAccMoney(userID, total);
+            
+            if (updatedAccount == null)
+            {
+                TempData["Status"] = "WithdrawnFail";
+                return RedirectToAction("Error404", "Home");
+            }
 
             var trading = new Domain.Models.Trading
             {
@@ -88,16 +117,27 @@ namespace Cursus.MVC.Controllers
                 TempData["Status"] = "WithdrawnFail";
                 return RedirectToAction("Error404", "Home");
             }
+            
+            // Send confirmation email
             var emailSender = (EmailSender)_emailSender;
             var htmlContent = emailSender.PayOutConfirm(account.FullName, total);
             await _emailSender.SendEmailAsync(account.Email, "Confirm Payment", htmlContent);
+            
             TempData["Status"] = "WithdrawnSuccess";
+            TempData["WithdrawnAmount"] = total;
             return RedirectToAction("Success", "Payout");
         }
         
         [Authorize(Roles = "Instructor")]
         public IActionResult Success()
         {
+            // Pass the success message and withdrawn amount to the view
+            ViewBag.SuccessMessage = TempData["Status"];
+            ViewBag.WithdrawnAmount = TempData["WithdrawnAmount"];
+            
+            // Set a flag to redirect after 3 seconds
+            ViewBag.RedirectToIndex = true;
+            
             return View();
         }
     }

@@ -1,6 +1,5 @@
 using AutoMapper;
 using CloudinaryDotNet;
-using DotNetEnv;
 using Cursus.Application;
 using Cursus.Application.Account;
 using Cursus.Application.Admin;
@@ -27,6 +26,7 @@ using Cursus.Application.Subscrise;
 using Cursus.Domain.Models;
 using Cursus.Infrastructure;
 using Cursus.Infrastructure.Admin;
+using Cursus.Infrastructure.AdminDashBoard;
 using Cursus.Infrastructure.Analyze;
 using Cursus.Infrastructure.Cart;
 using Cursus.Infrastructure.Category;
@@ -44,8 +44,9 @@ using Cursus.Infrastructure.Student;
 using Cursus.Infrastructure.Subscription;
 using Cursus.Infrastructure.Subscrise;
 using Cursus.MVC.Mapper;
-using Cursus.MVC.Services;
 using Cursus.MVC.Models;
+using Cursus.MVC.Services;
+using DotNetEnv;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.StaticFiles;
@@ -59,12 +60,12 @@ namespace Cursus.MVC
         {
             // Load environment variables from .env file
             Env.Load();
-            
+
             var builder = WebApplication.CreateBuilder(args);
-            
+
             // Add environment variables to configuration
             builder.Configuration.AddEnvironmentVariables();
-            
+
             var connectionString = builder.Configuration.GetConnectionString("CursusMVCContextConnection") ?? throw new InvalidOperationException("Connection string 'CursusMVCContextConnection' not found.");
             var config = builder.Configuration;
 
@@ -147,6 +148,7 @@ namespace Cursus.MVC
 
             builder.Services.AddScoped<IDashBoardService, DashBoardService>();
 
+            builder.Services.AddScoped<IAdminDashBoardRepository, AdminDashBoardRepository>();
             builder.Services.AddScoped<IAdminDashBoardService, AdminDashBoardService>();
 
             builder.Services.AddScoped<IInstructorCourseService, InstructorCourseService>();
@@ -185,7 +187,7 @@ namespace Cursus.MVC
 
             // Configure Email settings
             builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("Email"));
-            
+
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             builder.Services.AddTransient<ISendEmail, SendEmail>();
 

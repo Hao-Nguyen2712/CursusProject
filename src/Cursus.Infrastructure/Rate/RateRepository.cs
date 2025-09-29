@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Cursus.Application;
 using Cursus.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cursus.Infrastructure
 {
@@ -22,22 +23,48 @@ namespace Cursus.Infrastructure
 
         public void DeleteRate(int RateId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var rate = _context.Rates.Find(RateId);
+                if (rate != null)
+                {
+                    _context.Rates.Remove(rate);
+                    _context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error deleting rate: {ex.Message}");
+            }
         }
 
         public List<Rate> GetAllRate()
         {
-            return _context.Rates.ToList();
+            return _context.Rates
+                .Include(r => r.Account)
+                .Include(r => r.Course)
+                .ToList();
         }
 
         public Rate GetRateById(int RateId)
         {
-            throw new NotImplementedException();
+            return _context.Rates
+                .Include(r => r.Account)
+                .Include(r => r.Course)
+                .FirstOrDefault(r => r.RateId == RateId);
         }
 
         public void UpdateRate(Rate rate)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Rates.Update(rate);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error updating rate: {ex.Message}");
+            }
         }
     }
 }

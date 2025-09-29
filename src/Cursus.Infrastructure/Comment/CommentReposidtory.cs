@@ -54,7 +54,27 @@ namespace Cursus.Infrastructure.Comment
             return _db.Comments
                 .Include(c => c.Account)
                 .Include(c => c.Lession)
+                .Include(c => c.Reports)
                 .ToList();
+        }
+
+        public bool DeleteComment(int commentId)
+        {
+            try
+            {
+                var comment = _db.Comments.Find(commentId);
+                if (comment != null)
+                {
+                    _db.Comments.Remove(comment);
+                    _db.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

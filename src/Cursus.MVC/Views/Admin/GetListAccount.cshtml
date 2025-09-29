@@ -1,108 +1,211 @@
 @model IEnumerable<Cursus.MVC.Models.AccountViewModel>
 @{
-    ViewData["Title"] = "List Account";
+    ViewData["Title"] = "Account Management";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-
+    var totalAccounts = Model.Count(x => x.Role != 1);
+    var activeAccounts = Model.Count(x => x.Role != 1 && (x.IsDelete == "False" || x.IsDelete == "false"));
+    var blockedAccounts = Model.Count(x => x.Role != 1 && x.IsDelete != "False" && x.IsDelete != "false");
+    var students = Model.Count(x => x.Role == 3);
+    var instructors = Model.Count(x => x.Role == 2);
 }
 
-<body>
-    <div class="row text-center">
-        <div class="col-lg-12">
-            <h2 class="st_title"><i class="fa fa-check-circle"></i> Block/Unblock Account</h2>
-        </div>
-    </div>
-
-
-
-
-    <div class="wrapper" style="margin-left: 10px; margin-top: -50px">
-        <div class="sa4d25">
-            <div class="container-fluid">
-                <nav>
+<div class="sa4d25">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="section_padding_130">
                     <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="dashboard_tab_content">
+                                <!-- Header and Statistics -->
+                                <div class="orders_table">
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                            <div class="table_title">
+                                                <h2>Account Management</h2>
+                                                <p>Manage user accounts and control access across the platform</p>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                        <div class="course_tabs">
+                                    <!-- Navigation Tabs -->
+                                    <div class="row mb-4">
+                                        <div class="col-xl-12">
+                                            <div class="course_tabs">
+                                                <div class="nav nav-tabs tab_crse justify-content-center">
+                                                    <a class="nav-item nav-link" href="/Admin/GetCourseApprove">
+                                                        <i class="uil uil-book-open me-2"></i>Courses
+                                                    </a>
+                                                    <a class="nav-item nav-link active" href="/Admin/GetListAccount">
+                                                        <i class="uil uil-users-alt me-2"></i>Accounts
+                                                    </a>
+                                                    <a class="nav-item nav-link" href="/Admin/GetListInstructorRegis">
+                                                        <i class="uil uil-graduation-cap me-2"></i>Instructors
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                            <div class="nav nav-tabs tab_crse  justify-content-center">
+                                    <!-- Statistics Cards -->
+                                    <div class="row mb-4">
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="dashboard_stats_card">
+                                                <div class="dashboard_stats_card_icon">
+                                                    <i class="uil uil-users-alt"></i>
+                                                </div>
+                                                <div class="dashboard_stats_card_content">
+                                                    <h4>@totalAccounts</h4>
+                                                    <p>Total Accounts</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="dashboard_stats_card">
+                                                <div class="dashboard_stats_card_icon approved">
+                                                    <i class="uil uil-check-circle"></i>
+                                                </div>
+                                                <div class="dashboard_stats_card_content">
+                                                    <h4>@activeAccounts</h4>
+                                                    <p>Active Accounts</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="dashboard_stats_card">
+                                                <div class="dashboard_stats_card_icon rejected">
+                                                    <i class="uil uil-ban"></i>
+                                                </div>
+                                                <div class="dashboard_stats_card_content">
+                                                    <h4>@blockedAccounts</h4>
+                                                    <p>Blocked Accounts</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="dashboard_stats_card">
+                                                <div class="dashboard_stats_card_icon pending">
+                                                    <i class="uil uil-graduation-cap"></i>
+                                                </div>
+                                                <div class="dashboard_stats_card_content">
+                                                    <h4>@instructors</h4>
+                                                    <p>Instructors</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                <a class="nav-item nav-link" href="/Admin/GetCourseApprove">Course</a>
-                                <a class="nav-item nav-link active" href="/Admin/GetListAccount">Account</a>
-                                <a class="nav-item nav-link" href="/Admin/GetListInstructorRegis">Instructor</a>
-                            </div>
-                        </div>
-                    </div>
-                </nav>
-                <div class="row">
-                    <div class="col-12">
-                        <div class="mt-10">
-                            <div class="table-cerificate">
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-bordered" id="content-table">
-                                        <thead class="thead-dark">
-                                            <tr>
-                                                <th style="color:white; background-color: #ed2a26; text-align: center;">
-                                                    Item No.</th>
-                                                <th style="color:white; background-color: #ed2a26; text-align: center;"
-                                                    scope="col">Account ID</th>
-                                                <th style="color:white; background-color: #ed2a26;text-align: center;"
-                                                    scope="col">Username</th>
-                                                <th style="color:white; background-color: #ed2a26;text-align: center;"
-                                                    scope="col">Position</th>
-                                                <th style="color:white; background-color: #ed2a26;text-align: center;"
-                                                    scope="col">Block/UnBlock</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @{
-                                                int count = 1;
-                                                @foreach (var Model in Model)
-                                                {
-                                                    @if (@Model.Role != 1)
-                                                    {
+                                    <!-- Filters -->
+                                    <div class="row mb-4">
+                                        <div class="col-xl-12">
+                                            <div class="filters_section">
+                                                <div class="d-flex align-items-center flex-wrap">
+                                                    <div class="form-group me-3">
+                                                        <input type="text" id="searchInput" class="form-control" placeholder="Search accounts...">
+                                                    </div>
+                                                    <div class="form-group me-3">
+                                                        <select id="roleFilter" class="form-control">
+                                                            <option value="">All Roles</option>
+                                                            <option value="Student">Students</option>
+                                                            <option value="Instructor">Instructors</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group me-3">
+                                                        <select id="statusFilter" class="form-control">
+                                                            <option value="">All Status</option>
+                                                            <option value="active">Active</option>
+                                                            <option value="blocked">Blocked</option>
+                                                        </select>
+                                                    </div>
+                                                    <button type="button" id="clearFilters" class="btn btn-secondary">Clear Filters</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Accounts Table -->
+                                    <div class="row">
+                                        <div class="col-xl-12">
+                                            <div class="table-responsive">
+                                                <table id="accountsTable" class="table ucp-table">
+                                                    <thead class="thead-s">
                                                         <tr>
-                                                            <td class="cell-ta"> @count </td>
-                                                            <td class="cell-ta"> @Model.AccountId </td>
-                                                            <td class="cell-ta">@Model.Username</td>
-                                                            @{
-                                                                @if (@Model.Role == 3)
-                                                                {
-                                                                    <td class="text-center">Student</td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td class="text-center">Instructor</td>
-                                                                }
-
-
-                                                            }
-                                                            @{
-                                                                <td style="text-align: center">
-
-                                                                    @if (@Model.IsDelete == "False" || @Model.IsDelete == "false")
-                                                                    {
-                                                                        <a asp-action="BlockAccount" asp-asp-controller="Admin" style=";"
-                                                                            asp-route-id="@Model.AccountId">
-                                                                            <button class="btn btn-primary" onclick="">Block</button>
-                                                                        </a>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <a asp-action="UnBlockAccount" asp-asp-controller="Admin"
-                                                                            asp-route-id="@Model.AccountId">
-                                                                            <button class="btn btn-primary" onclick="">UnBlock</button>
-                                                                        </a>
-                                                                    }
-
-                                                                </td>
-                                                            }
+                                                            <th class="text-center">No</th>
+                                                            <th class="cell-ta">ID</th>
+                                                            <th class="cell-ta">Username</th>
+                                                            <th class="cell-ta">Full Name</th>
+                                                            <th class="cell-ta">Email</th>
+                                                            <th class="cell-ta">Role</th>
+                                                            <th class="cell-ta">Status</th>
+                                                            <th class="text-center">Actions</th>
                                                         </tr>
-                                                        count++;
-                                                    }
-
-                                                }
-                                            }
-                                        </tbody>
-                                    </table>
+                                                    </thead>
+                                                    <tbody>
+                                                        @{
+                                                            int count = 1;
+                                                        }
+                                                        @foreach (var account in Model)
+                                                        {
+                                                            if (account.Role != 1) // Exclude admin accounts
+                                                            {
+                                                                <tr>
+                                                                    <td class="text-center">@count</td>
+                                                                    <td class="cell-ta">
+                                                                        <span class="badge bg-secondary">#@account.AccountId</span>
+                                                                    </td>
+                                                                    <td class="cell-ta">
+                                                                        <div class="d-flex align-items-center">
+                                                                            <div class="user-avatar me-2">
+                                                                                <img src="@(string.IsNullOrEmpty(account.Avatar) ? "/images/default-avatar.png" : account.Avatar)" alt="Avatar" class="rounded-circle" width="32" height="32">
+                                                                            </div>
+                                                                            <span class="fw-semibold">@account.Username</span>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="cell-ta">@account.FullName</td>
+                                                                    <td class="cell-ta">@account.Email</td>
+                                                                    <td class="cell-ta">
+                                                                        @if (account.Role == 3)
+                                                                        {
+                                                                            <span class="badge bg-info">Student</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="badge bg-warning">Instructor</span>
+                                                                        }
+                                                                    </td>
+                                                                    <td class="cell-ta">
+                                                                        @if (account.IsDelete == "False" || account.IsDelete == "false")
+                                                                        {
+                                                                            <span class="badge bg-success">Active</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="badge bg-danger">Blocked</span>
+                                                                        }
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        @if (account.IsDelete == "False" || account.IsDelete == "false")
+                                                                        {
+                                                                            <button class="btn btn-danger btn-sm blockBtn" data-account-id="@account.AccountId" data-username="@account.Username" data-action="block">
+                                                                                <i class="uil uil-ban me-1"></i>Block
+                                                                            </button>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <button class="btn btn-success btn-sm blockBtn" data-account-id="@account.AccountId" data-username="@account.Username" data-action="unblock">
+                                                                                <i class="uil uil-check-circle me-1"></i>Unblock
+                                                                            </button>
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                                count++;
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -110,6 +213,696 @@
                 </div>
             </div>
         </div>
-
     </div>
-</body>
+</div>
+
+@section Styles {
+    <style>
+        /* Dashboard Statistics Cards */
+        .dashboard_stats_card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border-left: 4px solid #ed2a26;
+            transition: transform 0.2s;
+        }
+
+        .dashboard_stats_card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .dashboard_stats_card_icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ed2a26, #ff6b6b);
+        }
+
+        .dashboard_stats_card_icon.approved {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .dashboard_stats_card_icon.pending {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+        }
+
+        .dashboard_stats_card_icon.rejected {
+            background: linear-gradient(135deg, #dc3545, #e83e8c);
+        }
+
+        .dashboard_stats_card_icon i {
+            font-size: 24px;
+            color: white;
+        }
+
+        .dashboard_stats_card_content h4 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            color: #333;
+        }
+
+        .dashboard_stats_card_content p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Table Styles */
+        .table_title {
+            margin-bottom: 30px;
+        }
+
+        .table_title h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .table_title p {
+            color: #666;
+            margin: 0;
+        }
+
+        /* Navigation Tabs */
+        .course_tabs .nav-tabs {
+            border: none;
+            margin-bottom: 20px;
+        }
+
+        .course_tabs .nav-link {
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            margin: 0 5px;
+            background: #f8f9fa;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .course_tabs .nav-link:hover {
+            background: #ed2a26;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .course_tabs .nav-link.active {
+            background: linear-gradient(135deg, #ed2a26, #ff4757);
+            color: white;
+            box-shadow: 0 4px 15px rgba(237, 42, 38, 0.3);
+        }
+
+        /* Filters Section */
+        .filters_section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .filters_section .form-control {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        .filters_section .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 6px;
+        }
+
+        /* Table Responsive - Remove horizontal scroll */
+        .table-responsive {
+            overflow-x: hidden !important;
+        }
+        
+        .ucp-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100% !important;
+            table-layout: auto !important;
+        }
+
+        .ucp-table thead.thead-s th {
+            background: linear-gradient(135deg, #ed2a26, #ff4757);
+            color: white;
+            font-weight: 600;
+            padding: 15px;
+            border: none;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .ucp-table tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        .ucp-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .ucp-table .cell-ta {
+            padding: 12px 8px;
+            vertical-align: middle;
+            border-bottom: 1px solid #eee;
+            word-wrap: break-word;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .ucp-table td {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .ucp-table td:nth-child(4), /* Full Name */
+        .ucp-table td:nth-child(5) { /* Email */
+            max-width: 150px;
+        }
+        
+        .ucp-table td:first-child, /* No */
+        .ucp-table td:nth-child(2), /* Account ID */
+        .ucp-table td:nth-child(6), /* Role */
+        .ucp-table td:nth-child(7), /* Status */
+        .ucp-table td:last-child { /* Actions */
+            white-space: nowrap;
+        }
+
+        /* User Avatar */
+        .user-avatar img {
+            object-fit: cover;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Badges */
+        .badge {
+            font-size: 11px;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        /* Button Styles */
+        .blockBtn {
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .blockBtn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        /* DataTables Customization */
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-left: 8px;
+        }
+
+        .dataTables_wrapper .dataTables_length select {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 6px 10px;
+        }
+
+        /* Enhanced Pagination Styling with Higher Specificity */
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 20px !important;
+        }
+
+        /* Target all possible pagination button selectors */
+        .dataTables_wrapper .dataTables_paginate .paginate_button,
+        .dataTables_wrapper .dataTables_paginate .paginate_button a,
+        .dataTables_wrapper .dataTables_paginate .paginate_button span,
+        table.dataTable.no-footer + .dataTables_wrapper .dataTables_paginate .paginate_button {
+            border: 1px solid #dee2e6 !important;
+            border-radius: 6px !important;
+            padding: 8px 12px !important;
+            margin: 0 2px !important;
+            background: #fff !important;
+            background-color: #fff !important;
+            color: #495057 !important;
+            text-decoration: none !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            display: inline-block !important;
+            min-width: 40px !important;
+            text-align: center !important;
+            cursor: pointer !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+            line-height: 1.2 !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button a:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button span:hover {
+            background: #ed2a26 !important;
+            background-color: #ed2a26 !important;
+            color: white !important;
+            border-color: #ed2a26 !important;
+            box-shadow: 0 2px 4px rgba(237, 42, 38, 0.3) !important;
+            transform: translateY(-1px) !important;
+            text-decoration: none !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current a,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current span {
+            background: #ed2a26 !important;
+            background-color: #ed2a26 !important;
+            color: white !important;
+            border-color: #ed2a26 !important;
+            box-shadow: 0 2px 8px rgba(237, 42, 38, 0.4) !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled a,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled span {
+            background: #f8f9fa !important;
+            background-color: #f8f9fa !important;
+            color: #6c757d !important;
+            border-color: #dee2e6 !important;
+            cursor: not-allowed !important;
+            opacity: 0.65 !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled a:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled span:hover {
+            background: #f8f9fa !important;
+            background-color: #f8f9fa !important;
+            color: #6c757d !important;
+            border-color: #dee2e6 !important;
+            transform: none !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+        }
+        .dt-paging-button{
+                margin : 5px;
+             border: 1px solid #dee2e6;
+            }
+        .dt-info {
+            padding: 5px;
+        }
+        /* Info text styling */
+        .dataTables_wrapper .dataTables_info {
+            color: #6c757d;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        /* Override DataTables default styles */
+        table.dataTable {
+            border-collapse: separate !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        /* Remove horizontal scroll */
+        .dataTables_wrapper {
+            overflow-x: hidden !important;
+            width: 100% !important;
+        }
+        
+        .container-fluid {
+            overflow-x: hidden !important;
+        }
+        
+        body {
+            overflow-x: hidden !important;
+        }
+
+        /* Force remove default DataTables pagination styling */
+        .dataTables_wrapper .dataTables_paginate .paginate_button,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:focus {
+            outline: none !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+        }
+
+        /* Ensure buttons don't have default browser styling */
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            appearance: none !important;
+            font-family: inherit !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .pagination {
+            margin: 0 !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .page-link {
+            border: 1px solid #dee2e6 !important;
+            border-radius: 6px !important;
+            padding: 8px 12px !important;
+            margin: 0 2px !important;
+            background: #fff !important;
+            color: #495057 !important;
+            text-decoration: none !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            display: inline-block !important;
+            min-width: 40px !important;
+            text-align: center !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .page-link:hover {
+            background: #ed2a26 !important;
+            color: white !important;
+            border-color: #ed2a26 !important;
+            box-shadow: 0 2px 4px rgba(237, 42, 38, 0.3) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+            background: #ed2a26 !important;
+            color: white !important;
+            border-color: #ed2a26 !important;
+            box-shadow: 0 2px 8px rgba(237, 42, 38, 0.4) !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .page-item.disabled .page-link {
+            background: #f8f9fa !important;
+            color: #6c757d !important;
+            border-color: #dee2e6 !important;
+            cursor: not-allowed !important;
+            opacity: 0.65 !important;
+        }
+
+        /* Custom pagination button class */
+        .btn-pagination {
+            border: 1px solid #dee2e6 !important;
+            border-radius: 6px !important;
+            padding: 8px 12px !important;
+            margin: 0 2px !important;
+            background: #fff !important;
+            color: #495057 !important;
+            text-decoration: none !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            display: inline-block !important;
+            min-width: 40px !important;
+            text-align: center !important;
+            cursor: pointer !important;
+            line-height: 1.2 !important;
+        }
+
+        .btn-pagination:hover {
+            background: #ed2a26 !important;
+            color: white !important;
+            border-color: #ed2a26 !important;
+            box-shadow: 0 2px 4px rgba(237, 42, 38, 0.3) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        .btn-pagination.current {
+            background: #ed2a26 !important;
+            color: white !important;
+            border-color: #ed2a26 !important;
+            box-shadow: 0 2px 8px rgba(237, 42, 38, 0.4) !important;
+        }
+
+        .btn-pagination.disabled {
+            background: #f8f9fa !important;
+            color: #6c757d !important;
+            border-color: #dee2e6 !important;
+            cursor: not-allowed !important;
+            opacity: 0.65 !important;
+        }
+
+        .btn-pagination.disabled:hover {
+            background: #f8f9fa !important;
+            color: #6c757d !important;
+            border-color: #dee2e6 !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .dashboard_stats_card {
+                margin-bottom: 15px;
+            }
+            
+            .filters_section .d-flex {
+                flex-direction: column;
+            }
+            
+            .filters_section .form-group {
+                margin-bottom: 10px;
+                margin-right: 0 !important;
+            }
+
+            .course_tabs .nav-tabs {
+                flex-direction: column;
+            }
+
+            .course_tabs .nav-link {
+                margin: 5px 0;
+            }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button {
+                padding: 6px 8px !important;
+                font-size: 12px !important;
+                min-width: 32px !important;
+            }
+            
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Initialize DataTable
+            var table = $('#accountsTable').DataTable({
+                "dom": 'rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                "pageLength": 10,
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "ordering": true,
+                "searching": true,
+                "responsive": true,
+                "language": {
+                    "search": "Search accounts:",
+                    "lengthMenu": "Show _MENU_ accounts per page",
+                    "info": "Showing _START_ to _END_ of _TOTAL_ accounts",
+                    "paginate": {
+                        "first": "First",
+                        "last": "Last",
+                        "next": "Next",
+                        "previous": "Previous"
+                    }
+                },
+                "columnDefs": [
+                    { "orderable": false, "targets": [0, 7] }, // Disable ordering for No and Actions columns
+                    { "width": "40px", "targets": 0 },
+                    { "width": "80px", "targets": 1 },
+                    { "targets": 2 },
+                    { "targets": 3 },
+                    { "targets": 4 },
+                    { "width": "80px", "targets": 5 },
+                    { "width": "80px", "targets": 6 },
+                    { "width": "100px", "targets": 7 }
+                ],
+                "autoWidth": false,
+                "scrollX": false
+            });
+
+            // Custom search functionality
+            $('#searchInput').on('keyup', function () {
+                table.search(this.value).draw();
+            });
+
+            // Role filter
+            $('#roleFilter').on('change', function () {
+                var role = this.value;
+                if (role) {
+                    table.column(5).search(role).draw(); // Role is column 5
+                } else {
+                    table.column(5).search('').draw();
+                }
+            });
+
+            // Status filter
+            $('#statusFilter').on('change', function () {
+                var status = this.value;
+                if (status === 'active') {
+                    table.column(6).search('Active').draw(); // Status is column 6
+                } else if (status === 'blocked') {
+                    table.column(6).search('Blocked').draw();
+                } else {
+                    table.column(6).search('').draw();
+                }
+            });
+
+            // Clear filters
+            $('#clearFilters').on('click', function () {
+                $('#searchInput').val('');
+                $('#roleFilter').val('');
+                $('#statusFilter').val('');
+                table.search('').columns().search('').draw();
+            });
+
+            // Block/Unblock functionality
+            $(document).on('click', '.blockBtn', function (event) {
+                event.preventDefault();
+                var accountId = $(this).data('account-id');
+                var username = $(this).data('username');
+                var action = $(this).data('action');
+                var actionText = action === 'block' ? 'Block' : 'Unblock';
+                var actionUrl = action === 'block' ? '/Admin/BlockAccount/' + accountId : '/Admin/UnBlockAccount/' + accountId;
+
+                Swal.fire({
+                    title: `${actionText} Account?`,
+                    html: `Are you sure you want to ${action} <strong>${username}</strong>?<br><small class="text-muted">This will ${action === 'block' ? 'prevent the user from accessing the platform' : 'restore the user\'s access to the platform'}.</small>`,
+                    icon: action === 'block' ? 'warning' : 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: action === 'block' ? '#dc3545' : '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: `<i class="uil uil-${action === 'block' ? 'ban' : 'check-circle'}"></i> Yes, ${actionText}`,
+                    cancelButtonText: '<i class="uil uil-times"></i> Cancel',
+                    reverseButtons: true,
+                    focusCancel: true,
+                    customClass: {
+                        confirmButton: `btn btn-${action === 'block' ? 'danger' : 'success'} me-2`,
+                        cancelButton: 'btn btn-secondary'
+                    },
+                    buttonsStyling: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Show loading
+                        Swal.fire({
+                            title: `${actionText}ing...`,
+                            text: `Please wait while we ${action} the account.`,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            showConfirmButton: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                        
+                        // Redirect to action URL
+                        window.location.href = actionUrl;
+                    }
+                });
+            });
+
+            // Apply custom styling to pagination buttons after DataTable initialization
+            function stylePaginationButtons() {
+                // Remove default DataTables classes and add custom styling
+                $('.dataTables_wrapper .paginate_button').each(function() {
+                    $(this).addClass('btn-pagination');
+                    
+                    // Remove default styling attributes
+                    $(this).removeAttr('style');
+                    
+                    // Apply inline styles to ensure they take precedence
+                    $(this).css({
+                        'border': '1px solid #dee2e6',
+                        'border-radius': '6px',
+                        'padding': '8px 12px',
+                        'margin': '0 2px',
+                        'background': '#fff',
+                        'background-color': '#fff',
+                        'color': '#495057',
+                        'text-decoration': 'none',
+                        'font-size': '14px',
+                        'font-weight': '500',
+                        'display': 'inline-block',
+                        'min-width': '40px',
+                        'text-align': 'center',
+                        'cursor': 'pointer',
+                        'box-shadow': '0 1px 3px rgba(0,0,0,0.1)',
+                        'line-height': '1.2',
+                        'transition': 'all 0.3s ease'
+                    });
+                    
+                    // Handle current/active state
+                    if ($(this).hasClass('current')) {
+                        $(this).css({
+                            'background': '#ed2a26',
+                            'background-color': '#ed2a26',
+                            'color': 'white',
+                            'border-color': '#ed2a26',
+                            'box-shadow': '0 2px 8px rgba(237, 42, 38, 0.4)'
+                        });
+                    }
+                    
+                    // Handle disabled state
+                    if ($(this).hasClass('disabled')) {
+                        $(this).css({
+                            'background': '#f8f9fa',
+                            'background-color': '#f8f9fa',
+                            'color': '#6c757d',
+                            'border-color': '#dee2e6',
+                            'cursor': 'not-allowed',
+                            'opacity': '0.65'
+                        });
+                    }
+                });
+                
+                // Add hover effects via event handlers
+                $('.dataTables_wrapper .paginate_button').off('mouseenter mouseleave').on('mouseenter', function() {
+                    if (!$(this).hasClass('disabled')) {
+                        $(this).css({
+                            'background': '#ed2a26',
+                            'background-color': '#ed2a26',
+                            'color': 'white',
+                            'border-color': '#ed2a26',
+                            'box-shadow': '0 2px 4px rgba(237, 42, 38, 0.3)',
+                            'transform': 'translateY(-1px)'
+                        });
+                    }
+                }).on('mouseleave', function() {
+                    if (!$(this).hasClass('current') && !$(this).hasClass('disabled')) {
+                        $(this).css({
+                            'background': '#fff',
+                            'background-color': '#fff',
+                            'color': '#495057',
+                            'border-color': '#dee2e6',
+                            'box-shadow': '0 1px 3px rgba(0,0,0,0.1)',
+                            'transform': 'translateY(0)'
+                        });
+                    }
+                });
+            }
+
+            // Apply styling initially and on every draw
+            stylePaginationButtons();
+            table.on('draw', function() {
+                setTimeout(stylePaginationButtons, 100); // Small delay to ensure DOM is updated
+            });
+
+            // Auto-refresh statistics (can be enhanced with AJAX)
+            function refreshStats() {
+                console.log('Refreshing account statistics...');
+            }
+        });
+    </script>
+}

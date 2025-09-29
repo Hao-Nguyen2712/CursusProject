@@ -19,6 +19,7 @@ using Cursus.Application.Cart;
 
 using Cursus.MVC.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Authorization;
 namespace Cursus.MVC.Controllers
 {
     public class EnrolledController : Controller
@@ -53,7 +54,9 @@ namespace Cursus.MVC.Controllers
             var homePageView = _mapper.Map<HomePageViewViewModel>(homepage);
             return View(homePageView);
         }
+        
         [HttpPost]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> EnrollCourse(int courseId)
         {
             try
@@ -74,6 +77,7 @@ namespace Cursus.MVC.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> EnrollCourseFree(int courseId)
         {
             try

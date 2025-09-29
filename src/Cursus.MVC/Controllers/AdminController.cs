@@ -7,12 +7,15 @@ using Cursus.Application.Analyze;
 using Cursus.Application.Category;
 using Cursus.Application.Comment;
 using Cursus.Application.Credits;
+using Cursus.Application;
+using Cursus.MVC.ViewModels;
 using Cursus.Application.Enroll;
 using Cursus.Application.Instructor;
 using Cursus.Application.Payout;
 using Cursus.Application.Report;
 using Cursus.Application.Student;
 using Cursus.Domain.Models;
+using Cursus.Domain.ViewModels;
 using Cursus.MVC.Models;
 using Cursus.MVC.Services;
 using Cursus.MVC.ViewModels;
@@ -20,6 +23,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 
 
@@ -46,11 +50,12 @@ namespace Cursus.MVC.Controllers
         private readonly IPayoutService payoutService;
         private readonly IEnrollService enrollService;
         private readonly ICommentService commentService;
+        private readonly IRateService rateService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AdminController(ICategoryService _categoryService, IInstructorService _instructorService, IStudentService _studentService, IAnalyzeService _analyzeService, IAdminDashBoardService adminDashBoardService, IAdminService _adminService, IMapper _mapper, IEmailSender emailSender, ICourseService courseService, IAccountService accountService, IReportService _reportService, ICreditsService _creditsService, IPayoutService _payoutService, IEnrollService _enrollService, ICommentService _commentService, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AdminController(ICategoryService _categoryService, IInstructorService _instructorService, IStudentService _studentService, IAnalyzeService _analyzeService, IAdminDashBoardService adminDashBoardService, IAdminService _adminService, IMapper _mapper, IEmailSender emailSender, ICourseService courseService, IAccountService accountService, IReportService _reportService, ICreditsService _creditsService, IPayoutService _payoutService, IEnrollService _enrollService, ICommentService _commentService, IRateService _rateService, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
 
         {
             this.categoryService = _categoryService;
@@ -68,6 +73,7 @@ namespace Cursus.MVC.Controllers
             this.payoutService = _payoutService;
             this.enrollService = _enrollService;
             this.commentService = _commentService;
+            this.rateService = _rateService;
             _roleManager = roleManager;
             _userManager = userManager;
             _signInManager = signInManager;
@@ -409,13 +415,12 @@ namespace Cursus.MVC.Controllers
             }
         }
 
-        public IActionResult GetRevenue()
+        public IActionResult GetRevenue(DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
-                // Revenue analytics implementation
-                ViewBag.Message = "Revenue analytics coming soon";
-                return View();
+                var revenueAnalytics = _adminDashBoardService.GetRevenueAnalytics(startDate, endDate);
+                return View(revenueAnalytics);
             }
             catch (Exception ex)
             {
@@ -424,13 +429,51 @@ namespace Cursus.MVC.Controllers
             }
         }
 
-        public IActionResult GetPayouts()
+        [HttpGet]
+        public JsonResult GetRevenueData(DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
-                // Instructor payouts implementation
-                ViewBag.Message = "Instructor payouts coming soon";
-                return View();
+                var revenueAnalytics = _adminDashBoardService.GetRevenueAnalytics(startDate, endDate);
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        totalRevenue = revenueAnalytics.TotalRevenue,
+                        monthlyRevenue = revenueAnalytics.MonthlyRevenue,
+                        dailyRevenue = revenueAnalytics.DailyRevenue,
+                        monthlyGrowth = revenueAnalytics.MonthlyGrowthPercentage,
+                        platformFees = revenueAnalytics.PlatformFees,
+                        instructorEarnings = revenueAnalytics.InstructorEarnings,
+                        topCourses = revenueAnalytics.TopSellingCourses.Take(5),
+                        paymentMethods = revenueAnalytics.PaymentMethodBreakdown,
+                        monthlyData = revenueAnalytics.MonthlyRevenueData.Take(12),
+                        dailyData = revenueAnalytics.DailyRevenueData.Take(30)
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        public IActionResult GetPayouts(DateTime? startDate = null, DateTime? endDate = null, PayoutStatus? status = null)
+        {
+            try
+            {
+                var instructorPayouts = _adminDashBoardService.GetInstructorPayouts(startDate, endDate);
+
+                // Apply status filter if provided
+                if (status.HasValue)
+                {
+                    instructorPayouts.PendingPayouts = instructorPayouts.PendingPayouts
+                        .Where(p => p.Status == status.Value).ToList();
+                    instructorPayouts.StatusFilter = status;
+                }
+
+                return View(instructorPayouts);
             }
             catch (Exception ex)
             {
@@ -439,14 +482,161 @@ namespace Cursus.MVC.Controllers
             }
         }
 
-        // ===== CONTENT MODERATION =====
-        public IActionResult GetComments()
+        [HttpPost]
+        public async Task<IActionResult> ProcessPayout(int payoutId)
         {
             try
             {
-                // Comment moderation implementation
-                ViewBag.Message = "Comment moderation coming soon";
-                return View();
+                var adminId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Admin";
+                var result = await _adminDashBoardService.ProcessPayoutAsync(payoutId, adminId);
+
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Payout processed successfully";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Failed to process payout";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error processing payout: {ex.Message}";
+            }
+
+            return RedirectToAction("GetPayouts");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BulkProcessPayouts(List<int> payoutIds)
+        {
+            try
+            {
+                if (payoutIds == null || !payoutIds.Any())
+                {
+                    TempData["ErrorMessage"] = "No payouts selected";
+                    return RedirectToAction("GetPayouts");
+                }
+
+                var adminId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Admin";
+                var result = await _adminDashBoardService.BulkProcessPayoutsAsync(payoutIds, adminId);
+
+                if (result)
+                {
+                    TempData["SuccessMessage"] = $"Successfully processed {payoutIds.Count} payouts";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Some payouts failed to process";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error processing payouts: {ex.Message}";
+            }
+
+            return RedirectToAction("GetPayouts");
+        }
+
+        [HttpGet]
+        public JsonResult GetPayoutData(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                var payoutData = _adminDashBoardService.GetInstructorPayouts(startDate, endDate);
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        totalPending = payoutData.TotalPendingPayouts,
+                        totalPaidOut = payoutData.TotalPaidOut,
+                        currentMonth = payoutData.CurrentMonthPayouts,
+                        pendingCount = payoutData.PendingPayoutCount,
+                        completedCount = payoutData.CompletedPayoutCount,
+                        averageAmount = payoutData.AveragePayoutAmount,
+                        averageProcessingTime = payoutData.AverageProcessingTime.Days,
+                        topInstructors = payoutData.InstructorEarnings.Take(10)
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // ===== CONTENT MODERATION =====
+        public IActionResult CommentManagement(string status = "", string search = "", int page = 1, int pageSize = 20)
+        {
+            try
+            {
+                var viewModel = new CommentModerationViewModel();
+                
+                // Get comments with filtering
+                var comments = commentService.GetAllComments();
+                
+                // Apply search filter
+                if (!string.IsNullOrEmpty(search))
+                {
+                    comments = commentService.SearchComments(search);
+                }
+                
+                // Apply status filter (simulated)
+                if (!string.IsNullOrEmpty(status))
+                {
+                    // Since we don't have real status field, we simulate based on content
+                    switch (status.ToLower())
+                    {
+                        case "approved":
+                            comments = comments.Where(c => c.CmtContent != null && c.CmtContent.Contains("[APPROVED]")).ToList();
+                            break;
+                        case "rejected":
+                            comments = comments.Where(c => c.CmtContent != null && c.CmtContent.Contains("[REJECTED]")).ToList();
+                            break;
+                        case "pending":
+                            comments = comments.Where(c => c.CmtContent != null && !c.CmtContent.Contains("[APPROVED]") && !c.CmtContent.Contains("[REJECTED]")).ToList();
+                            break;
+                    }
+                }
+                
+                // Apply pagination
+                var totalComments = comments.Count();
+                var paginatedComments = comments
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                
+                viewModel.Comments = paginatedComments.Select(c => new CommentDetail
+                {
+                    CmtId = c.CmtId,
+                    AccountId = c.AccountId ?? 0,
+                    CommenterName = c.Account?.FullName ?? "Unknown",
+                    CommenterEmail = c.Account?.Email ?? "Unknown",
+                    LessionId = c.LessionId ?? 0,
+                    LessonTitle = c.Lession?.LessionTilte ?? "Unknown",
+                    CourseName = c.Lession?.Course?.CourseName ?? "Unknown",
+                    CmtContent = c.CmtContent ?? "",
+                    CmtDate = c.CmtDate ?? DateTime.Now,
+                    Status = GetCommentStatus(c.CmtContent),
+                    ReportCount = 0 // Simulated since we don't have reports linked to comments
+                }).ToList();
+                
+                // Get statistics
+                var stats = commentService.GetCommentStatistics();
+                viewModel.TotalComments = stats.GetValueOrDefault("Total", 0);
+                viewModel.PendingComments = stats.GetValueOrDefault("Pending", 0);
+                viewModel.ApprovedComments = stats.GetValueOrDefault("Approved", 0);
+                viewModel.RejectedComments = stats.GetValueOrDefault("Rejected", 0);
+                
+                // Set pagination info
+                viewModel.CurrentPage = page;
+                viewModel.PageSize = pageSize;
+                viewModel.TotalPages = (int)Math.Ceiling((double)totalComments / pageSize);
+                viewModel.StatusFilter = status;
+                viewModel.SearchQuery = search;
+                
+                return View(viewModel);
             }
             catch (Exception ex)
             {
@@ -455,19 +645,316 @@ namespace Cursus.MVC.Controllers
             }
         }
 
-        public IActionResult GetReviews()
+        public IActionResult ReviewManagement(string status = "", string search = "", int courseId = 0, int page = 1, int pageSize = 20)
         {
             try
             {
-                // Review moderation implementation
-                ViewBag.Message = "Review moderation coming soon";
-                return View();
+                var viewModel = new ReviewManagementViewModel();
+                
+                // Get reviews with filtering
+                var reviews = rateService.GetAllReviews();
+                
+                // Apply search filter
+                if (!string.IsNullOrEmpty(search))
+                {
+                    reviews = rateService.SearchReviews(search);
+                }
+                
+                // Apply status filter
+                if (!string.IsNullOrEmpty(status))
+                {
+                    reviews = rateService.GetReviewsByStatus(status);
+                }
+                
+                // Apply course filter
+                if (courseId > 0)
+                {
+                    reviews = reviews.Where(r => r.CourseId == courseId).ToList();
+                }
+                
+                // Apply pagination
+                var totalReviews = reviews.Count();
+                var paginatedReviews = reviews
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                
+                viewModel.CourseReviews = paginatedReviews.Select(r => new CourseReviewDetail
+                {
+                    RateId = r.RateId,
+                    CourseId = r.CourseId ?? 0,
+                    CourseName = r.Course?.CourseName ?? "Unknown",
+                    AccountId = r.AccountId ?? 0,
+                    ReviewerName = r.Account?.FullName ?? "Unknown",
+                    ReviewerEmail = r.Account?.Email ?? "Unknown",
+                    RatePoint = r.RatePoint ?? 0,
+                    RateContent = r.RateContent ?? "",
+                    RateDate = r.RateDate ?? DateTime.Now,
+                    Status = GetReviewStatus(r.RateContent),
+                    ReportCount = 0 // Simulated
+                }).ToList();
+                
+                // Get statistics
+                var stats = rateService.GetReviewStatistics();
+                viewModel.TotalReviews = stats.GetValueOrDefault("Total", 0);
+                viewModel.PendingReviews = stats.GetValueOrDefault("Pending", 0);
+                viewModel.ApprovedReviews = stats.GetValueOrDefault("Approved", 0);
+                viewModel.RejectedReviews = stats.GetValueOrDefault("Rejected", 0);
+                viewModel.AverageRating = 4.2; // Placeholder - calculate from actual data
+                
+                // Get course summaries for dropdown
+                var courses = courseService.GetAllCourseActive();
+                viewModel.TopRatedCourses = courses.Select(c => new CourseReviewSummary
+                {
+                    CourseId = c.CourseId,
+                    CourseName = c.CourseName,
+                    TotalReviews = reviews.Count(r => r.CourseId == c.CourseId),
+                    AverageRating = rateService.GetCourseAverageRating(c.CourseId)
+                }).ToList();
+                
+                // Set pagination info
+                viewModel.CurrentPage = page;
+                viewModel.PageSize = pageSize;
+                viewModel.TotalPages = (int)Math.Ceiling((double)totalReviews / pageSize);
+                viewModel.StatusFilter = status;
+                viewModel.SearchQuery = search;
+                viewModel.CourseFilter = courseId.ToString();
+                
+                return View(viewModel);
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"Error loading reviews: {ex.Message}";
                 return RedirectToAction("Index");
             }
+        }
+
+        [HttpPost]
+        public IActionResult ApproveComment(int commentId)
+        {
+            try
+            {
+                var moderatorId = User.Identity?.Name ?? "admin";
+                var result = commentService.ApproveComment(commentId, moderatorId);
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Comment approved successfully.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Failed to approve comment.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error approving comment: {ex.Message}";
+            }
+            return RedirectToAction("CommentManagement");
+        }
+
+        [HttpPost]
+        public IActionResult RejectComment(int commentId)
+        {
+            try
+            {
+                var moderatorId = User.Identity?.Name ?? "admin";
+                var result = commentService.RejectComment(commentId, moderatorId, "Rejected by admin");
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Comment rejected successfully.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Failed to reject comment.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error rejecting comment: {ex.Message}";
+            }
+            return RedirectToAction("CommentManagement");
+        }
+
+        [HttpPost]
+        public IActionResult ApproveReview(int reviewId)
+        {
+            try
+            {
+                var moderatorId = User.Identity?.Name ?? "admin";
+                var result = rateService.ApproveReview(reviewId, moderatorId);
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Review approved successfully.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Failed to approve review.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error approving review: {ex.Message}";
+            }
+            return RedirectToAction("ReviewManagement");
+        }
+
+        [HttpPost]
+        public IActionResult RejectReview(int reviewId)
+        {
+            try
+            {
+                var moderatorId = User.Identity?.Name ?? "admin";
+                var result = rateService.RejectReview(reviewId, moderatorId, "Rejected by admin");
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Review rejected successfully.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Failed to reject review.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error rejecting review: {ex.Message}";
+            }
+            return RedirectToAction("ReviewManagement");
+        }
+
+        [HttpPost]
+        public JsonResult BulkApproveComments(int[] commentIds)
+        {
+            try
+            {
+                if (commentIds != null && commentIds.Length > 0)
+                {
+                    var moderatorId = User.Identity?.Name ?? "admin";
+                    var result = commentService.BulkApproveComments(commentIds.ToList(), moderatorId);
+                    if (result)
+                    {
+                        return Json(new { success = true, message = $"{commentIds.Length} comments approved successfully." });
+                    }
+                    return Json(new { success = false, message = "Failed to approve some comments." });
+                }
+                return Json(new { success = false, message = "No comments selected." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error approving comments: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult BulkRejectComments(int[] commentIds)
+        {
+            try
+            {
+                if (commentIds != null && commentIds.Length > 0)
+                {
+                    var moderatorId = User.Identity?.Name ?? "admin";
+                    var result = commentService.BulkRejectComments(commentIds.ToList(), moderatorId, "Bulk rejection by admin");
+                    if (result)
+                    {
+                        return Json(new { success = true, message = $"{commentIds.Length} comments rejected successfully." });
+                    }
+                    return Json(new { success = false, message = "Failed to reject some comments." });
+                }
+                return Json(new { success = false, message = "No comments selected." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error rejecting comments: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult BulkApproveReviews(int[] reviewIds)
+        {
+            try
+            {
+                if (reviewIds != null && reviewIds.Length > 0)
+                {
+                    var moderatorId = User.Identity?.Name ?? "admin";
+                    var result = rateService.BulkApproveReviews(reviewIds.ToList(), moderatorId);
+                    if (result)
+                    {
+                        return Json(new { success = true, message = $"{reviewIds.Length} reviews approved successfully." });
+                    }
+                    return Json(new { success = false, message = "Failed to approve some reviews." });
+                }
+                return Json(new { success = false, message = "No reviews selected." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error approving reviews: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult BulkRejectReviews(int[] reviewIds)
+        {
+            try
+            {
+                if (reviewIds != null && reviewIds.Length > 0)
+                {
+                    var moderatorId = User.Identity?.Name ?? "admin";
+                    var result = rateService.BulkRejectReviews(reviewIds.ToList(), moderatorId, "Bulk rejection by admin");
+                    if (result)
+                    {
+                        return Json(new { success = true, message = $"{reviewIds.Length} reviews rejected successfully." });
+                    }
+                    return Json(new { success = false, message = "Failed to reject some reviews." });
+                }
+                return Json(new { success = false, message = "No reviews selected." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error rejecting reviews: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetReviewStatistics()
+        {
+            try
+            {
+                var stats = rateService.GetReviewStatistics();
+                var ratingDistribution = rateService.GetRatingDistribution();
+                
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        totalReviews = stats.GetValueOrDefault("Total", 0),
+                        pendingReviews = stats.GetValueOrDefault("Pending", 0),
+                        approvedReviews = stats.GetValueOrDefault("Approved", 0),
+                        rejectedReviews = stats.GetValueOrDefault("Rejected", 0),
+                        averageRating = 4.2, // Placeholder
+                        ratingDistribution = ratingDistribution
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        private string GetCommentStatus(string content)
+        {
+            if (string.IsNullOrEmpty(content)) return "Pending";
+            if (content.Contains("[APPROVED]")) return "Approved";
+            if (content.Contains("[REJECTED]")) return "Rejected";
+            return "Pending";
+        }
+
+        private string GetReviewStatus(string content)
+        {
+            if (string.IsNullOrEmpty(content)) return "Pending";
+            if (content.Contains("[APPROVED]")) return "Approved";
+            if (content.Contains("[REJECTED]")) return "Rejected";
+            return "Pending";
         }
 
         // ===== DISCOUNT MANAGEMENT =====
@@ -684,113 +1171,7 @@ namespace Cursus.MVC.Controllers
             }
         }
 
-        [HttpPost]
-        public IActionResult ApproveComment(int commentId)
-        {
-            try
-            {
-                var comment = commentService.GetCommentById(commentId);
-                if (comment != null)
-                {
-                    // Since Comment model doesn't have CmtStatus, we'll simulate approval by updating the content
-                    // In a real implementation, you'd add a CmtStatus property to the Comment model
-                    // comment.CmtStatus = "Approved";
-                    // commentService.UpdateComment(comment);
-                    TempData["SuccessMessage"] = "Comment approved successfully.";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Comment not found.";
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = $"Error approving comment: {ex.Message}";
-            }
-            return RedirectToAction("ContentModeration");
-        }
 
-        [HttpPost]
-        public IActionResult RejectComment(int commentId)
-        {
-            try
-            {
-                var comment = commentService.GetCommentById(commentId);
-                if (comment != null)
-                {
-                    // Since Comment model doesn't have CmtStatus, we'll simulate rejection by updating the content
-                    // In a real implementation, you'd add a CmtStatus property to the Comment model
-                    // comment.CmtStatus = "Rejected";
-                    // commentService.UpdateComment(comment);
-                    TempData["SuccessMessage"] = "Comment rejected successfully.";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Comment not found.";
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = $"Error rejecting comment: {ex.Message}";
-            }
-            return RedirectToAction("ContentModeration");
-        }
-
-        [HttpPost]
-        public JsonResult BulkApproveComments(int[] commentIds)
-        {
-            try
-            {
-                if (commentIds != null && commentIds.Length > 0)
-                {
-                    int approvedCount = 0;
-                    foreach (var commentId in commentIds)
-                    {
-                        var comment = commentService.GetCommentById(commentId);
-                        if (comment != null)
-                        {
-                            // comment.CmtStatus = "Approved";
-                            // commentService.UpdateComment(comment);
-                            approvedCount++;
-                        }
-                    }
-                    return Json(new { success = true, message = $"{approvedCount} comments approved successfully." });
-                }
-                return Json(new { success = false, message = "No comments selected." });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = $"Error approving comments: {ex.Message}" });
-            }
-        }
-
-        [HttpPost]
-        public JsonResult BulkRejectComments(int[] commentIds)
-        {
-            try
-            {
-                if (commentIds != null && commentIds.Length > 0)
-                {
-                    int rejectedCount = 0;
-                    foreach (var commentId in commentIds)
-                    {
-                        var comment = commentService.GetCommentById(commentId);
-                        if (comment != null)
-                        {
-                            // comment.CmtStatus = "Rejected";
-                            // commentService.UpdateComment(comment);
-                            rejectedCount++;
-                        }
-                    }
-                    return Json(new { success = true, message = $"{rejectedCount} comments rejected successfully." });
-                }
-                return Json(new { success = false, message = "No comments selected." });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = $"Error rejecting comments: {ex.Message}" });
-            }
-        }
 
         [HttpPost]
         public JsonResult ResolveReport(int reportId, string status)

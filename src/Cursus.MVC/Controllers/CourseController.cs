@@ -421,6 +421,7 @@ namespace Cursus.MVC.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> UnEnroll(int courseId)
         {
             ClaimsPrincipal claims = this.User;

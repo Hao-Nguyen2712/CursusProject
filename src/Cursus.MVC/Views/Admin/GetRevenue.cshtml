@@ -1,3 +1,4 @@
+@model Cursus.Domain.ViewModels.RevenueAnalyticsViewModel
 @{
     ViewData["Title"] = "Revenue Analytics";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
@@ -11,30 +12,219 @@
                     <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="dashboard_tab_content">
-                                <div class="orders_table">
-                                    <div class="row">
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                            <div class="table_title">
-                                                <h2>Revenue Analytics</h2>
-                                                <p>Comprehensive revenue analysis and reporting</p>
+                                <!-- Revenue Overview Cards -->
+                                <div class="row mb-4">
+                                    <div class="col-lg-3 col-md-6 mb-3">
+                                        <div class="card bg-primary text-white">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <h4 class="mb-0">@Model.TotalRevenue.ToString("C")</h4>
+                                                        <small>Total Revenue</small>
+                                                    </div>
+                                                    <div class="align-self-center">
+                                                        <i class="uil uil-money-bill-stack fa-2x"></i>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     
-                                    <div class="coming-soon-container text-center">
-                                        <i class="uil uil-chart-line" style="font-size: 4rem; color: #007bff;"></i>
-                                        <h3>Revenue Analytics</h3>
-                                        <p class="text-muted">@ViewBag.Message</p>
-                                        <div class="alert alert-info">
-                                            <strong>Features to be implemented:</strong>
-                                            <ul class="list-unstyled mt-2">
-                                                <li>• Monthly/yearly revenue charts</li>
-                                                <li>• Revenue by course category</li>
-                                                <li>• Payment method breakdown</li>
-                                                <li>• Instructor commission tracking</li>
-                                                <li>• Revenue forecasting</li>
-                                                <li>• Downloadable reports</li>
-                                            </ul>
+                                    <div class="col-lg-3 col-md-6 mb-3">
+                                        <div class="card bg-success text-white">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <h4 class="mb-0">@Model.MonthlyRevenue.ToString("C")</h4>
+                                                        <small>This Month</small>
+                                                        @if (Model.MonthlyGrowthPercentage != 0)
+                                                        {
+                                                            <div class="small">
+                                                                @if (Model.MonthlyGrowthPercentage > 0)
+                                                                {
+                                                                    <i class="uil uil-arrow-up"></i>
+                                                                    <span class="text-success">+@Model.MonthlyGrowthPercentage.ToString("F1")%</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <i class="uil uil-arrow-down"></i>
+                                                                    <span class="text-danger">@Model.MonthlyGrowthPercentage.ToString("F1")%</span>
+                                                                }
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                    <div class="align-self-center">
+                                                        <i class="uil uil-calendar-alt fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-lg-3 col-md-6 mb-3">
+                                        <div class="card bg-info text-white">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <h4 class="mb-0">@Model.PlatformFees.ToString("C")</h4>
+                                                        <small>Platform Fees (@Model.PlatformFeePercentage%)</small>
+                                                    </div>
+                                                    <div class="align-self-center">
+                                                        <i class="uil uil-percentage fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-lg-3 col-md-6 mb-3">
+                                        <div class="card bg-warning text-white">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <h4 class="mb-0">@Model.InstructorEarnings.ToString("C")</h4>
+                                                        <small>Instructor Earnings</small>
+                                                    </div>
+                                                    <div class="align-self-center">
+                                                        <i class="uil uil-user-circle fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Charts Row -->
+                                <div class="row mb-4">
+                                    <!-- Monthly Revenue Chart -->
+                                    <div class="col-lg-8 mb-3">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="card-title mb-0">Monthly Revenue Trend</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <canvas id="monthlyRevenueChart" width="400" height="200"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Payment Methods Chart -->
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="card-title mb-0">Payment Methods</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <canvas id="paymentMethodChart" width="400" height="200"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Top Selling Courses and Top Instructors -->
+                                <div class="row mb-4">
+                                    <div class="col-lg-6 mb-3">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="card-title mb-0">Top Selling Courses</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Course</th>
+                                                                <th>Sales</th>
+                                                                <th>Revenue</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var course in Model.TopSellingCourses.Take(5))
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="d-flex flex-column">
+                                                                            <span class="fw-bold">@course.CourseName</span>
+                                                                            <small class="text-muted">by @course.InstructorName</small>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>@course.TotalSales</td>
+                                                                    <td class="text-success fw-bold">@course.TotalRevenue.ToString("C")</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-lg-6 mb-3">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="card-title mb-0">Top Earning Instructors</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Instructor</th>
+                                                                <th>Students</th>
+                                                                <th>Earnings</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var instructor in Model.TopEarningInstructors.Take(5))
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="d-flex flex-column">
+                                                                            <span class="fw-bold">@instructor.InstructorName</span>
+                                                                            <small class="text-muted">@instructor.CoursesCount courses</small>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>@instructor.TotalStudents</td>
+                                                                    <td class="text-success fw-bold">@instructor.TotalEarnings.ToString("C")</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Date Range Filter -->
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="card-title mb-0">Filter Analytics</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <form asp-action="GetRevenue" method="get" class="row g-3">
+                                                    <div class="col-md-4">
+                                                        <label for="startDate" class="form-label">Start Date</label>
+                                                        <input type="date" class="form-control" id="startDate" name="startDate" 
+                                                               value="@Model.StartDate.ToString("yyyy-MM-dd")">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label for="endDate" class="form-label">End Date</label>
+                                                        <input type="date" class="form-control" id="endDate" name="endDate" 
+                                                               value="@Model.EndDate.ToString("yyyy-MM-dd")">
+                                                    </div>
+                                                    <div class="col-md-4 d-flex align-items-end">
+                                                        <button type="submit" class="btn btn-primary me-2">
+                                                            <i class="uil uil-filter"></i> Apply Filter
+                                                        </button>
+                                                        <a href="@Url.Action("GetRevenue")" class="btn btn-outline-secondary">
+                                                            <i class="uil uil-refresh"></i> Reset
+                                                        </a>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -47,15 +237,95 @@
     </div>
 </div>
 
-@section Styles {
-    <style>
-        .coming-soon-container {
-            padding: 3rem;
-        }
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Monthly Revenue Chart
+        const monthlyCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
+        const monthlyData = @Html.Raw(Json.Serialize(Model.MonthlyRevenueData));
         
-        .coming-soon-container ul li {
-            text-align: left;
-            margin-bottom: 0.5rem;
-        }
-    </style>
+        new Chart(monthlyCtx, {
+            type: 'line',
+            data: {
+                labels: monthlyData.map(d => d.monthName),
+                datasets: [{
+                    label: 'Revenue',
+                    data: monthlyData.map(d => d.revenue),
+                    borderColor: 'rgb(54, 162, 235)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Platform Fees',
+                    data: monthlyData.map(d => d.platformFees),
+                    borderColor: 'rgb(255, 159, 64)',
+                    backgroundColor: 'rgba(255, 159, 64, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Payment Methods Pie Chart
+        const paymentCtx = document.getElementById('paymentMethodChart').getContext('2d');
+        const paymentData = @Html.Raw(Json.Serialize(Model.PaymentMethodBreakdown));
+        
+        new Chart(paymentCtx, {
+            type: 'doughnut',
+            data: {
+                labels: paymentData.map(d => d.paymentMethod),
+                datasets: [{
+                    data: paymentData.map(d => d.revenue),
+                    backgroundColor: [
+                        '#FF6384',
+                        '#36A2EB',
+                        '#FFCE56',
+                        '#4BC0C0',
+                        '#9966FF'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = '$' + context.parsed.toLocaleString();
+                                const percentage = paymentData[context.dataIndex].percentage.toFixed(1) + '%';
+                                return label + ': ' + value + ' (' + percentage + ')';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 }
