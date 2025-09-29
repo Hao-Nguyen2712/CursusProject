@@ -33,7 +33,7 @@ namespace Cursus.MVC.Controllers
         {
             ClaimsPrincipal claims = this.User;
             var userID = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            
+
             if (string.IsNullOrEmpty(userID))
             {
                 TempData["Status"] = "InvalidUser";
@@ -88,7 +88,7 @@ namespace Cursus.MVC.Controllers
 
             ClaimsPrincipal claims = this.User;
             var userID = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            
+
             if (string.IsNullOrEmpty(userID))
             {
                 TempData["Status"] = "InvalidUser";
@@ -96,7 +96,7 @@ namespace Cursus.MVC.Controllers
             }
             // Update account money first
             var updatedAccount = _payoutService.UpdateAccMoney(userID, total);
-            
+
             if (updatedAccount == null)
             {
                 TempData["Status"] = "WithdrawnFail";
@@ -117,27 +117,27 @@ namespace Cursus.MVC.Controllers
                 TempData["Status"] = "WithdrawnFail";
                 return RedirectToAction("Error404", "Home");
             }
-            
+
             // Send confirmation email
             var emailSender = (EmailSender)_emailSender;
             var htmlContent = emailSender.PayOutConfirm(account.FullName, total);
             await _emailSender.SendEmailAsync(account.Email, "Confirm Payment", htmlContent);
-            
+
             TempData["Status"] = "WithdrawnSuccess";
             TempData["WithdrawnAmount"] = total;
             return RedirectToAction("Success", "Payout");
         }
-        
+
         [Authorize(Roles = "Instructor")]
         public IActionResult Success()
         {
             // Pass the success message and withdrawn amount to the view
             ViewBag.SuccessMessage = TempData["Status"];
             ViewBag.WithdrawnAmount = TempData["WithdrawnAmount"];
-            
+
             // Set a flag to redirect after 3 seconds
             ViewBag.RedirectToIndex = true;
-            
+
             return View();
         }
     }

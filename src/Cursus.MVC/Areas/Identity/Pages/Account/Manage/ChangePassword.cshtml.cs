@@ -21,14 +21,14 @@ namespace Cursus.MVC.Areas.Identity.Pages.Account.Manage
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<ChangePasswordModel> _logger;
         private readonly Cursus.Domain.Models.CursusDBContext _db;
-        private readonly EmailSender _emailSender;
+        private readonly IEmailSender _emailSender;
 
         public ChangePasswordModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<ChangePasswordModel> logger,
             CursusDBContext db,
-            EmailSender emailSender)
+            IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -125,7 +125,8 @@ namespace Cursus.MVC.Areas.Identity.Pages.Account.Manage
                 {
                     account.Password = Input.NewPassword;
                     _db.Accounts.Update(account);
-                    var htmlContent = _emailSender.EmailChangePassword(account.FullName);
+                    var emailSender = (EmailSender)_emailSender;
+                    var htmlContent = emailSender.EmailChangePassword(account.FullName);
                     await _emailSender.SendEmailAsync(account.Email, "Change Password", htmlContent);
                     await _db.SaveChangesAsync();
                 }
