@@ -255,11 +255,9 @@ namespace Cursus.MVC
                     cursusDbContext.Database.Migrate();
 
                     // Seed data if in development environment
-                    if (app.Environment.IsDevelopment())
-                    {
-                        var seeder = services.GetRequiredService<DatabaseSeeder>();
-                        await seeder.SeedAsync();
-                    }
+                    var seeder = services.GetRequiredService<DatabaseSeeder>();
+                    await seeder.SeedAsync();
+
                 }
                 catch (Exception ex)
                 {

@@ -5,6 +5,7 @@
 using Cursus.Domain.Models;
 using Cursus.MVC.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
@@ -17,9 +18,9 @@ namespace Cursus.MVC.Areas.Identity.Pages.Account
     public class ForgotPasswordModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly EmailSender _emailSender;
+        private readonly IEmailSender _emailSender;
 
-        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, EmailSender emailSender)
+        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
         {
             _userManager = userManager;
             _emailSender = emailSender;
@@ -68,10 +69,11 @@ namespace Cursus.MVC.Areas.Identity.Pages.Account
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
 
+                var emailSender = (EmailSender)_emailSender;
                 await _emailSender.SendEmailAsync(
                     Input.Email,
                     "Reset Password",
-                    _emailSender.EmailConfirm(user.UserName, $"<h3>To reset your password, please click the link below: </h3><div style='text-align: center;'><a style='color: white;' class='link-confirm' href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Reset Password</a></div>"));
+                    emailSender.EmailConfirm(user.UserName, $"<h3>To reset your password, please click the link below: </h3><div style='text-align: center;'><a style='color: white;' class='link-confirm' href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Reset Password</a></div>"));
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }
